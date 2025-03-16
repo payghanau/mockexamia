@@ -1,5 +1,4 @@
 
-import { Chart } from "@/components/ui/chart";
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { ExamAnalysis } from "@/types";
 import { Check, X, Clock, AlertCircle, BarChart } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 type TestAnalysisProps = {
   analysis: ExamAnalysis;
@@ -114,37 +114,32 @@ const TestAnalysis = ({ analysis }: TestAnalysisProps) => {
         </CardHeader>
         <CardContent>
           <div className="h-[300px] flex justify-center items-center">
-            <Chart 
-              type="pie"
-              data={pieData}
-              width={300}
-              height={300}
-              options={{
-                colors: pieData.map(item => item.color),
-                labels: pieData.map(item => item.name),
-                legend: {
-                  position: 'bottom',
-                  horizontalAlign: 'center',
-                },
-                dataLabels: {
-                  enabled: true,
-                  formatter: function(val: number) {
-                    return val.toFixed(1) + '%';
-                  },
-                },
-                responsive: [{
-                  breakpoint: 480,
-                  options: {
-                    chart: {
-                      width: 200
-                    },
-                    legend: {
-                      position: 'bottom'
-                    }
-                  }
-                }]
-              }}
-            />
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={true}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value, name) => [value, name]}
+                  labelFormatter={() => ''}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  align="center" 
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
 
           <div className="mt-4 p-4 bg-mcq-gray-lightest rounded-lg">
