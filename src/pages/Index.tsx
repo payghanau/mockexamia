@@ -8,7 +8,7 @@ import { ArrowRight, BookOpen, Briefcase, Layers } from "lucide-react";
 
 const Index = () => {
   useEffect(() => {
-    document.title = "MockExamia - NISM & GATE Mock Exams";
+    document.title = "myturnindia - NISM & GATE Mock Exams";
   }, []);
 
   return (
@@ -19,7 +19,7 @@ const Index = () => {
       <section className="flex-1 flex flex-col justify-center items-center px-4 pt-24 pb-16">
         <div className="w-full max-w-5xl mx-auto text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-mcq-blue to-blue-600">
-            Ace Your Certification Exams with MockExamia
+            Ace Your Certification Exams with myturnindia
           </h1>
           <p className="text-xl text-mcq-gray-dark max-w-3xl mx-auto mb-8">
             Premium practice tests for NISM Certifications and GATE Exams designed by industry experts
@@ -38,7 +38,7 @@ const Index = () => {
       {/* Features Section */}
       <section className="bg-white py-16">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose MockExamia?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose myturnindia?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center p-6 rounded-xl bg-blue-50 shadow-sm">
               <div className="bg-mcq-blue/10 p-4 rounded-full mb-4">
@@ -86,7 +86,7 @@ const Index = () => {
                 Perfect for focused preparation on specific topics.
               </p>
               <Button asChild variant="outline" className="w-full">
-                <Link to="/login">Start Practicing</Link>
+                <Link to="/dashboard">Start Practicing</Link>
               </Button>
             </div>
             
@@ -97,7 +97,7 @@ const Index = () => {
                 full-length tests (65 questions, 3 hours) to suit your preparation needs.
               </p>
               <Button asChild variant="outline" className="w-full">
-                <Link to="/login">Start Practicing</Link>
+                <Link to="/dashboard">Start Practicing</Link>
               </Button>
             </div>
           </div>
