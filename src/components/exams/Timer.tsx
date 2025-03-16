@@ -1,84 +1,50 @@
 
-import { useState, useEffect, useCallback } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { Clock, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Clock } from "lucide-react";
 
-type TimerProps = {
-  durationInMinutes: number;
-  onTimeUp: () => void;
-};
+export interface TimerProps {
+  initialTime: number; // Time in minutes
+  onTimerEnd: () => void;
+}
 
-const Timer = ({ durationInMinutes, onTimeUp }: TimerProps) => {
-  const [timeLeft, setTimeLeft] = useState(durationInMinutes * 60);
-  const [isWarning, setIsWarning] = useState(false);
-  const [isCritical, setIsCritical] = useState(false);
-  const { toast } = useToast();
-
-  const formatTime = useCallback((seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-  }, []);
-
+const Timer = ({ initialTime, onTimerEnd }: TimerProps) => {
+  // Convert minutes to seconds
+  const [timeLeft, setTimeLeft] = useState(initialTime * 60);
+  
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(timer);
-          onTimeUp();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [onTimeUp]);
-
-  useEffect(() => {
-    // Show warning when 25% time is left
-    const warningThreshold = durationInMinutes * 60 * 0.25;
-    // Show critical warning when 10% time is left
-    const criticalThreshold = durationInMinutes * 60 * 0.1;
-
-    if (timeLeft <= criticalThreshold && !isCritical) {
-      setIsCritical(true);
-      toast({
-        title: "Time is running out!",
-        description: "Less than 10% of your exam time remains.",
-        variant: "destructive",
-      });
-    } else if (timeLeft <= warningThreshold && !isWarning) {
-      setIsWarning(true);
-      toast({
-        title: "Warning",
-        description: "25% of your exam time is left.",
-        variant: "default",
-      });
+    if (timeLeft <= 0) {
+      onTimerEnd();
+      return;
     }
-  }, [timeLeft, durationInMinutes, isWarning, isCritical, toast]);
-
+    
+    const timerId = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+    
+    return () => clearInterval(timerId);
+  }, [timeLeft, onTimerEnd]);
+  
+  // Format time as MM:SS
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  
+  // Format with leading zeros
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, '0');
+  
+  // Determine color based on time left
+  const getColor = () => {
+    if (timeLeft < 60) return "text-red-600"; // Less than 1 minute
+    if (timeLeft < 300) return "text-amber-500"; // Less than 5 minutes
+    return "text-green-600";
+  };
+  
   return (
-    <div className={`flex items-center space-x-2 p-3 rounded-lg transition-colors ${
-      isCritical 
-        ? "bg-red-50 text-red-500 animate-pulse" 
-        : isWarning 
-          ? "bg-amber-50 text-amber-500" 
-          : "bg-mcq-gray-lightest text-foreground"
-    }`}>
-      {isCritical ? (
-        <AlertTriangle className="h-5 w-5" />
-      ) : (
-        <Clock className="h-5 w-5" />
-      )}
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Time Remaining</span>
-        <span className="text-lg font-bold">{formatTime(timeLeft)}</span>
-      </div>
+    <div className="flex items-center gap-2 font-mono text-lg">
+      <Clock className={`h-5 w-5 ${getColor()}`} />
+      <span className={getColor()}>
+        {formattedMinutes}:{formattedSeconds}
+      </span>
     </div>
   );
 };

@@ -13,6 +13,10 @@ import ExamPage from "./pages/ExamPage";
 import TestResults from "./pages/TestResults";
 import PaymentPage from "./pages/PaymentPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import NismExams from "./pages/NismExams";
+import GateExams from "./pages/GateExams";
+import Pricing from "./pages/Pricing";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +36,10 @@ const App = () => {
             <Route path="/results/:resultId" element={<TestResults />} />
             <Route path="/payment/:examId" element={<PaymentPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/exams/nism" element={<NismExams />} />
+            <Route path="/exams/gate" element={<GateExams />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/contact" element={<Contact />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
