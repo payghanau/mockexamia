@@ -1,26 +1,45 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MenuIcon, X } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 type NavbarProps = {
   isAuthenticated?: boolean;
   isAdmin?: boolean;
 };
 
-const Navbar = ({ isAuthenticated = false, isAdmin = false }: NavbarProps) => {
+const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  
+  const { user, isAuthenticated } = useAuth();
+  const isAdmin = propIsAdmin || user?.role === 'admin';
+  
+  const lastScrollY = useRef(0);
 
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      const currentScrollY = window.scrollY;
+      
+      // Set background when scrolled down
+      if (currentScrollY > 10) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
+      
+      // Hide navbar when scrolling down, show when scrolling up
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setIsVisible(false); // Scrolling down - hide
+      } else {
+        setIsVisible(true); // Scrolling up - show
+      }
+      
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -41,6 +60,8 @@ const Navbar = ({ isAuthenticated = false, isAdmin = false }: NavbarProps) => {
         isScrolled
           ? "bg-white/80 backdrop-blur-lg shadow-sm py-3"
           : "bg-transparent py-5"
+      } ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
@@ -52,12 +73,6 @@ const Navbar = ({ isAuthenticated = false, isAdmin = false }: NavbarProps) => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link
-            to="/"
-            className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
-          >
-            Home
-          </Link>
           <Link
             to="/exams/nism"
             className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
@@ -86,7 +101,7 @@ const Navbar = ({ isAuthenticated = false, isAdmin = false }: NavbarProps) => {
 
         {/* Desktop Authentication */}
         <div className="hidden md:flex items-center space-x-4">
-          {isAuthenticated ? (
+          {isAuthenticated || propIsAuthenticated ? (
             <>
               {isAdmin && (
                 <Link to="/admin">
@@ -158,13 +173,6 @@ const Navbar = ({ isAuthenticated = false, isAdmin = false }: NavbarProps) => {
         </div>
         <div className="flex flex-col items-center space-y-8 p-8">
           <Link
-            to="/"
-            className="text-lg font-medium"
-            onClick={closeMenu}
-          >
-            Home
-          </Link>
-          <Link
             to="/exams/nism"
             className="text-lg font-medium"
             onClick={closeMenu}
@@ -195,7 +203,7 @@ const Navbar = ({ isAuthenticated = false, isAdmin = false }: NavbarProps) => {
 
           {/* Mobile Authentication */}
           <div className="pt-8 flex flex-col space-y-4 w-full">
-            {isAuthenticated ? (
+            {isAuthenticated || propIsAuthenticated ? (
               <>
                 {isAdmin && (
                   <Link to="/admin" onClick={closeMenu}>
