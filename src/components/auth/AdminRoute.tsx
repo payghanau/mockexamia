@@ -20,7 +20,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
 
   if (!isAuthenticated || user?.role !== 'admin') {
     // Redirect users who aren't admins
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

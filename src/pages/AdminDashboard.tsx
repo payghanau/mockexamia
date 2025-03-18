@@ -12,7 +12,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Exam, Question } from "@/types";
-import { ArrowRight, ListChecks, PlusCircle, Save, Trash2 } from "lucide-react";
+import { ArrowRight, ListChecks, PlusCircle, Save, Trash2, Users, BookOpen, DollarSign, TrendingUp } from "lucide-react";
+import StatCard from "@/components/admin/StatCard";
+import SalesChart from "@/components/admin/SalesChart";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -34,6 +36,9 @@ const AdminDashboard = () => {
   
   // Existing exams
   const [exams, setExams] = useState<Exam[]>([]);
+  
+  // Analytics period state
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<"month" | "year">("month");
   
   useEffect(() => {
     document.title = "Admin Dashboard - myturnindia";
@@ -237,12 +242,125 @@ const AdminDashboard = () => {
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
           
-          <Tabs defaultValue="exams" className="space-y-6">
+          <Tabs defaultValue="analytics" className="space-y-6">
             <TabsList className="mb-8">
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="exams">Manage Exams</TabsTrigger>
               <TabsTrigger value="create">Create New Exam</TabsTrigger>
               <TabsTrigger value="questions">Add Questions</TabsTrigger>
             </TabsList>
+            
+            {/* Analytics Tab */}
+            <TabsContent value="analytics">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <StatCard 
+                    title="Total Users" 
+                    value="1,274" 
+                    description="Active students on platform"
+                    icon={Users}
+                    trend={{ value: 12, isPositive: true }}
+                  />
+                  <StatCard 
+                    title="Total Exams" 
+                    value={exams.length.toString()} 
+                    description="Tests available on platform"
+                    icon={BookOpen}
+                  />
+                  <StatCard 
+                    title="Tests Attempted" 
+                    value="8,562" 
+                    description="Total test attempts by students"
+                    icon={ListChecks}
+                    trend={{ value: 8, isPositive: true }}
+                  />
+                  <StatCard 
+                    title="Revenue" 
+                    value="₹2,45,890" 
+                    description="Total revenue generated"
+                    icon={DollarSign}
+                    trend={{ value: 14, isPositive: true }}
+                  />
+                </div>
+
+                <div className="flex justify-end mb-2">
+                  <div className="space-x-1">
+                    <Button 
+                      variant={analyticsPeriod === "month" ? "default" : "outline"} 
+                      size="sm" 
+                      onClick={() => setAnalyticsPeriod("month")}
+                    >
+                      Monthly
+                    </Button>
+                    <Button 
+                      variant={analyticsPeriod === "year" ? "default" : "outline"} 
+                      size="sm" 
+                      onClick={() => setAnalyticsPeriod("year")}
+                    >
+                      Yearly
+                    </Button>
+                  </div>
+                </div>
+
+                <SalesChart period={analyticsPeriod} />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Popular Tests</CardTitle>
+                      <CardDescription>Most popular tests by sales volume</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {exams.slice(0, 5).map((exam, index) => (
+                          <div key={exam.id} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="bg-blue-100 text-blue-700 h-6 w-6 rounded-full flex items-center justify-center text-xs font-medium">
+                                {index + 1}
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">{exam.title}</p>
+                                <p className="text-xs text-muted-foreground">{exam.category}</p>
+                              </div>
+                            </div>
+                            <div className="text-sm font-medium">{Math.floor(Math.random() * 100) + 50} sales</div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Transactions</CardTitle>
+                      <CardDescription>Last 5 test purchases</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div key={i} className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-sm">
+                                {['Rahul S.', 'Priya M.', 'Arjun K.', 'Neha P.', 'Vikram T.'][i-1]}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Purchased {exams[i % exams.length]?.title.substring(0, 20)}...
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-medium">₹{exams[i % exams.length]?.fee}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {new Date(Date.now() - i * 3600000).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
             
             {/* Existing Exams Tab */}
             <TabsContent value="exams">

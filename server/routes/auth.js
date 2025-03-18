@@ -65,7 +65,7 @@ router.post('/login', async (req, res) => {
     
     // Generate JWT token
     const token = jwt.sign(
-      { id: user._id },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '30d' }
     );
@@ -92,6 +92,45 @@ router.get('/me', auth, async (req, res) => {
       name: req.user.name,
       role: req.user.role,
       createdAt: req.user.createdAt
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Create admin user (for seeding or testing purposes)
+router.post('/create-admin', async (req, res) => {
+  try {
+    // Check if this route is protected by an admin key
+    const adminKey = req.header('Admin-Key');
+    if (!adminKey || adminKey !== process.env.ADMIN_KEY) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    const { email, password, name } = req.body;
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+    
+    // Create new admin user
+    const user = new User({
+      email,
+      password,
+      name,
+      role: 'admin'
+    });
+    
+    await user.save();
+    
+    res.status(201).json({
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      createdAt: user.createdAt
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

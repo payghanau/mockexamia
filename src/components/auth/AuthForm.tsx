@@ -8,12 +8,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
 import GoogleAuth from "./GoogleAuth";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 type AuthFormProps = {
   type: "login" | "register";
+  userRole?: "user" | "admin";
 };
 
-const AuthForm = ({ type }: AuthFormProps) => {
+const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,6 +23,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,21 +39,19 @@ const AuthForm = ({ type }: AuthFormProps) => {
         throw new Error("Passwords do not match");
       }
 
-      // In a real app, we would call an API here
-      // For demo, we'll simulate authentication
-      setTimeout(() => {
-        // Success notification
-        toast({
-          title: type === "login" ? "Welcome back!" : "Account created successfully",
-          description: type === "login" 
-            ? "You have been successfully logged in" 
-            : "Your account has been created. You can now log in",
-          variant: "default",
-        });
-        
+      if (type === "login") {
+        await login(email, password);
+        // Navigate based on role after successful login
+        if (userRole === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
+      } else {
+        await register(email, password);
         navigate("/dashboard");
-        setIsLoading(false);
-      }, 1500);
+      }
+      
     } catch (error) {
       setIsLoading(false);
       toast({
@@ -65,12 +66,14 @@ const AuthForm = ({ type }: AuthFormProps) => {
     <Card className="w-full max-w-md mx-auto glass">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-semibold tracking-tight">
-          {type === "login" ? "Sign In" : "Create an account"}
+          {userRole === "admin" ? "Admin Access" : type === "login" ? "Sign In" : "Create an account"}
         </CardTitle>
         <CardDescription>
-          {type === "login"
-            ? "Enter your credentials to access your account"
-            : "Fill out the form below to create your account"}
+          {userRole === "admin" 
+            ? "Enter your admin credentials to access the dashboard"
+            : type === "login"
+              ? "Enter your credentials to access your account"
+              : "Fill out the form below to create your account"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -154,37 +157,47 @@ const AuthForm = ({ type }: AuthFormProps) => {
             {isLoading ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-                {type === "login" ? "Signing in..." : "Creating account..."}
+                {userRole === "admin" 
+                  ? "Signing in as admin..." 
+                  : type === "login" 
+                    ? "Signing in..." 
+                    : "Creating account..."}
               </div>
             ) : (
-              <>{type === "login" ? "Sign In" : "Create Account"}</>
+              <>{userRole === "admin" ? "Admin Sign In" : type === "login" ? "Sign In" : "Create Account"}</>
             )}
           </Button>
         </form>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
+        {userRole !== "admin" && (
+          <>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
 
-        <GoogleAuth type={type} />
+            <GoogleAuth type={type} />
+          </>
+        )}
       </CardContent>
       <CardFooter className="flex justify-center">
-        <p className="text-sm text-muted-foreground">
-          {type === "login" ? "Don't have an account? " : "Already have an account? "}
-          <a
-            href={type === "login" ? "/register" : "/login"}
-            className="font-medium text-mcq-blue hover:text-mcq-blue-dark transition-base"
-          >
-            {type === "login" ? "Sign up" : "Sign in"}
-          </a>
-        </p>
+        {userRole !== "admin" && (
+          <p className="text-sm text-muted-foreground">
+            {type === "login" ? "Don't have an account? " : "Already have an account? "}
+            <a
+              href={type === "login" ? "/register" : "/login"}
+              className="font-medium text-mcq-blue hover:text-mcq-blue-dark transition-base"
+            >
+              {type === "login" ? "Sign up" : "Sign in"}
+            </a>
+          </p>
+        )}
       </CardFooter>
     </Card>
   );
