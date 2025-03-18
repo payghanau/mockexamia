@@ -1,113 +1,68 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ExamCard from "@/components/exams/ExamCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Exam } from "@/types";
+import { examService } from "@/services/api";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [exams, setExams] = useState<Exam[]>([]);
-  
+  const { toast } = useToast();
+
   useEffect(() => {
     document.title = "Dashboard - myturnindia";
-    
-    // In a real app, this would be an API call
-    // For now, we'll use mock data
-    const mockExams: Exam[] = [
-      {
-        id: "nism-1",
-        title: "NISM Series V-A: Mutual Fund Distributors",
-        description: "Chapter 1-3: Introduction to Mutual Funds",
-        category: "NISM",
-        type: "chapter-wise",
-        duration: 12,
-        totalQuestions: 10,
-        fee: 199,
-        createdBy: "admin",
-        createdAt: new Date(),
-        isActive: true
-      },
-      {
-        id: "nism-2",
-        title: "NISM Series VIII: Equity Derivatives",
-        description: "Chapter 4-6: Options Trading Strategies",
-        category: "NISM",
-        type: "chapter-wise",
-        duration: 12,
-        totalQuestions: 10,
-        fee: 199,
-        createdBy: "admin",
-        createdAt: new Date(),
-        isActive: true
-      },
-      {
-        id: "gate-1",
-        title: "GATE Computer Science - Section Test",
-        description: "Data Structures & Algorithms",
-        category: "GATE",
-        subcategory: "Computer Science",
-        type: "section-wise",
-        duration: 20,
-        totalQuestions: 10,
-        fee: 299,
-        createdBy: "admin",
-        createdAt: new Date(),
-        isActive: true
-      },
-      {
-        id: "gate-2",
-        title: "GATE Computer Science - Full Length",
-        description: "Complete syllabus coverage",
-        category: "GATE",
-        subcategory: "Computer Science",
-        type: "full-length",
-        duration: 180,
-        totalQuestions: 65,
-        fee: 499,
-        createdBy: "admin",
-        createdAt: new Date(),
-        isActive: true
-      },
-      {
-        id: "gate-3",
-        title: "GATE Electrical Engineering - Section Test",
-        description: "Circuit Theory & Electromagnetic Fields",
-        category: "GATE",
-        subcategory: "Electrical Engineering",
-        type: "section-wise",
-        duration: 20,
-        totalQuestions: 10,
-        fee: 299,
-        createdBy: "admin",
-        createdAt: new Date(),
-        isActive: true
-      },
-      {
-        id: "gate-4",
-        title: "GATE Electrical Engineering - Full Length",
-        description: "Complete syllabus coverage",
-        category: "GATE",
-        subcategory: "Electrical Engineering",
-        type: "full-length",
-        duration: 180,
-        totalQuestions: 65,
-        fee: 499,
-        createdBy: "admin",
-        createdAt: new Date(), 
-        isActive: true
-      }
-    ];
-    
-    setExams(mockExams);
   }, []);
 
-  const nismExams = exams.filter(exam => exam.category === "NISM");
-  const gateExams = exams.filter(exam => exam.category === "GATE");
-  const sectionWiseGateExams = gateExams.filter(exam => exam.type === "section-wise");
-  const fullLengthGateExams = gateExams.filter(exam => exam.type === "full-length");
+  // Fetch all exams
+  const { data: exams, isLoading, error } = useQuery({
+    queryKey: ['exams'],
+    queryFn: () => examService.getAllExams()
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading exams...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Failed to load exams</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md"
+            >
+              Try Again
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const nismExams = exams.filter((exam: Exam) => exam.category === "NISM");
+  const gateExams = exams.filter((exam: Exam) => exam.category === "GATE");
+  const sectionWiseGateExams = gateExams.filter((exam: Exam) => exam.type === "section-wise");
+  const fullLengthGateExams = gateExams.filter((exam: Exam) => exam.type === "full-length");
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -124,27 +79,45 @@ const Dashboard = () => {
             </TabsList>
             
             <TabsContent value="nism" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {nismExams.map(exam => (
-                  <ExamCard key={exam.id} exam={exam} />
-                ))}
-              </div>
+              {nismExams.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {nismExams.map((exam: Exam) => (
+                    <ExamCard key={exam.id} exam={exam} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No NISM exams available at the moment.</p>
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="gate-section" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sectionWiseGateExams.map(exam => (
-                  <ExamCard key={exam.id} exam={exam} />
-                ))}
-              </div>
+              {sectionWiseGateExams.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {sectionWiseGateExams.map((exam: Exam) => (
+                    <ExamCard key={exam.id} exam={exam} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No section-wise GATE exams available at the moment.</p>
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="gate-full" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {fullLengthGateExams.map(exam => (
-                  <ExamCard key={exam.id} exam={exam} isPremium={true} />
-                ))}
-              </div>
+              {fullLengthGateExams.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {fullLengthGateExams.map((exam: Exam) => (
+                    <ExamCard key={exam.id} exam={exam} isPremium={true} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No full-length GATE exams available at the moment.</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
