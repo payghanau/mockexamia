@@ -151,8 +151,17 @@ export const userExamService = {
 
 // Payment services
 export const paymentService = {
-  processPayment: async (examId: string, paymentMethod: string) => {
-    const response = await api.post('/payments/process', { examId, paymentMethod });
+  createPaymentOrder: async (examId: string) => {
+    const response = await api.post('/payments/create-order', { examId });
+    return response.data;
+  },
+  
+  verifyPayment: async (paymentData: {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+  }) => {
+    const response = await api.post('/payments/verify', paymentData);
     return response.data;
   },
   

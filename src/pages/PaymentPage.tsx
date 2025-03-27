@@ -1,107 +1,178 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Exam } from "@/types";
-import { ArrowLeft, CreditCard, IndianRupee, LockKeyhole, Shield } from "lucide-react";
+import { ArrowLeft, IndianRupee, Info, LockKeyhole, Shield } from "lucide-react";
+import { examService, paymentService } from "@/services/api";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Declare Razorpay at global level
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const PaymentPage = () => {
-  const { examId } = useParams();
+  const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [loading, setLoading] = useState(true);
-  const [exam, setExam] = useState<Exam | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>("card");
+  const [processingPayment, setProcessingPayment] = useState(false);
   
-  // Credit card form state
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardName, setCardName] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvv, setCardCvv] = useState("");
-  
-  // UPI form state
-  const [upiId, setUpiId] = useState("");
-  
+  // Fetch exam details
+  const { data: exam, isLoading, error } = useQuery({
+    queryKey: ['exam', examId],
+    queryFn: () => examId ? examService.getExamById(examId) : Promise.reject('No exam ID'),
+    enabled: !!examId
+  });
+
+  // Create payment order mutation
+  const createOrderMutation = useMutation({
+    mutationFn: () => paymentService.createPaymentOrder(examId!),
+    onSuccess: (data) => {
+      if (data.success) {
+        initializeRazorpayCheckout(data.order, data.key_id);
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Payment Failed",
+        description: error.response?.data?.message || "Could not initiate payment"
+      });
+      setProcessingPayment(false);
+    }
+  });
+
+  // Verify payment mutation
+  const verifyPaymentMutation = useMutation({
+    mutationFn: (paymentData: any) => paymentService.verifyPayment(paymentData),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast({
+          title: "Payment Successful!",
+          description: "You can now access the exam.",
+        });
+        
+        // Redirect to exam page
+        setTimeout(() => {
+          navigate(`/exam/${examId}`);
+        }, 1500);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Payment Verification Failed",
+          description: data.message || "Something went wrong"
+        });
+      }
+      setProcessingPayment(false);
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Payment Verification Failed",
+        description: error.response?.data?.message || "Could not verify payment"
+      });
+      setProcessingPayment(false);
+    }
+  });
+
   useEffect(() => {
     document.title = "Payment - myturnindia";
     
-    // In a real app, this would be an API call
-    setTimeout(() => {
-      // Mock exam data
-      const mockExam: Exam = {
-        id: examId || "",
-        title: "NISM Series V-A: Mutual Fund Distributors",
-        description: "Chapter 1-3: Introduction to Mutual Funds",
-        category: "NISM",
-        type: "chapter-wise",
-        duration: 12,
-        totalQuestions: 10,
-        fee: 199,
-        createdBy: "admin",
-        createdAt: new Date(),
-        isActive: true
-      };
-      
-      setExam(mockExam);
-      setLoading(false);
-    }, 800);
-  }, [examId]);
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      // Cleanup script on unmount
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
-  const handlePaymentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate payment details
-    if (paymentMethod === "card") {
-      if (!cardNumber || !cardName || !cardExpiry || !cardCvv) {
-        toast({
-          variant: "destructive",
-          title: "Missing information",
-          description: "Please fill all card details",
-        });
-        return;
+  const initializeRazorpayCheckout = (order: any, keyId: string) => {
+    const options = {
+      key: keyId,
+      amount: order.amount,
+      currency: order.currency,
+      name: "myturnindia",
+      description: `Payment for ${exam?.title || 'Exam'}`,
+      order_id: order.id,
+      handler: function (response: any) {
+        handlePaymentSuccess(response);
+      },
+      prefill: {
+        name: localStorage.getItem('userName') || '',
+        email: localStorage.getItem('userEmail') || '',
+        contact: ""
+      },
+      notes: {
+        examId: examId
+      },
+      theme: {
+        color: "#3399cc"
+      },
+      modal: {
+        ondismiss: function() {
+          setProcessingPayment(false);
+          toast({
+            title: "Payment Cancelled",
+            description: "You can try again when you're ready.",
+          });
+        }
       }
-    } else if (paymentMethod === "upi") {
-      if (!upiId) {
-        toast({
-          variant: "destructive",
-          title: "Missing information",
-          description: "Please enter your UPI ID",
-        });
-        return;
-      }
-    }
-    
-    // Show processing toast
-    toast({
-      title: "Processing payment",
-      description: "Please wait while we process your payment...",
-    });
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      // Success - in a real app this would depend on payment gateway response
+    };
+
+    try {
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.open();
+    } catch (error) {
+      console.error("Failed to initialize Razorpay:", error);
       toast({
-        title: "Payment successful!",
-        description: "You can now access the exam.",
-        variant: "default",
+        variant: "destructive",
+        title: "Payment Failed",
+        description: "Could not initialize payment gateway. Please try again.",
       });
-      
-      // Redirect to exam page
-      setTimeout(() => {
-        navigate(`/exam/${examId}`);
-      }, 1500);
-    }, 2000);
+      setProcessingPayment(false);
+    }
   };
 
-  if (loading) {
+  const handlePaymentSuccess = (response: any) => {
+    // Verify the payment with our server
+    verifyPaymentMutation.mutate({
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_signature: response.razorpay_signature
+    });
+  };
+
+  const handleProceedToPayment = () => {
+    if (!examId) return;
+    
+    setProcessingPayment(true);
+    
+    // Create the payment order
+    toast({
+      title: "Initializing Payment",
+      description: "Please wait while we connect to the payment gateway...",
+    });
+    
+    createOrderMutation.mutate();
+  };
+
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
@@ -112,7 +183,8 @@ const PaymentPage = () => {
     );
   }
 
-  if (!exam) {
+  // Error state
+  if (error || !exam) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
@@ -141,107 +213,63 @@ const PaymentPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Payment Form */}
+            {/* Payment Details */}
             <div className="md:col-span-2">
-              <Card className="glass">
+              <Card>
                 <CardHeader>
                   <CardTitle>Complete Payment</CardTitle>
                   <CardDescription>
-                    Choose your preferred payment method
+                    Secure payment via Razorpay
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handlePaymentSubmit}>
-                    <RadioGroup 
-                      value={paymentMethod} 
-                      onValueChange={setPaymentMethod}
-                      className="mb-6"
-                    >
-                      <div className="flex items-center space-x-2 mb-4">
-                        <RadioGroupItem value="card" id="payment-card" />
-                        <Label htmlFor="payment-card" className="flex items-center">
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          Credit/Debit Card
-                        </Label>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="upi" id="payment-upi" />
-                        <Label htmlFor="payment-upi" className="flex items-center">
-                          <Shield className="h-4 w-4 mr-2" />
-                          UPI Payment
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                    
-                    {paymentMethod === "card" ? (
-                      <div className="space-y-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="card-number">Card Number</Label>
-                          <Input
-                            id="card-number"
-                            placeholder="0000 0000 0000 0000"
-                            value={cardNumber}
-                            onChange={(e) => setCardNumber(e.target.value)}
-                          />
-                        </div>
-                        
-                        <div className="grid gap-2">
-                          <Label htmlFor="card-name">Cardholder Name</Label>
-                          <Input
-                            id="card-name"
-                            placeholder="Name as on card"
-                            value={cardName}
-                            onChange={(e) => setCardName(e.target.value)}
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="grid gap-2">
-                            <Label htmlFor="card-expiry">Expiry Date</Label>
-                            <Input
-                              id="card-expiry"
-                              placeholder="MM/YY"
-                              value={cardExpiry}
-                              onChange={(e) => setCardExpiry(e.target.value)}
-                            />
-                          </div>
-                          
-                          <div className="grid gap-2">
-                            <Label htmlFor="card-cvv">CVV</Label>
-                            <Input
-                              id="card-cvv"
-                              placeholder="123"
-                              type="password"
-                              maxLength={3}
-                              value={cardCvv}
-                              onChange={(e) => setCardCvv(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="upi-id">UPI ID</Label>
-                          <Input
-                            id="upi-id"
-                            placeholder="name@upi"
-                            value={upiId}
-                            onChange={(e) => setUpiId(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="mt-6 flex items-center justify-center">
-                      <Button type="submit" className="w-full md:w-auto">
-                        <LockKeyhole className="mr-2 h-4 w-4" />
-                        Pay ₹{exam.fee}
-                      </Button>
+                <CardContent className="space-y-6">
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertDescription>
+                      You'll be redirected to Razorpay's secure payment page to complete your transaction.
+                    </AlertDescription>
+                  </Alert>
+                  
+                  <div className="rounded-lg bg-blue-50 p-4 text-blue-800 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">Exam Fee</span>
+                      <span className="text-lg font-bold flex items-center">
+                        <IndianRupee className="h-4 w-4 mr-1" /> {exam.fee}
+                      </span>
                     </div>
-                  </form>
+                    
+                    <p className="text-sm text-blue-700">
+                      This is a one-time payment for access to {exam.title}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Shield className="h-4 w-4 mr-2" />
+                      Secure payment processed by Razorpay
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <LockKeyhole className="h-4 w-4 mr-2" />
+                      Your payment information is encrypted
+                    </div>
+                  </div>
                 </CardContent>
+                <CardFooter>
+                  <Button 
+                    onClick={handleProceedToPayment} 
+                    className="w-full" 
+                    disabled={processingPayment}
+                  >
+                    {processingPayment ? (
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-2"></span>
+                        Processing...
+                      </>
+                    ) : (
+                      <>Proceed to Payment</>
+                    )}
+                  </Button>
+                </CardFooter>
               </Card>
             </div>
             
@@ -275,7 +303,9 @@ const PaymentPage = () => {
                   <div className="pt-4 border-t">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total</span>
-                      <span className="text-mcq-blue">₹{exam.fee}</span>
+                      <span className="text-mcq-blue flex items-center">
+                        <IndianRupee className="h-4 w-4 mr-1" /> {exam.fee}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
