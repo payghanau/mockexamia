@@ -9,7 +9,180 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      exams: {
+        Row: {
+          category: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          duration: number
+          fee: number
+          id: string
+          is_active: boolean | null
+          subcategory: string | null
+          title: string
+          total_questions: number
+          type: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          duration: number
+          fee: number
+          id?: string
+          is_active?: boolean | null
+          subcategory?: string | null
+          title: string
+          total_questions: number
+          type: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          duration?: number
+          fee?: number
+          id?: string
+          is_active?: boolean | null
+          subcategory?: string | null
+          title?: string
+          total_questions?: number
+          type?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          exam_id: string | null
+          id: string
+          order_id: string | null
+          payment_id: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          exam_id?: string | null
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          exam_id?: string | null
+          id?: string
+          order_id?: string | null
+          payment_id?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          correct_answers: number[]
+          exam_id: string | null
+          id: string
+          marks: number
+          negative_marks: number | null
+          options: Json
+          text: string
+          type: string
+        }
+        Insert: {
+          correct_answers: number[]
+          exam_id?: string | null
+          id?: string
+          marks: number
+          negative_marks?: number | null
+          options: Json
+          text: string
+          type: string
+        }
+        Update: {
+          correct_answers?: number[]
+          exam_id?: string | null
+          id?: string
+          marks?: number
+          negative_marks?: number | null
+          options?: Json
+          text?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_exams: {
+        Row: {
+          answers: Json | null
+          end_time: string | null
+          exam_id: string | null
+          id: string
+          payment_id: string | null
+          payment_status: string | null
+          score: number | null
+          start_time: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          answers?: Json | null
+          end_time?: string | null
+          exam_id?: string | null
+          id?: string
+          payment_id?: string | null
+          payment_status?: string | null
+          score?: number | null
+          start_time?: string | null
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json | null
+          end_time?: string | null
+          exam_id?: string | null
+          id?: string
+          payment_id?: string | null
+          payment_status?: string | null
+          score?: number | null
+          start_time?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_exams_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
