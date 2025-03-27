@@ -6,7 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ExamCard from "@/components/exams/ExamCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Exam } from "@/types";
+import { ExamRow } from "@/types/supabase";
 import { examService } from "@/services/api";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -59,10 +59,10 @@ const Dashboard = () => {
     );
   }
 
-  const nismExams = exams.filter((exam: Exam) => exam.category === "NISM");
-  const gateExams = exams.filter((exam: Exam) => exam.category === "GATE");
-  const sectionWiseGateExams = gateExams.filter((exam: Exam) => exam.type === "section-wise");
-  const fullLengthGateExams = gateExams.filter((exam: Exam) => exam.type === "full-length");
+  const nismExams = exams.filter((exam: ExamRow) => exam.category === "NISM");
+  const gateExams = exams.filter((exam: ExamRow) => exam.category === "GATE");
+  const sectionWiseGateExams = gateExams.filter((exam: ExamRow) => exam.type === "section-wise");
+  const fullLengthGateExams = gateExams.filter((exam: ExamRow) => exam.type === "full-length");
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,8 +81,24 @@ const Dashboard = () => {
             <TabsContent value="nism" className="space-y-6">
               {nismExams.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {nismExams.map((exam: Exam) => (
-                    <ExamCard key={exam.id} exam={exam} />
+                  {nismExams.map((exam: ExamRow) => (
+                    <ExamCard 
+                      key={exam.id} 
+                      exam={{
+                        id: exam.id,
+                        title: exam.title,
+                        description: exam.description || undefined,
+                        category: exam.category as 'NISM' | 'GATE',
+                        subcategory: exam.subcategory || undefined,
+                        type: exam.type as 'chapter-wise' | 'section-wise' | 'full-length',
+                        duration: exam.duration,
+                        totalQuestions: exam.total_questions,
+                        fee: exam.fee,
+                        createdBy: exam.created_by || '',
+                        createdAt: exam.created_at ? new Date(exam.created_at) : new Date(),
+                        isActive: exam.is_active || false
+                      }} 
+                    />
                   ))}
                 </div>
               ) : (
@@ -95,8 +111,24 @@ const Dashboard = () => {
             <TabsContent value="gate-section" className="space-y-6">
               {sectionWiseGateExams.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {sectionWiseGateExams.map((exam: Exam) => (
-                    <ExamCard key={exam.id} exam={exam} />
+                  {sectionWiseGateExams.map((exam: ExamRow) => (
+                    <ExamCard 
+                      key={exam.id} 
+                      exam={{
+                        id: exam.id,
+                        title: exam.title,
+                        description: exam.description || undefined,
+                        category: exam.category as 'NISM' | 'GATE',
+                        subcategory: exam.subcategory || undefined,
+                        type: exam.type as 'chapter-wise' | 'section-wise' | 'full-length',
+                        duration: exam.duration,
+                        totalQuestions: exam.total_questions,
+                        fee: exam.fee,
+                        createdBy: exam.created_by || '',
+                        createdAt: exam.created_at ? new Date(exam.created_at) : new Date(),
+                        isActive: exam.is_active || false
+                      }}
+                    />
                   ))}
                 </div>
               ) : (
@@ -109,8 +141,25 @@ const Dashboard = () => {
             <TabsContent value="gate-full" className="space-y-6">
               {fullLengthGateExams.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {fullLengthGateExams.map((exam: Exam) => (
-                    <ExamCard key={exam.id} exam={exam} isPremium={true} />
+                  {fullLengthGateExams.map((exam: ExamRow) => (
+                    <ExamCard 
+                      key={exam.id} 
+                      exam={{
+                        id: exam.id,
+                        title: exam.title,
+                        description: exam.description || undefined,
+                        category: exam.category as 'NISM' | 'GATE',
+                        subcategory: exam.subcategory || undefined,
+                        type: exam.type as 'chapter-wise' | 'section-wise' | 'full-length',
+                        duration: exam.duration,
+                        totalQuestions: exam.total_questions,
+                        fee: exam.fee,
+                        createdBy: exam.created_by || '',
+                        createdAt: exam.created_at ? new Date(exam.created_at) : new Date(),
+                        isActive: exam.is_active || false
+                      }}
+                      isPremium={true}
+                    />
                   ))}
                 </div>
               ) : (
