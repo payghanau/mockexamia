@@ -1,62 +1,34 @@
+
 import axios from 'axios';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
-// Create axios instance
+// Create axios instance for any external APIs we might still need
 const api = axios.create({
-  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 10000, // 10 second timeout
 });
 
-// Add auth token to requests if available
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Handle response errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const message = error.response?.data?.message || 'Network error. Please check your connection.';
-    
-    if (!error.response) {
-      // Network error
-      console.error('Network Error:', error);
-      toast.error('Network error. Please check if the server is running.');
-    } else {
-      // Server returned an error
-      console.error('API Error:', error.response?.status, message);
-      if (error.response.status === 401) {
-        // Unauthorized - might need to redirect to login
-        localStorage.removeItem('token');
-      }
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
 // Auth services
 export const authService = {
   register: async (userData: { email: string; password: string; name?: string }) => {
     try {
-      const response = await api.post('/auth/register', userData);
-      return response.data;
-    } catch (error) {
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          data: {
+            name: userData.name || ''
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
       console.error('Registration failed:', error);
       throw error;
     }
@@ -64,9 +36,15 @@ export const authService = {
   
   login: async (credentials: { email: string; password: string }) => {
     try {
-      const response = await api.post('/auth/login', credentials);
-      return response.data;
-    } catch (error) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password
+      });
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
       console.error('Login failed:', error);
       throw error;
     }
@@ -74,86 +52,273 @@ export const authService = {
   
   getCurrentUser: async () => {
     try {
-      const response = await api.get('/auth/me');
-      return response.data;
-    } catch (error) {
+      const { data, error } = await supabase.auth.getUser();
+      
+      if (error) throw error;
+      
+      return data.user;
+    } catch (error: any) {
       console.error('Get current user failed:', error);
       throw error;
     }
   }
 };
 
-// Exam services
+// Exam services - using Supabase
 export const examService = {
   getAllExams: async (params?: { category?: string; type?: string }) => {
-    const response = await api.get('/exams', { params });
-    return response.data;
+    try {
+      let query = supabase.from('exams').select('*');
+      
+      if (params?.category) {
+        query = query.eq('category', params.category);
+      }
+      
+      if (params?.type) {
+        query = query.eq('type', params.type);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Get all exams failed:', error);
+      toast.error('Failed to load exams');
+      throw error;
+    }
   },
   
   getExamById: async (examId: string) => {
-    const response = await api.get(`/exams/${examId}`);
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('exams')
+        .select('*')
+        .eq('id', examId)
+        .single();
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Get exam by ID failed:', error);
+      toast.error('Failed to load exam details');
+      throw error;
+    }
   },
   
   getExamQuestions: async (examId: string) => {
-    const response = await api.get(`/exams/${examId}/questions`);
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('exam_id', examId);
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Get exam questions failed:', error);
+      toast.error('Failed to load exam questions');
+      throw error;
+    }
   },
   
   createExam: async (examData: any) => {
-    const response = await api.post('/exams', examData);
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('exams')
+        .insert(examData)
+        .select();
+      
+      if (error) throw error;
+      
+      return data[0];
+    } catch (error: any) {
+      console.error('Create exam failed:', error);
+      toast.error('Failed to create exam');
+      throw error;
+    }
   },
   
   updateExam: async (examId: string, examData: any) => {
-    const response = await api.put(`/exams/${examId}`, examData);
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('exams')
+        .update(examData)
+        .eq('id', examId)
+        .select();
+      
+      if (error) throw error;
+      
+      return data[0];
+    } catch (error: any) {
+      console.error('Update exam failed:', error);
+      toast.error('Failed to update exam');
+      throw error;
+    }
   },
   
   deleteExam: async (examId: string) => {
-    const response = await api.delete(`/exams/${examId}`);
-    return response.data;
+    try {
+      const { error } = await supabase
+        .from('exams')
+        .delete()
+        .eq('id', examId);
+      
+      if (error) throw error;
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Delete exam failed:', error);
+      toast.error('Failed to delete exam');
+      throw error;
+    }
   },
   
   addQuestions: async (examId: string, questions: any[]) => {
-    const response = await api.post(`/exams/${examId}/questions`, { questions });
-    return response.data;
+    try {
+      const questionsWithExamId = questions.map(q => ({
+        ...q,
+        exam_id: examId
+      }));
+      
+      const { data, error } = await supabase
+        .from('questions')
+        .insert(questionsWithExamId)
+        .select();
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Add questions failed:', error);
+      toast.error('Failed to add questions');
+      throw error;
+    }
   }
 };
 
-// User exam services
+// User exam services - using Supabase
 export const userExamService = {
   getUserExams: async () => {
-    const response = await api.get('/user-exams');
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('user_exams')
+        .select('*');
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Get user exams failed:', error);
+      toast.error('Failed to load your exam results');
+      throw error;
+    }
   },
   
   getUserExamById: async (resultId: string) => {
-    const response = await api.get(`/user-exams/${resultId}`);
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('user_exams')
+        .select('*')
+        .eq('id', resultId)
+        .single();
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Get user exam by ID failed:', error);
+      toast.error('Failed to load exam result');
+      throw error;
+    }
   },
   
   startExam: async (examId: string) => {
-    const response = await api.post('/user-exams/start', { examId });
-    return response.data;
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (!userData.user) throw new Error('Not authenticated');
+      
+      const { data, error } = await supabase
+        .from('user_exams')
+        .insert({
+          exam_id: examId,
+          user_id: userData.user.id,
+          status: 'in_progress',
+          start_time: new Date().toISOString()
+        })
+        .select();
+      
+      if (error) throw error;
+      
+      return data[0];
+    } catch (error: any) {
+      console.error('Start exam failed:', error);
+      toast.error('Failed to start exam');
+      throw error;
+    }
   },
   
   submitExam: async (userExamId: string, answers: any[]) => {
-    const response = await api.post(`/user-exams/${userExamId}/submit`, { answers });
-    return response.data;
+    try {
+      // First, update the user_exam record
+      const { data: examData, error: examError } = await supabase
+        .from('user_exams')
+        .update({
+          status: 'completed',
+          end_time: new Date().toISOString(),
+          answers: answers
+        })
+        .eq('id', userExamId)
+        .select();
+      
+      if (examError) throw examError;
+      
+      return examData[0];
+    } catch (error: any) {
+      console.error('Submit exam failed:', error);
+      toast.error('Failed to submit exam');
+      throw error;
+    }
   },
   
   getExamAnalysis: async (resultId: string) => {
-    const response = await api.get(`/user-exams/${resultId}/analysis`);
-    return response.data;
+    try {
+      const { data, error } = await supabase
+        .from('user_exams')
+        .select(`
+          *,
+          exam:exams(*)
+        `)
+        .eq('id', resultId)
+        .single();
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error: any) {
+      console.error('Get exam analysis failed:', error);
+      toast.error('Failed to load exam analysis');
+      throw error;
+    }
   }
 };
 
-// Payment services
+// Payment services - continue using Razorpay
 export const paymentService = {
   createPaymentOrder: async (examId: string) => {
-    const response = await api.post('/payments/create-order', { examId });
-    return response.data;
+    try {
+      // For Razorpay we still need a server endpoint
+      const response = await api.post('/payments/create-order', { examId });
+      return response.data;
+    } catch (error: any) {
+      console.error('Create payment order failed:', error);
+      toast.error('Failed to create payment order');
+      throw error;
+    }
   },
   
   verifyPayment: async (paymentData: {
@@ -161,13 +326,38 @@ export const paymentService = {
     razorpay_payment_id: string;
     razorpay_signature: string;
   }) => {
-    const response = await api.post('/payments/verify', paymentData);
-    return response.data;
+    try {
+      const response = await api.post('/payments/verify', paymentData);
+      return response.data;
+    } catch (error: any) {
+      console.error('Verify payment failed:', error);
+      toast.error('Failed to verify payment');
+      throw error;
+    }
   },
   
   getPaymentStatus: async (examId: string) => {
-    const response = await api.get(`/payments/${examId}/status`);
-    return response.data;
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (!userData.user) throw new Error('Not authenticated');
+      
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('exam_id', examId)
+        .eq('user_id', userData.user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      return data.length > 0 ? data[0] : { status: 'not_paid' };
+    } catch (error: any) {
+      console.error('Get payment status failed:', error);
+      toast.error('Failed to get payment status');
+      throw error;
+    }
   }
 };
 
