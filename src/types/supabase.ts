@@ -56,3 +56,9 @@ export type PaymentRow = {
   order_id?: string;
   created_at?: string;
 }
+
+// Type aliases to ensure compatibility with existing code
+export type Exam = ExamRow;
+export type Question = QuestionRow;
+export type UserExam = UserExamRow;
+export type Payment = PaymentRow;

@@ -12,6 +12,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
+  googleAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   register: async () => {},
   logout: async () => {},
+  googleAuth: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -103,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({
         title: 'Registration successful',
-        description: 'Your account has been created.',
+        description: 'Your account has been created. Please check your email for verification.',
       });
     } catch (error: any) {
       console.error('Registration failed:', error);
@@ -111,6 +113,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         variant: 'destructive',
         title: 'Registration failed',
         description: error.message || 'Could not create account',
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const googleAuth = async () => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      
+      if (error) throw error;
+      
+    } catch (error: any) {
+      console.error('Google authentication failed:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Authentication failed',
+        description: error.message || 'Failed to authenticate with Google',
       });
       throw error;
     } finally {
@@ -141,6 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
+        googleAuth,
       }}
     >
       {children}

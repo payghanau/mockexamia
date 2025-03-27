@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react";
 import GoogleAuth from "./GoogleAuth";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/AuthContext";
@@ -19,6 +19,7 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -39,7 +40,11 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
         throw new Error("Passwords do not match");
       }
 
-      if (type === "login") {
+      if (type === "register") {
+        await register(email, password, name);
+        // For now, automatically navigate to login after registration
+        navigate("/login");
+      } else {
         await login(email, password);
         // Navigate based on role after successful login
         if (userRole === "admin") {
@@ -47,18 +52,17 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
         } else {
           navigate("/dashboard");
         }
-      } else {
-        await register(email, password);
-        navigate("/dashboard");
       }
       
     } catch (error) {
-      setIsLoading(false);
+      console.error("Auth error:", error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Authentication failed",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,6 +82,25 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
+          {type === "register" && (
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-mcq-gray-dark">
+                  <UserIcon className="h-4 w-4" />
+                </div>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+          )}
+          
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">

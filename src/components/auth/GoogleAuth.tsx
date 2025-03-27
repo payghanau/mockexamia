@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 type GoogleAuthProps = {
   type: "login" | "register";
@@ -12,24 +13,14 @@ const GoogleAuth = ({ type }: GoogleAuthProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { googleAuth } = useAuth();
 
   const handleGoogleAuth = async () => {
     setIsLoading(true);
 
     try {
-      // In a real app, we would call an API here for Google OAuth
-      // For demo, we'll simulate authentication
-      setTimeout(() => {
-        // Success notification
-        toast({
-          title: "Google authentication successful",
-          description: "You have been signed in with Google",
-          variant: "default",
-        });
-        
-        navigate("/dashboard");
-        setIsLoading(false);
-      }, 1500);
+      await googleAuth();
+      // Note: We don't need to navigate here as the OAuth callback will handle it
     } catch (error) {
       setIsLoading(false);
       toast({

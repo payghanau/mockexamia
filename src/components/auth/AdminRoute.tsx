@@ -18,7 +18,11 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
     );
   }
 
-  if (!isAuthenticated || user?.role !== 'admin') {
+  // Check if user is authenticated and has admin role
+  // User role is stored in user.app_metadata.role for Supabase
+  const userRole = user?.app_metadata?.role || 'user';
+  
+  if (!isAuthenticated || userRole !== 'admin') {
     // Redirect users who aren't admins
     return <Navigate to="/login" replace />;
   }
