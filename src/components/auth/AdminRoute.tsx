@@ -1,8 +1,6 @@
-
 import { ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 
 interface AdminRouteProps {
@@ -33,7 +31,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
         }
 
         // If not, check if user's email matches the admin email
-        if (user.email === 'admin@myturnindia.com') {
+        if (user.email === 'akashpayghan2001@gmail.com') {
           setIsAdmin(true);
           setCheckingAdmin(false);
           return;

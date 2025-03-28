@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
     setIsLoading(true);
 
     try {
-      // Validation
       if (!email || !password) {
         throw new Error("Please fill all required fields");
       }
@@ -42,29 +40,21 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
 
       if (type === "register") {
         await register(email, password, name);
-        // For now, automatically navigate to login after registration
         navigate("/login");
       } else {
-        // Attempt to login with Supabase
         try {
           await login(email, password);
           
-          // If this is an admin login attempt with the admin credentials, set admin role
-          if (userRole === "admin" && email === "admin@myturnindia.com") {
-            // Note: In a real app, you would want to verify this on the server side as well
+          if (userRole === "admin" && email === "akashpayghan2001@gmail.com") {
             console.log("Admin logged in successfully");
-            
-            // Navigate based on role after successful login
             navigate("/admin");
           } else {
-            // For regular users
             navigate("/dashboard");
           }
         } catch (loginError) {
           console.error("Login error:", loginError);
           
-          // Special case for the admin login
-          if (userRole === "admin" && email === "admin@myturnindia.com") {
+          if (userRole === "admin" && email === "akashpayghan2001@gmail.com") {
             toast({
               title: "Admin Login",
               description: "Please create an admin account first with this email",
