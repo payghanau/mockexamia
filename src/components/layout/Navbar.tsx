@@ -67,7 +67,7 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
       <div className="container px-4 mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center">
           <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-mcq-blue to-mcq-blue-dark bg-clip-text text-transparent">
-            MockExamia
+            myturnindia
           </span>
         </Link>
 
