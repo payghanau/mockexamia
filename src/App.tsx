@@ -29,44 +29,51 @@ const App = () => {
       <AuthProvider>
         <BrowserRouter>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/exam/:examId" element={
-                <ProtectedRoute>
-                  <ExamPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/results/:resultId" element={
-                <ProtectedRoute>
-                  <TestResults />
-                </ProtectedRoute>
-              } />
-              <Route path="/payment/:examId" element={
-                <ProtectedRoute>
-                  <PaymentPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin" element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              } />
-              <Route path="/exams/nism" element={<NismExams />} />
-              <Route path="/exams/gate" element={<GateExams />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/contact" element={<Contact />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <div className="min-h-screen flex flex-col bg-gray-50">
+              <Toaster />
+              <Sonner />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/exam/:examId" element={
+                  <ProtectedRoute>
+                    <ExamPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/results/:resultId" element={
+                  <ProtectedRoute>
+                    <TestResults />
+                  </ProtectedRoute>
+                } />
+                <Route path="/payment/:examId" element={
+                  <ProtectedRoute>
+                    <PaymentPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin" element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                } />
+                <Route path="/admin/*" element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                } />
+                <Route path="/exams/nism" element={<NismExams />} />
+                <Route path="/exams/gate" element={<GateExams />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/contact" element={<Contact />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
           </TooltipProvider>
         </BrowserRouter>
       </AuthProvider>

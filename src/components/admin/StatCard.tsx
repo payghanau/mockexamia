@@ -13,6 +13,7 @@ interface StatCardProps {
     isPositive: boolean;
   };
   color?: "blue" | "green" | "purple" | "orange" | "pink";
+  onClick?: () => void;
 }
 
 const StatCard = ({ 
@@ -21,7 +22,8 @@ const StatCard = ({
   description, 
   icon: Icon, 
   trend, 
-  color = "blue" 
+  color = "blue",
+  onClick
 }: StatCardProps) => {
   
   const gradientClasses = {
@@ -49,10 +51,14 @@ const StatCard = ({
   };
 
   return (
-    <Card className={cn(
-      "overflow-hidden transition-all duration-300 hover:shadow-card-hover",
-      gradientClasses[color],
-    )}>
+    <Card 
+      className={cn(
+        "overflow-hidden transition-all duration-300 hover:shadow-card-hover cursor-pointer transform hover:-translate-y-1",
+        gradientClasses[color],
+        onClick ? "cursor-pointer" : ""
+      )}
+      onClick={onClick}
+    >
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-sm font-medium opacity-90">{title}</CardTitle>

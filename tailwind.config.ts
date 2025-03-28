@@ -65,7 +65,7 @@ export default {
 					DEFAULT: '#CED4DA',
 					dark: '#6C757D'
 				},
-				// New vibrant colors for dashboard
+				// Dashboard colors
 				'dashboard': {
 					purple: '#8B5CF6',
 					blue: '#3B82F6',
@@ -76,6 +76,14 @@ export default {
 					indigo: '#6366F1',
 					orange: '#F97316',
 					teal: '#14B8A6',
+					slate: '#64748B',
+					emerald: '#059669',
+					lime: '#84CC16',
+					cyan: '#06B6D4',
+					fuchsia: '#D946EF',
+					violet: '#8B5CF6',
+					rose: '#F43F5E',
+					amber: '#F59E0B',
 				},
 				'gradient': {
 					'blue-start': '#60A5FA',
@@ -88,6 +96,18 @@ export default {
 					'orange-end': '#F97316',
 					'pink-start': '#F9A8D4',
 					'pink-end': '#EC4899',
+					'indigo-start': '#A5B4FC',
+					'indigo-end': '#6366F1',
+					'teal-start': '#5EEAD4',
+					'teal-end': '#14B8A6',
+					'amber-start': '#FCD34D',
+					'amber-end': '#F59E0B',
+					'violet-start': '#C4B5FD',
+					'violet-end': '#8B5CF6',
+					'emerald-start': '#6EE7B7',
+					'emerald-end': '#059669',
+					'rose-start': '#FDA4AF',
+					'rose-end': '#F43F5E',
 				}
 			},
 			borderRadius: {
@@ -127,6 +147,10 @@ export default {
 				'float': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' }
+				},
+				'bounce-subtle': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-4px)' }
 				}
 			},
 			animation: {
@@ -137,13 +161,15 @@ export default {
 				'slide-up': 'slide-up 0.4s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
 				'pulse-slow': 'pulse 3s ease-in-out infinite',
-				'float': 'float 3s ease-in-out infinite'
+				'float': 'float 3s ease-in-out infinite',
+				'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite'
 			},
 			boxShadow: {
 				'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
 				'neu': '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff',
 				'colored': '0 4px 14px 0 rgba(0, 118, 255, 0.39)',
-				'card-hover': '0 8px 30px rgba(0, 0, 0, 0.12)'
+				'card-hover': '0 8px 30px rgba(0, 0, 0, 0.12)',
+				'admin-card': '0 4px 15px rgba(0, 0, 0, 0.08)'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -152,6 +178,12 @@ export default {
 				'gradient-card-purple': 'linear-gradient(120deg, #A78BFA, #8B5CF6)',
 				'gradient-card-orange': 'linear-gradient(120deg, #FDBA74, #F97316)',
 				'gradient-card-pink': 'linear-gradient(120deg, #F9A8D4, #EC4899)',
+				'gradient-card-indigo': 'linear-gradient(120deg, #A5B4FC, #6366F1)',
+				'gradient-card-teal': 'linear-gradient(120deg, #5EEAD4, #14B8A6)',
+				'gradient-card-amber': 'linear-gradient(120deg, #FCD34D, #F59E0B)',
+				'gradient-card-violet': 'linear-gradient(120deg, #C4B5FD, #8B5CF6)',
+				'gradient-card-emerald': 'linear-gradient(120deg, #6EE7B7, #059669)',
+				'gradient-card-rose': 'linear-gradient(120deg, #FDA4AF, #F43F5E)',
 			},
 		}
 	},
