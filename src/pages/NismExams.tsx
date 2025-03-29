@@ -5,7 +5,8 @@ import Footer from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowRight, FileText, CheckCircle, Award, BookOpen, ChevronRight } from "lucide-react";
+import { ArrowRight, FileText, CheckCircle, Award, BookOpen, ChevronRight, ShieldCheck, Clock, BarChart } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const NismExams = () => {
   useEffect(() => {
@@ -74,17 +75,20 @@ const NismExams = () => {
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 pt-24 pb-16 px-4">
+        <div className="nism-gradient text-white pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gradient-to-r from-blue-700 to-blue-900">NISM Certification Exams</h1>
-            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+            <div className="inline-block bg-white/10 backdrop-blur-md p-2 rounded-full mb-6">
+              <ShieldCheck className="h-8 w-8 text-blue-200" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">NISM Certification Exams</h1>
+            <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto mb-8">
               Expert-designed mock tests to help you succeed in your NISM certification journey
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2">
+              <Button asChild size="lg" className="gap-2 bg-white text-blue-700 hover:bg-blue-50">
                 <Link to="/register">Start Practicing <ChevronRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
+              <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
                 <Link to="/pricing">View Pricing</Link>
               </Button>
             </div>
@@ -96,7 +100,7 @@ const NismExams = () => {
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold mb-4">What is NISM?</h2>
+                <h2 className="text-3xl font-bold mb-4 text-blue-900">What is NISM?</h2>
                 <p className="text-gray-700 mb-4">
                   The National Institute of Securities Markets (NISM) is a public trust established by the Securities and Exchange Board of India (SEBI) to enhance the quality of securities market professionals through education and certification.
                 </p>
@@ -110,32 +114,32 @@ const NismExams = () => {
                   </Link>
                 </div>
               </div>
-              <div className="bg-blue-50 rounded-lg p-8 shadow-sm">
-                <h3 className="text-xl font-semibold mb-4">Why NISM Certification Matters</h3>
+              <div className="nism-card rounded-lg p-8 shadow-lg">
+                <h3 className="text-xl font-semibold mb-4 text-blue-800">Why NISM Certification Matters</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-5 w-5 text-blue-600" />
                     </div>
-                    <span>Mandatory requirement for securities professionals</span>
+                    <span className="text-blue-800">Mandatory requirement for securities professionals</span>
                   </li>
                   <li className="flex items-start">
                     <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-5 w-5 text-blue-600" />
                     </div>
-                    <span>Demonstrates expertise and professional knowledge</span>
+                    <span className="text-blue-800">Demonstrates expertise and professional knowledge</span>
                   </li>
                   <li className="flex items-start">
                     <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-5 w-5 text-blue-600" />
                     </div>
-                    <span>Enhances career opportunities in the securities industry</span>
+                    <span className="text-blue-800">Enhances career opportunities in the securities industry</span>
                   </li>
                   <li className="flex items-start">
                     <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <CheckCircle className="h-5 w-5 text-blue-600" />
                     </div>
-                    <span>Builds client trust and improves service quality</span>
+                    <span className="text-blue-800">Builds client trust and improves service quality</span>
                   </li>
                 </ul>
               </div>
@@ -144,93 +148,99 @@ const NismExams = () => {
         </div>
 
         {/* Exam Features */}
-        <div className="py-16 px-4 bg-gray-50">
+        <div className="py-16 px-4 bg-blue-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Our NISM Mock Test Features</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4 text-blue-900">Our NISM Mock Test Features</h2>
+              <p className="text-lg text-blue-700 max-w-3xl mx-auto">
                 Practice with the most comprehensive and realistic NISM mock tests
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all">
+              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center mb-4">
                   <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <FileText className="h-6 w-6 text-mcq-blue" />
+                    <FileText className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-xl">Chapter-wise Tests</h3>
+                  <h3 className="font-semibold text-xl text-blue-800">Chapter-wise Tests</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
-                  Focus on mastering individual chapters with targeted 10-question tests that help solidify your understanding of key concepts
-                </p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>10 questions per chapter</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>12-minute timed tests</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>Detailed explanations</span>
-                  </li>
-                </ul>
-              </div>
+                <CardContent className="p-0">
+                  <p className="text-blue-700 mb-4">
+                    Focus on mastering individual chapters with targeted 10-question tests that help solidify your understanding of key concepts
+                  </p>
+                  <ul className="text-sm text-blue-600 space-y-2">
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>10 questions per chapter</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>12-minute timed tests</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>Detailed explanations</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
 
-              <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all">
+              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center mb-4">
                   <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <CheckCircle className="h-6 w-6 text-mcq-blue" />
+                    <Clock className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-xl">Realistic Format</h3>
+                  <h3 className="font-semibold text-xl text-blue-800">Realistic Format</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
-                  Experience the exact exam environment with our simulator that mirrors the official NISM examination interface and question pattern
-                </p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>MCQ and case study questions</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>Authentic interface</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>Simulated exam pressure</span>
-                  </li>
-                </ul>
-              </div>
+                <CardContent className="p-0">
+                  <p className="text-blue-700 mb-4">
+                    Experience the exact exam environment with our simulator that mirrors the official NISM examination interface and question pattern
+                  </p>
+                  <ul className="text-sm text-blue-600 space-y-2">
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>MCQ and case study questions</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>Authentic interface</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>Simulated exam pressure</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
 
-              <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all">
+              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-center mb-4">
                   <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <Award className="h-6 w-6 text-mcq-blue" />
+                    <BarChart className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-xl">Performance Analysis</h3>
+                  <h3 className="font-semibold text-xl text-blue-800">Performance Analysis</h3>
                 </div>
-                <p className="text-gray-600 mb-4">
-                  Get detailed insights into your performance with comprehensive analytics that help identify your strengths and areas for improvement
-                </p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>Topic-wise performance</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>Comparative statistics</span>
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-1.5 h-1.5 bg-mcq-blue rounded-full mr-2 flex-shrink-0"></div>
-                    <span>Improvement tracking</span>
-                  </li>
-                </ul>
-              </div>
+                <CardContent className="p-0">
+                  <p className="text-blue-700 mb-4">
+                    Get detailed insights into your performance with comprehensive analytics that help identify your strengths and areas for improvement
+                  </p>
+                  <ul className="text-sm text-blue-600 space-y-2">
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>Topic-wise performance</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>Comparative statistics</span>
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 flex-shrink-0"></div>
+                      <span>Improvement tracking</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -238,33 +248,33 @@ const NismExams = () => {
         {/* Available NISM Certifications */}
         <div className="py-16 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6">Available NISM Certifications</h2>
-            <p className="text-gray-600 mb-10">
+            <h2 className="text-3xl font-bold mb-6 text-blue-900">Available NISM Certifications</h2>
+            <p className="text-blue-700 mb-10">
               We offer comprehensive mock tests for the following NISM certifications. Each certification includes chapter-wise tests and full-length mock exams.
             </p>
             
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-xl shadow-lg border border-blue-100">
               <Table className="w-full">
-                <TableHeader>
+                <TableHeader className="bg-blue-50">
                   <TableRow>
-                    <TableHead className="w-[350px]">Certification</TableHead>
-                    <TableHead>Chapters</TableHead>
-                    <TableHead>Difficulty</TableHead>
-                    <TableHead>Popularity</TableHead>
-                    <TableHead>Pass Rate</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="w-[350px] text-blue-800">Certification</TableHead>
+                    <TableHead className="text-blue-800">Chapters</TableHead>
+                    <TableHead className="text-blue-800">Difficulty</TableHead>
+                    <TableHead className="text-blue-800">Popularity</TableHead>
+                    <TableHead className="text-blue-800">Pass Rate</TableHead>
+                    <TableHead className="text-right text-blue-800">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {nismCertifications.map((cert) => (
-                    <TableRow key={cert.id} className="hover:bg-gray-50">
+                    <TableRow key={cert.id} className="hover:bg-blue-50 transition-colors">
                       <TableCell className="font-medium">
                         <div>
-                          <div className="font-semibold">{cert.title}</div>
-                          <div className="text-sm text-gray-500">{cert.description}</div>
+                          <div className="font-semibold text-blue-900">{cert.title}</div>
+                          <div className="text-sm text-blue-600">{cert.description}</div>
                         </div>
                       </TableCell>
-                      <TableCell>{cert.chapters}</TableCell>
+                      <TableCell className="text-blue-700">{cert.chapters}</TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           cert.difficulty === "Beginner" ? "bg-green-100 text-green-800" :
@@ -275,10 +285,10 @@ const NismExams = () => {
                           {cert.difficulty}
                         </span>
                       </TableCell>
-                      <TableCell>{cert.popularity}</TableCell>
-                      <TableCell>{cert.passRate}</TableCell>
+                      <TableCell className="text-blue-700">{cert.popularity}</TableCell>
+                      <TableCell className="text-blue-700">{cert.passRate}</TableCell>
                       <TableCell className="text-right">
-                        <Button asChild size="sm">
+                        <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700">
                           <Link to="/dashboard">View Tests</Link>
                         </Button>
                       </TableCell>
@@ -288,11 +298,11 @@ const NismExams = () => {
               </Table>
             </div>
             
-            <div className="mt-10 text-center">
-              <p className="text-gray-600 mb-6">
+            <div className="mt-12 text-center">
+              <p className="text-blue-700 mb-6">
                 Not sure which certification is right for you? Talk to our experts for personalized guidance.
               </p>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-50">
                 <Link to="/contact">Contact Our Team</Link>
               </Button>
             </div>
@@ -300,17 +310,17 @@ const NismExams = () => {
         </div>
 
         {/* Testimonials section */}
-        <div className="py-16 px-4 bg-gray-50">
+        <div className="py-16 px-4 bg-blue-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">What Our Students Say</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4 text-blue-900">What Our Students Say</h2>
+              <p className="text-lg text-blue-700 max-w-3xl mx-auto">
                 Success stories from professionals who passed their NISM exams with our help
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
+              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -318,16 +328,18 @@ const NismExams = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-4">
-                  "The chapter-wise approach helped me tackle difficult topics systematically. I passed my Series V-A exam on the first attempt with 82% marks."
-                </p>
-                <div className="mt-4">
-                  <div className="font-semibold">Rajesh Sharma</div>
-                  <div className="text-sm text-gray-500">Financial Advisor, Mumbai</div>
-                </div>
-              </div>
+                <CardContent className="p-0">
+                  <p className="text-blue-800 mb-4">
+                    "The chapter-wise approach helped me tackle difficult topics systematically. I passed my Series V-A exam on the first attempt with 82% marks."
+                  </p>
+                  <div className="mt-4">
+                    <div className="font-semibold text-blue-900">Rajesh Sharma</div>
+                    <div className="text-sm text-blue-600">Financial Advisor, Mumbai</div>
+                  </div>
+                </CardContent>
+              </Card>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
+              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -335,16 +347,18 @@ const NismExams = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-4">
-                  "The test interface is exactly like the actual NISM exam. The detailed explanations for each question helped me understand concepts better."
-                </p>
-                <div className="mt-4">
-                  <div className="font-semibold">Priya Patel</div>
-                  <div className="text-sm text-gray-500">Mutual Fund Distributor, Delhi</div>
-                </div>
-              </div>
+                <CardContent className="p-0">
+                  <p className="text-blue-800 mb-4">
+                    "The test interface is exactly like the actual NISM exam. The detailed explanations for each question helped me understand concepts better."
+                  </p>
+                  <div className="mt-4">
+                    <div className="font-semibold text-blue-900">Priya Patel</div>
+                    <div className="text-sm text-blue-600">Mutual Fund Distributor, Delhi</div>
+                  </div>
+                </CardContent>
+              </Card>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
+              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -352,30 +366,32 @@ const NismExams = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-4">
-                  "I was struggling with Series X-A until I found myturnindia. The performance analytics helped me focus on my weak areas and improve quickly."
-                </p>
-                <div className="mt-4">
-                  <div className="font-semibold">Arun Nair</div>
-                  <div className="text-sm text-gray-500">Investment Advisor, Bangalore</div>
-                </div>
-              </div>
+                <CardContent className="p-0">
+                  <p className="text-blue-800 mb-4">
+                    "I was struggling with Series X-A until I found myturnindia. The performance analytics helped me focus on my weak areas and improve quickly."
+                  </p>
+                  <div className="mt-4">
+                    <div className="font-semibold text-blue-900">Arun Nair</div>
+                    <div className="text-sm text-blue-600">Investment Advisor, Bangalore</div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
 
         {/* CTA Section */}
-        <div className="py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div className="py-16 px-4 nism-gradient text-white">
           <div className="max-w-6xl mx-auto text-center">
             <h3 className="text-3xl font-bold mb-4">Ready to Ace Your NISM Exam?</h3>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">
               Join thousands of successful professionals who passed their NISM certification with our comprehensive practice tests
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" variant="secondary" className="gap-2">
+              <Button asChild size="lg" variant="secondary" className="bg-white text-blue-700 hover:bg-blue-50 gap-2">
                 <Link to="/register">Get Started Today <ChevronRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="bg-transparent border-white hover:bg-white/10">
+              <Button asChild variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10">
                 <Link to="/pricing">View Pricing Plans</Link>
               </Button>
             </div>

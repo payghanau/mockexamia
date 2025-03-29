@@ -75,16 +75,10 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link
-              to="/exams/nism"
+              to="/mock-tests"
               className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
             >
-              NISM Exams
-            </Link>
-            <Link
-              to="/exams/gate"
-              className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
-            >
-              GATE Exams
+              Mock Tests
             </Link>
             <Link
               to="/pricing"
@@ -174,18 +168,11 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           </div>
           <div className="flex flex-col items-center space-y-8 p-8">
             <Link
-              to="/exams/nism"
+              to="/mock-tests"
               className="text-lg font-medium"
               onClick={closeMenu}
             >
-              NISM Exams
-            </Link>
-            <Link
-              to="/exams/gate"
-              className="text-lg font-medium"
-              onClick={closeMenu}
-            >
-              GATE Exams
+              Mock Tests
             </Link>
             <Link
               to="/pricing"

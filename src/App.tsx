@@ -20,6 +20,7 @@ import NismExams from "./pages/NismExams";
 import GateExams from "./pages/GateExams";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
+import MockTests from "./pages/MockTests";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => {
                 <Route path="/exams/gate" element={<GateExams />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/mock-tests" element={<MockTests />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

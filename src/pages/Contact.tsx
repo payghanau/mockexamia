@@ -5,182 +5,248 @@ import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
+import { Phone, Mail, MapPin, Clock, MessageSquare, Send } from "lucide-react";
 
 const Contact = () => {
-  const { toast } = useToast();
-  
   useEffect(() => {
     document.title = "Contact Us - myturnindia";
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, you would handle form submission here
-    toast({
-      title: "Message Sent",
-      description: "We've received your message and will get back to you shortly.",
-    });
+    // Contact form submission logic would go here
+    console.log("Form submitted");
+    // Display success message or handle errors
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 bg-gradient-to-b from-white to-blue-50 px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Have questions about our mock tests or need assistance? We're here to help!
+      <main className="flex-1">
+        {/* Hero Section */}
+        <div className="contact-gradient text-white pt-24 pb-16 px-4">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="inline-block bg-white/10 backdrop-blur-md p-2 rounded-full mb-6">
+              <MessageSquare className="h-8 w-8 text-teal-200" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
+            <p className="text-lg md:text-xl text-teal-100 max-w-3xl mx-auto">
+              We're here to help with any questions about our exam preparation services
             </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            {/* Contact Form */}
-            <div className="bg-white p-8 rounded-lg shadow-sm">
-              <h2 className="text-2xl font-semibold mb-6">Send us a message</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium">
-                      Your Name
-                    </label>
-                    <Input id="name" placeholder="John Doe" required />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium">
-                      Email Address
-                    </label>
-                    <Input id="email" type="email" placeholder="john@example.com" required />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="subject" className="text-sm font-medium">
-                    Subject
-                  </label>
-                  <Input id="subject" placeholder="How can we help you?" required />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium">
-                    Message
-                  </label>
-                  <Textarea 
-                    id="message" 
-                    placeholder="Please describe your query in detail..." 
-                    rows={5}
-                    required
-                  />
-                </div>
-                
-                <Button type="submit" className="w-full">
-                  Send Message
-                </Button>
-              </form>
-            </div>
-
-            {/* Contact Information */}
-            <div className="flex flex-col justify-between">
+        {/* Contact Forms and Info Section */}
+        <div className="py-16 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Contact Form */}
               <div>
-                <h2 className="text-2xl font-semibold mb-6">Contact Information</h2>
-                <div className="space-y-6 mb-12">
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 p-3 rounded-full mr-4">
-                      <MapPin className="h-5 w-5 text-mcq-blue" />
+                <h2 className="text-3xl font-bold mb-6 text-teal-900">Send Us a Message</h2>
+                <p className="text-teal-700 mb-8">
+                  Fill out the form below, and we'll get back to you within 24 hours.
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-teal-700 mb-1">
+                        Name
+                      </label>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Your Name"
+                        required
+                        className="border-teal-200 focus:border-teal-500 focus:ring-teal-500"
+                      />
                     </div>
                     <div>
-                      <h3 className="font-medium mb-1">Office Address</h3>
-                      <p className="text-gray-600">
-                        123 Education Street, Knowledge Park<br />
-                        New Delhi, 110001, India
-                      </p>
+                      <label htmlFor="email" className="block text-sm font-medium text-teal-700 mb-1">
+                        Email
+                      </label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your@email.com"
+                        required
+                        className="border-teal-200 focus:border-teal-500 focus:ring-teal-500"
+                      />
                     </div>
                   </div>
                   
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 p-3 rounded-full mr-4">
-                      <Mail className="h-5 w-5 text-mcq-blue" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Email Us</h3>
-                      <p className="text-gray-600">
-                        support@myturnindia.com<br />
-                        info@myturnindia.com
-                      </p>
-                    </div>
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-teal-700 mb-1">
+                      Subject
+                    </label>
+                    <Input
+                      id="subject"
+                      type="text"
+                      placeholder="How can we help you?"
+                      required
+                      className="border-teal-200 focus:border-teal-500 focus:ring-teal-500"
+                    />
                   </div>
                   
-                  <div className="flex items-start">
-                    <div className="bg-blue-100 p-3 rounded-full mr-4">
-                      <Phone className="h-5 w-5 text-mcq-blue" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">Call Us</h3>
-                      <p className="text-gray-600">
-                        +91 98765 43210<br />
-                        +91 12345 67890
-                      </p>
-                    </div>
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-teal-700 mb-1">
+                      Message
+                    </label>
+                    <Textarea
+                      id="message"
+                      placeholder="Your message..."
+                      rows={5}
+                      required
+                      className="border-teal-200 focus:border-teal-500 focus:ring-teal-500 w-full"
+                    />
                   </div>
-                </div>
+                  
+                  <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 gap-2">
+                    Send Message <Send className="h-4 w-4" />
+                  </Button>
+                </form>
               </div>
-              
-              {/* Operating Hours */}
-              <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg">
-                <h3 className="font-semibold text-lg mb-4 flex items-center">
-                  <MessageSquare className="h-5 w-5 mr-2 text-mcq-blue" />
-                  Customer Support Hours
-                </h3>
-                <div className="space-y-2 text-gray-700">
-                  <p>Monday - Friday: 9:00 AM - 6:00 PM IST</p>
-                  <p>Saturday: 10:00 AM - 2:00 PM IST</p>
-                  <p>Sunday: Closed</p>
-                  <p className="pt-2 text-sm">
-                    Email support available 24/7. We aim to respond within 24 hours.
-                  </p>
+
+              {/* Contact Information */}
+              <div>
+                <h2 className="text-3xl font-bold mb-6 text-teal-900">Contact Information</h2>
+                <p className="text-teal-700 mb-8">
+                  Reach out to us directly or visit our office during business hours.
+                </p>
+
+                <div className="space-y-6">
+                  <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-start">
+                        <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                          <Phone className="h-5 w-5 text-teal-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-teal-900 mb-1">Call Us</h3>
+                          <p className="text-teal-700">+91 98765 43210</p>
+                          <p className="text-teal-700">+91 12345 67890</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-start">
+                        <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                          <Mail className="h-5 w-5 text-teal-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-teal-900 mb-1">Email Us</h3>
+                          <p className="text-teal-700">info@myturnindia.com</p>
+                          <p className="text-teal-700">support@myturnindia.com</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-start">
+                        <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                          <MapPin className="h-5 w-5 text-teal-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-teal-900 mb-1">Visit Us</h3>
+                          <p className="text-teal-700">123 Education Street, Tech Park</p>
+                          <p className="text-teal-700">Bangalore, Karnataka 560001</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-start">
+                        <div className="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                          <Clock className="h-5 w-5 text-teal-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-teal-900 mb-1">Business Hours</h3>
+                          <p className="text-teal-700">Monday - Friday: 9:00 AM - 6:00 PM</p>
+                          <p className="text-teal-700">Saturday: 10:00 AM - 2:00 PM</p>
+                          <p className="text-teal-700">Sunday: Closed</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* FAQ Section */}
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+        {/* Map Section */}
+        <div className="py-16 px-4 bg-teal-50">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl font-bold mb-8 text-center text-teal-900">Find Us</h2>
+            <div className="rounded-xl overflow-hidden shadow-lg h-96 border border-teal-200">
+              {/* Placeholder for a map. In a real application, you would integrate Google Maps or another map service here */}
+              <div className="w-full h-full bg-teal-100 flex items-center justify-center">
+                <p className="text-teal-800 text-lg font-medium">Map Loading...</p>
+                {/* A real application would have something like: */}
+                {/* <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" frameBorder="0" style={{ border: 0 }} allowFullScreen></iframe> */}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="py-16 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl font-bold mb-8 text-center text-teal-900">Frequently Asked Questions</h2>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-3">How do I reset my password?</h3>
-                <p className="text-gray-600">
-                  You can reset your password by clicking on the "Forgot Password" link on the login page. Follow the instructions sent to your registered email address.
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-3">Can I get a demo before purchasing?</h3>
-                <p className="text-gray-600">
-                  Yes, we offer a free demo test for each category. Register for a free account to access the demo tests.
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-3">How do I report a technical issue?</h3>
-                <p className="text-gray-600">
-                  Please email us at support@myturnindia.com with details of the issue you're experiencing, including screenshots if possible.
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-3">Do you offer bulk discounts for institutions?</h3>
-                <p className="text-gray-600">
-                  Yes, we offer special pricing for educational institutions. Please contact us at info@myturnindia.com for details.
-                </p>
-              </div>
+              <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-teal-900 mb-2">How can I access the mock tests?</h3>
+                  <p className="text-teal-700">
+                    After registering and purchasing a plan, you can access all mock tests from your dashboard. Login to your account and navigate to the "Tests" section.
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-teal-900 mb-2">What payment methods do you accept?</h3>
+                  <p className="text-teal-700">
+                    We accept credit/debit cards, UPI, net banking, and various digital wallets. All payments are secured through industry-standard encryption.
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-teal-900 mb-2">Are the mock tests similar to the actual exams?</h3>
+                  <p className="text-teal-700">
+                    Yes, our mock tests are designed to closely simulate the actual exam pattern, difficulty level, and interface to provide you with a realistic experience.
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card className="overflow-hidden border-teal-200 hover:shadow-md transition-all duration-300">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-teal-900 mb-2">How long is my subscription valid?</h3>
+                  <p className="text-teal-700">
+                    Subscription validity depends on the plan you purchase. We offer monthly, quarterly, and annual plans. You can check the details on our pricing page.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
-          </div>
-
-          {/* Map Section */}
-          <div className="bg-white p-4 rounded-lg shadow-sm mb-16">
-            <div className="rounded-lg overflow-hidden h-[400px] bg-gray-200 flex items-center justify-center">
-              <p className="text-gray-500">Google Map would be embedded here</p>
-              {/* In a real implementation, you would use a map component here */}
+            
+            <div className="text-center mt-12">
+              <p className="text-teal-700 mb-4">
+                Still have questions? Reach out to our customer support team.
+              </p>
+              <Button asChild variant="outline" className="border-teal-500 text-teal-600 hover:bg-teal-50">
+                <a href="mailto:support@myturnindia.com">Contact Support</a>
+              </Button>
             </div>
           </div>
         </div>
