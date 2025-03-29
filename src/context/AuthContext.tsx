@@ -12,7 +12,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
-  googleAuth: () => Promise<void>;
+  googleAuth: (redirectUrl?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -120,13 +120,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const googleAuth = async () => {
+  const googleAuth = async (redirectUrl?: string) => {
     try {
       setIsLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: redirectUrl ? `${redirectUrl}/dashboard` : `${window.location.origin}/dashboard`,
         },
       });
       

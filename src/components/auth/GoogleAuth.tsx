@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/AuthContext";
 
@@ -11,7 +10,6 @@ type GoogleAuthProps = {
 
 const GoogleAuth = ({ type }: GoogleAuthProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { googleAuth } = useAuth();
 
@@ -19,7 +17,9 @@ const GoogleAuth = ({ type }: GoogleAuthProps) => {
     setIsLoading(true);
 
     try {
-      await googleAuth();
+      // Get the current URL to use as base for the redirect
+      const baseUrl = window.location.origin;
+      await googleAuth(baseUrl);
       // Note: We don't need to navigate here as the OAuth callback will handle it
     } catch (error) {
       setIsLoading(false);
