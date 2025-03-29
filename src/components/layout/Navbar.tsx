@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MenuIcon, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -14,6 +14,7 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const location = useLocation();
   
   const { user, isAuthenticated } = useAuth();
   const isAdmin = propIsAdmin || user?.role === 'admin';
@@ -76,19 +77,31 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/mock-tests"
-              className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
+              className={`text-sm font-medium transition-base ${
+                location.pathname.includes('mock-tests') 
+                  ? 'text-mcq-blue font-semibold' 
+                  : 'text-foreground hover:text-mcq-blue'
+              }`}
             >
               Mock Tests
             </Link>
             <Link
               to="/pricing"
-              className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
+              className={`text-sm font-medium transition-base ${
+                location.pathname.includes('pricing') 
+                  ? 'text-mcq-blue font-semibold' 
+                  : 'text-foreground hover:text-mcq-blue'
+              }`}
             >
               Pricing
             </Link>
             <Link
               to="/contact"
-              className="text-sm font-medium text-foreground hover:text-mcq-blue transition-base"
+              className={`text-sm font-medium transition-base ${
+                location.pathname.includes('contact') 
+                  ? 'text-mcq-blue font-semibold' 
+                  : 'text-foreground hover:text-mcq-blue'
+              }`}
             >
               Contact
             </Link>
@@ -169,21 +182,21 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           <div className="flex flex-col items-center space-y-8 p-8">
             <Link
               to="/mock-tests"
-              className="text-lg font-medium"
+              className={`text-lg font-medium ${location.pathname.includes('mock-tests') ? 'text-mcq-blue font-semibold' : ''}`}
               onClick={closeMenu}
             >
               Mock Tests
             </Link>
             <Link
               to="/pricing"
-              className="text-lg font-medium"
+              className={`text-lg font-medium ${location.pathname.includes('pricing') ? 'text-mcq-blue font-semibold' : ''}`}
               onClick={closeMenu}
             >
               Pricing
             </Link>
             <Link
               to="/contact"
-              className="text-lg font-medium"
+              className={`text-lg font-medium ${location.pathname.includes('contact') ? 'text-mcq-blue font-semibold' : ''}`}
               onClick={closeMenu}
             >
               Contact
@@ -229,7 +242,7 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
         </div>
       </header>
       {/* Add spacing div to prevent content overlap with fixed navbar */}
-      <div className="h-20"></div>
+      <div className="h-24"></div>
     </>
   );
 };

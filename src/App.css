@@ -43,8 +43,8 @@
 
 /* Fix for content overlap with fixed navbar */
 main.content-area {
-  padding-top: 5rem;
-  min-height: calc(100vh - 5rem);
+  padding-top: 6rem;
+  min-height: calc(100vh - 6rem);
 }
 
 /* NISM theme colors */
@@ -70,8 +70,8 @@ main.content-area {
 /* Admin dashboard specific styles */
 .admin-layout {
   display: flex;
-  min-height: calc(100vh - 5rem);
-  margin-top: 5rem;
+  min-height: calc(100vh - 6rem);
+  margin-top: 6rem;
 }
 
 .admin-sidebar {
@@ -117,4 +117,22 @@ main.content-area {
 
 .pricing-gradient {
   background: linear-gradient(135deg, #0e7490 0%, #06b6d4 100%);
+}
+
+/* NISM and GATE page improvements */
+.nism-page-container {
+  background-color: #f0f7ff;
+  min-height: calc(100vh - 6rem);
+  padding-top: 2rem;
+}
+
+.gate-page-container {
+  background-color: #f5f3ff;
+  min-height: calc(100vh - 6rem);
+  padding-top: 2rem;
+}
+
+.mock-tests-container {
+  min-height: calc(100vh - 6rem);
+  padding-top: 2rem;
 }
