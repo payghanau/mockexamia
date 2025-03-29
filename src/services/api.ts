@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -163,6 +162,15 @@ export const examService = {
   
   deleteExam: async (examId: string) => {
     try {
+      // First delete associated questions
+      const { error: questionsError } = await supabase
+        .from('questions')
+        .delete()
+        .eq('exam_id', examId);
+      
+      if (questionsError) throw questionsError;
+      
+      // Then delete the exam
       const { error } = await supabase
         .from('exams')
         .delete()

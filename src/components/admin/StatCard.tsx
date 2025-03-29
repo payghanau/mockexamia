@@ -1,88 +1,92 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ElementType } from "react";
 
 interface StatCardProps {
   title: string;
-  value: string | number;
+  value: string;
   description: string;
-  icon: LucideIcon;
+  icon: ElementType;
   trend?: {
     value: number;
     isPositive: boolean;
   };
-  color?: "blue" | "green" | "purple" | "orange" | "pink";
-  onClick?: () => void;
+  color: "purple" | "blue" | "green" | "orange";
 }
 
-const StatCard = ({ 
-  title, 
-  value, 
-  description, 
-  icon: Icon, 
-  trend, 
-  color = "blue",
-  onClick
-}: StatCardProps) => {
-  
-  const gradientClasses = {
-    blue: "bg-gradient-card-blue text-white",
-    green: "bg-gradient-card-green text-white",
-    purple: "bg-gradient-card-purple text-white",
-    orange: "bg-gradient-card-orange text-white",
-    pink: "bg-gradient-card-pink text-white",
-  };
-  
-  const iconContainerClasses = {
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
-    purple: "bg-purple-100 text-purple-600",
-    orange: "bg-orange-100 text-orange-600",
-    pink: "bg-pink-100 text-pink-600",
-  };
-  
-  const ringClasses = {
-    blue: "ring-blue-400",
-    green: "ring-green-400",
-    purple: "ring-purple-400",
-    orange: "ring-orange-400",
-    pink: "ring-pink-400",
+const StatCard = ({ title, value, description, icon: Icon, trend, color }: StatCardProps) => {
+  // Generate color classes based on the color prop
+  const getColorClasses = () => {
+    switch (color) {
+      case "purple":
+        return {
+          bg: "bg-purple-50",
+          text: "text-purple-700",
+          iconBg: "bg-purple-100",
+          iconColor: "text-purple-600",
+          trendUp: "text-purple-600",
+          trendDown: "text-red-500"
+        };
+      case "blue":
+        return {
+          bg: "bg-blue-50",
+          text: "text-blue-700",
+          iconBg: "bg-blue-100",
+          iconColor: "text-blue-600",
+          trendUp: "text-blue-600",
+          trendDown: "text-red-500"
+        };
+      case "green":
+        return {
+          bg: "bg-green-50",
+          text: "text-green-700",
+          iconBg: "bg-green-100",
+          iconColor: "text-green-600",
+          trendUp: "text-green-600",
+          trendDown: "text-red-500"
+        };
+      case "orange":
+        return {
+          bg: "bg-orange-50",
+          text: "text-orange-700",
+          iconBg: "bg-orange-100",
+          iconColor: "text-orange-600",
+          trendUp: "text-green-600",
+          trendDown: "text-red-500"
+        };
+      default:
+        return {
+          bg: "bg-gray-50",
+          text: "text-gray-700",
+          iconBg: "bg-gray-100",
+          iconColor: "text-gray-600",
+          trendUp: "text-green-600",
+          trendDown: "text-red-500"
+        };
+    }
   };
 
+  const colors = getColorClasses();
+
   return (
-    <Card 
-      className={cn(
-        "overflow-hidden transition-all duration-300 hover:shadow-card-hover cursor-pointer transform hover:-translate-y-1",
-        gradientClasses[color],
-        onClick ? "cursor-pointer" : ""
-      )}
-      onClick={onClick}
-    >
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-sm font-medium opacity-90">{title}</CardTitle>
-          <div className={cn(
-            "p-2 rounded-full flex items-center justify-center",
-            iconContainerClasses[color],
-            "ring-2 ring-offset-2 ring-offset-transparent",
-            ringClasses[color]
-          )}>
-            <Icon className="h-4 w-4" />
+    <div className={`${colors.bg} p-6 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow`}>
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <div className="flex items-baseline mt-1">
+            <h3 className={`text-2xl font-bold ${colors.text}`}>{value}</h3>
+            {trend && (
+              <span className={`ml-2 text-sm font-medium ${trend.isPositive ? colors.trendUp : colors.trendDown}`}>
+                {trend.isPositive ? "+" : "-"}{trend.value}%
+              </span>
+            )}
           </div>
+          <p className="mt-1 text-sm text-gray-500">{description}</p>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-3xl font-bold mt-1 mb-1">{value}</div>
-        <p className="text-xs opacity-80">{description}</p>
-        {trend && (
-          <div className={`flex items-center mt-2 text-xs ${trend.isPositive ? 'text-green-100' : 'text-red-200'}`}>
-            {trend.isPositive ? '↑' : '↓'} {trend.value}%
-            <span className="ml-1 opacity-80">from last month</span>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        <div className={`p-2 rounded-full ${colors.iconBg}`}>
+          <Icon className={`h-5 w-5 ${colors.iconColor}`} />
+        </div>
+      </div>
+    </div>
   );
 };
 
