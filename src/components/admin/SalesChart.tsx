@@ -33,27 +33,42 @@ const SalesChart = ({ period }: SalesChartProps) => {
 
   const data = period === "month" ? monthlyData : yearlyData;
 
+  // Custom tooltip to display formatted values
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-4 rounded-md shadow-md border border-gray-200">
+          <p className="font-medium text-gray-800">{label}</p>
+          <p className="text-blue-600">
+            <span className="inline-block w-3 h-3 bg-blue-600 rounded-full mr-2"></span>
+            Revenue: ₹{payload[0].value}
+          </p>
+          <p className="text-green-600">
+            <span className="inline-block w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+            Exams Sold: {payload[1].value}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="w-full bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Sales Overview</h3>
-        <p className="text-sm text-gray-500">
-          {period === "month" ? "Monthly revenue and exams sold" : "Yearly revenue and exams sold"}
-        </p>
-      </div>
-      
+    <div className="w-full h-full bg-white rounded-lg">
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            barSize={period === "month" ? 16 : 40}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" opacity={0.6} />
             <XAxis 
               dataKey="name" 
               tick={{ fill: "#6B7280" }} 
               axisLine={{ stroke: "#E5E7EB" }}
               tickLine={{ stroke: "#E5E7EB" }}
+              tickMargin={8}
             />
             <YAxis 
               yAxisId="left"
@@ -62,6 +77,7 @@ const SalesChart = ({ period }: SalesChartProps) => {
               axisLine={{ stroke: "#E5E7EB" }}
               tickLine={{ stroke: "#E5E7EB" }}
               tickFormatter={(value) => `₹${value}`}
+              tickMargin={8}
             />
             <YAxis 
               yAxisId="right"
@@ -69,27 +85,28 @@ const SalesChart = ({ period }: SalesChartProps) => {
               tick={{ fill: "#6B7280" }}
               axisLine={{ stroke: "#E5E7EB" }}
               tickLine={{ stroke: "#E5E7EB" }}
+              tickMargin={8}
             />
-            <Tooltip 
-              formatter={(value, name) => {
-                if (name === "revenue") return [`₹${value}`, "Revenue"];
-                return [value, "Exams Sold"];
-              }}
+            <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              wrapperStyle={{ paddingTop: 15 }}
+              formatter={(value) => <span className="text-sm text-gray-700">{value}</span>}
             />
-            <Legend />
             <Bar 
               yAxisId="left"
               dataKey="revenue" 
               name="Revenue" 
-              fill="#8884d8" 
+              fill="#3B82F6" 
               radius={[4, 4, 0, 0]}
+              fillOpacity={0.85}
             />
             <Bar 
               yAxisId="right"
               dataKey="exams" 
               name="Exams Sold" 
-              fill="#82ca9d" 
+              fill="#10B981" 
               radius={[4, 4, 0, 0]}
+              fillOpacity={0.85}
             />
           </BarChart>
         </ResponsiveContainer>

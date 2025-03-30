@@ -15,7 +15,10 @@ import {
   Clock,
   PenSquare,
   BarChart4,
-  Brain
+  Brain,
+  Zap,
+  Target,
+  TrendingUp
 } from "lucide-react";
 
 const GateExams = () => {
@@ -45,7 +48,7 @@ const GateExams = () => {
     {
       id: "ee",
       title: "Electrical Engineering",
-      icon: <BookOpen className="h-5 w-5 text-purple-600" />,
+      icon: <Zap className="h-5 w-5 text-purple-600" />,
       description: "Power systems, Control systems, Electrical machines, and more",
       topics: ["Power Systems", "Control Systems", "Electrical Machines", "Power Electronics"],
       students: "15,000+",
@@ -54,7 +57,7 @@ const GateExams = () => {
     {
       id: "me",
       title: "Mechanical Engineering",
-      icon: <BookOpen className="h-5 w-5 text-purple-600" />,
+      icon: <Target className="h-5 w-5 text-purple-600" />,
       description: "Thermodynamics, Fluid Mechanics, Manufacturing, and more",
       topics: ["Thermodynamics", "Fluid Mechanics", "Manufacturing", "Industrial Engineering"],
       students: "20,000+",
@@ -73,7 +76,7 @@ const GateExams = () => {
         "Track your progress by topic",
         "Focus on your weak areas"
       ],
-      bgClass: "bg-gradient-to-br from-purple-500 to-purple-700"
+      bgClass: "bg-gradient-to-r from-purple-600 to-purple-800"
     },
     {
       title: "Previous Year Papers",
@@ -85,7 +88,7 @@ const GateExams = () => {
         "Analysis of question patterns",
         "Topic-wise classification"
       ],
-      bgClass: "bg-gradient-to-br from-purple-600 to-purple-800"
+      bgClass: "bg-gradient-to-r from-purple-700 to-purple-900"
     },
     {
       title: "Full Mock Tests",
@@ -97,18 +100,18 @@ const GateExams = () => {
         "NAT and MCQ question types",
         "Detailed performance analysis"
       ],
-      bgClass: "bg-gradient-to-br from-purple-700 to-purple-900"
+      bgClass: "bg-gradient-to-r from-purple-800 to-purple-950"
     }
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
       <main className="flex-1">
-        {/* Hero Section */}
-        <div className="gate-gradient text-white pt-24 pb-16 px-4">
+        {/* Hero Section - Improved gradient */}
+        <div className="bg-gradient-to-r from-purple-700 to-purple-900 text-white pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="inline-block bg-white/10 backdrop-blur-md p-2 rounded-full mb-6">
+            <div className="inline-block bg-white/10 backdrop-blur-md p-3 rounded-full mb-6">
               <GraduationCap className="h-8 w-8 text-purple-200" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">GATE Exam Preparation</h1>
@@ -116,7 +119,7 @@ const GateExams = () => {
               Comprehensive mock tests and practice resources to boost your GATE score
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-white text-purple-700 hover:bg-purple-50">
+              <Button asChild size="lg" className="gap-2 bg-white text-purple-800 hover:bg-purple-50">
                 <Link to="/register">Start Practicing <ChevronRight className="h-4 w-4" /></Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
@@ -145,29 +148,29 @@ const GateExams = () => {
                   </Link>
                 </div>
               </div>
-              <div className="gate-card rounded-lg p-8 shadow-lg">
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-8 shadow-lg border border-purple-200">
                 <h3 className="text-xl font-semibold mb-4 text-purple-800">Why GATE is Important</h3>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   <li className="flex items-start">
-                    <div className="bg-purple-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-purple-600" />
+                    <div className="bg-purple-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <GraduationCap className="h-5 w-5 text-purple-600" />
                     </div>
                     <span className="text-purple-800">Gateway to prestigious institutions like IITs and NITs</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-purple-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-purple-600" />
+                    <div className="bg-purple-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <TrendingUp className="h-5 w-5 text-purple-600" />
                     </div>
                     <span className="text-purple-800">Essential for PSU recruitments and higher-paying jobs</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-purple-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-purple-600" />
+                    <div className="bg-purple-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <Award className="h-5 w-5 text-purple-600" />
                     </div>
                     <span className="text-purple-800">Opportunity for research scholarships and stipends</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-purple-100 p-1 rounded-full mr-3 mt-1">
+                    <div className="bg-purple-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
                       <CheckCircle className="h-5 w-5 text-purple-600" />
                     </div>
                     <span className="text-purple-800">Recognized globally for academic excellence</span>
@@ -179,7 +182,7 @@ const GateExams = () => {
         </div>
 
         {/* Our Approach Section */}
-        <div className="py-16 px-4 bg-purple-50">
+        <div className="py-16 px-4 bg-gradient-to-b from-purple-50 to-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4 text-purple-900">Our Approach to GATE Preparation</h2>
@@ -190,7 +193,7 @@ const GateExams = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {examTypes.map((type, index) => (
-                <Card key={index} className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl ${type.bgClass}`}>
+                <Card key={index} className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${type.bgClass}`}>
                   <CardHeader>
                     <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4">
                       {type.icon}
@@ -229,10 +232,10 @@ const GateExams = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {gateCourses.map((course) => (
-                <Card key={course.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-purple-200">
+                <Card key={course.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-purple-200 bg-white">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white">
                         {course.icon}
                       </div>
                       <div>
@@ -259,7 +262,7 @@ const GateExams = () => {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button asChild className="w-full bg-purple-600 hover:bg-purple-700 mt-2">
+                    <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 mt-2">
                       <Link to="/dashboard">Start Practicing</Link>
                     </Button>
                   </CardFooter>
@@ -270,7 +273,7 @@ const GateExams = () => {
         </div>
 
         {/* Success Stories */}
-        <div className="py-16 px-4 bg-purple-50">
+        <div className="py-16 px-4 bg-gradient-to-b from-slate-50 to-purple-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4 text-purple-900">Success Stories</h2>
@@ -280,7 +283,7 @@ const GateExams = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-purple-100">
+              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-purple-100 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -299,7 +302,7 @@ const GateExams = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-purple-100">
+              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-purple-100 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -318,7 +321,7 @@ const GateExams = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-purple-100">
+              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-purple-100 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -341,7 +344,7 @@ const GateExams = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="py-16 px-4 gate-gradient text-white">
+        <div className="py-16 px-4 bg-gradient-to-r from-purple-700 to-purple-900 text-white">
           <div className="max-w-6xl mx-auto text-center">
             <h3 className="text-3xl font-bold mb-4">Get GATE Ready with myturnindia</h3>
             <p className="text-xl mb-8 max-w-2xl mx-auto text-purple-100">

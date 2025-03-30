@@ -5,7 +5,11 @@ import Footer from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowRight, FileText, CheckCircle, Award, BookOpen, ChevronRight, ShieldCheck, Clock, BarChart } from "lucide-react";
+import { 
+  ArrowRight, FileText, CheckCircle, Award, BookOpen, 
+  ChevronRight, ShieldCheck, Clock, BarChart, CircleCheck, 
+  BadgeCheck, GraduationCap, Trophy 
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const NismExams = () => {
@@ -71,21 +75,21 @@ const NismExams = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
       <main className="flex-1">
-        {/* Hero Section */}
-        <div className="nism-gradient text-white pt-24 pb-16 px-4">
+        {/* Hero Section - Updated with a more professional gradient */}
+        <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="inline-block bg-white/10 backdrop-blur-md p-2 rounded-full mb-6">
-              <ShieldCheck className="h-8 w-8 text-blue-200" />
+            <div className="inline-block bg-white/10 backdrop-blur-md p-3 rounded-full mb-6">
+              <ShieldCheck className="h-8 w-8 text-blue-100" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">NISM Certification Exams</h1>
             <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto mb-8">
               Expert-designed mock tests to help you succeed in your NISM certification journey
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-white text-blue-700 hover:bg-blue-50">
+              <Button asChild size="lg" className="gap-2 bg-white text-blue-800 hover:bg-blue-50">
                 <Link to="/register">Start Practicing <ChevronRight className="h-4 w-4" /></Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
@@ -114,30 +118,30 @@ const NismExams = () => {
                   </Link>
                 </div>
               </div>
-              <div className="nism-card rounded-lg p-8 shadow-lg">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-8 shadow-lg border border-blue-200">
                 <h3 className="text-xl font-semibold mb-4 text-blue-800">Why NISM Certification Matters</h3>
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   <li className="flex items-start">
-                    <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <BadgeCheck className="h-5 w-5 text-blue-600" />
                     </div>
                     <span className="text-blue-800">Mandatory requirement for securities professionals</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <GraduationCap className="h-5 w-5 text-blue-600" />
                     </div>
                     <span className="text-blue-800">Demonstrates expertise and professional knowledge</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <Trophy className="h-5 w-5 text-blue-600" />
                     </div>
                     <span className="text-blue-800">Enhances career opportunities in the securities industry</span>
                   </li>
                   <li className="flex items-start">
-                    <div className="bg-blue-100 p-1 rounded-full mr-3 mt-1">
-                      <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
+                      <CircleCheck className="h-5 w-5 text-blue-600" />
                     </div>
                     <span className="text-blue-800">Builds client trust and improves service quality</span>
                   </li>
@@ -148,7 +152,7 @@ const NismExams = () => {
         </div>
 
         {/* Exam Features */}
-        <div className="py-16 px-4 bg-blue-50">
+        <div className="py-16 px-4 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4 text-blue-900">Our NISM Mock Test Features</h2>
@@ -158,10 +162,10 @@ const NismExams = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
-                  <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <FileText className="h-6 w-6 text-blue-600" />
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-full mr-4 text-white">
+                    <FileText className="h-6 w-6" />
                   </div>
                   <h3 className="font-semibold text-xl text-blue-800">Chapter-wise Tests</h3>
                 </div>
@@ -186,10 +190,10 @@ const NismExams = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
-                  <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <Clock className="h-6 w-6 text-blue-600" />
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-full mr-4 text-white">
+                    <Clock className="h-6 w-6" />
                   </div>
                   <h3 className="font-semibold text-xl text-blue-800">Realistic Format</h3>
                 </div>
@@ -214,10 +218,10 @@ const NismExams = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300">
+              <Card className="bg-white p-8 rounded-lg shadow-lg border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
-                  <div className="bg-blue-100 p-3 rounded-full mr-4">
-                    <BarChart className="h-6 w-6 text-blue-600" />
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-full mr-4 text-white">
+                    <BarChart className="h-6 w-6" />
                   </div>
                   <h3 className="font-semibold text-xl text-blue-800">Performance Analysis</h3>
                 </div>
@@ -248,21 +252,21 @@ const NismExams = () => {
         {/* Available NISM Certifications */}
         <div className="py-16 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6 text-blue-900">Available NISM Certifications</h2>
-            <p className="text-blue-700 mb-10">
+            <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">Available NISM Certifications</h2>
+            <p className="text-blue-700 mb-10 text-center max-w-3xl mx-auto">
               We offer comprehensive mock tests for the following NISM certifications. Each certification includes chapter-wise tests and full-length mock exams.
             </p>
             
             <div className="overflow-x-auto rounded-xl shadow-lg border border-blue-100">
               <Table className="w-full">
-                <TableHeader className="bg-blue-50">
+                <TableHeader className="bg-blue-700">
                   <TableRow>
-                    <TableHead className="w-[350px] text-blue-800">Certification</TableHead>
-                    <TableHead className="text-blue-800">Chapters</TableHead>
-                    <TableHead className="text-blue-800">Difficulty</TableHead>
-                    <TableHead className="text-blue-800">Popularity</TableHead>
-                    <TableHead className="text-blue-800">Pass Rate</TableHead>
-                    <TableHead className="text-right text-blue-800">Action</TableHead>
+                    <TableHead className="w-[350px] text-white font-medium">Certification</TableHead>
+                    <TableHead className="text-white font-medium">Chapters</TableHead>
+                    <TableHead className="text-white font-medium">Difficulty</TableHead>
+                    <TableHead className="text-white font-medium">Popularity</TableHead>
+                    <TableHead className="text-white font-medium">Pass Rate</TableHead>
+                    <TableHead className="text-right text-white font-medium">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -310,7 +314,7 @@ const NismExams = () => {
         </div>
 
         {/* Testimonials section */}
-        <div className="py-16 px-4 bg-blue-50">
+        <div className="py-16 px-4 bg-gradient-to-b from-slate-50 to-blue-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4 text-blue-900">What Our Students Say</h2>
@@ -381,7 +385,7 @@ const NismExams = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="py-16 px-4 nism-gradient text-white">
+        <div className="py-16 px-4 bg-gradient-to-r from-blue-700 to-blue-900 text-white">
           <div className="max-w-6xl mx-auto text-center">
             <h3 className="text-3xl font-bold mb-4">Ready to Ace Your NISM Exam?</h3>
             <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Users, Award, ArrowRight } from "lucide-react";
+import { Clock, Users, Award, ArrowRight, BookOpen } from "lucide-react";
 import { Exam } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -29,11 +29,42 @@ const ExamCard = ({ exam, isPremium = false }: ExamCardProps) => {
     navigate(`/exam-details/${exam.id}`);
   };
 
+  // Determine card style based on exam category
+  const getCardStyle = () => {
+    if (exam.category === "NISM") {
+      return {
+        gradient: isPremium 
+          ? "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200" 
+          : "bg-white border-blue-100",
+        accent: "text-blue-700",
+        accentLight: "text-blue-600",
+        badge: "bg-blue-600",
+        button: "bg-blue-600 hover:bg-blue-700",
+        outlineButton: "border-blue-500 text-blue-600 hover:bg-blue-50",
+        icon: "text-blue-500"
+      };
+    } else {
+      return {
+        gradient: isPremium 
+          ? "bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200" 
+          : "bg-white border-purple-100",
+        accent: "text-purple-700",
+        accentLight: "text-purple-600",
+        badge: "bg-purple-600",
+        button: "bg-purple-600 hover:bg-purple-700",
+        outlineButton: "border-purple-500 text-purple-600 hover:bg-purple-50",
+        icon: "text-purple-500"
+      };
+    }
+  };
+
+  const style = getCardStyle();
+
   return (
     <Card 
-      className={`w-full transition-all duration-300 overflow-hidden ${
-        isHovered ? "shadow-lg transform-gpu -translate-y-1" : "shadow-sm"
-      } ${isPremium ? "glass bg-gradient-to-br from-white to-mcq-blue-light border-mcq-blue/20" : "bg-white"}`}
+      className={`w-full transition-all duration-300 overflow-hidden shadow-sm ${
+        isHovered ? "shadow-xl transform -translate-y-1" : ""
+      } ${style.gradient}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -43,13 +74,13 @@ const ExamCard = ({ exam, isPremium = false }: ExamCardProps) => {
             {exam.title}
           </CardTitle>
           {isPremium && (
-            <div className="bg-mcq-blue text-white text-xs px-2 py-1 rounded-full">
+            <div className={`${style.badge} text-white text-xs px-3 py-1 rounded-full`}>
               Premium
             </div>
           )}
         </div>
         {exam.description && (
-          <p className="text-sm text-mcq-gray-dark mt-1 text-left">
+          <p className="text-sm text-gray-600 mt-1 text-left">
             {exam.description}
           </p>
         )}
@@ -57,36 +88,39 @@ const ExamCard = ({ exam, isPremium = false }: ExamCardProps) => {
       <CardContent className="p-6 pt-0">
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center">
-            <Clock className="h-4 w-4 mr-2 text-mcq-gray-dark" />
+            <Clock className={`h-4 w-4 mr-2 ${style.icon}`} />
             <span>{exam.duration} minutes</span>
           </div>
           <div className="flex items-center">
-            <Award className="h-4 w-4 mr-2 text-mcq-gray-dark" />
+            <Award className={`h-4 w-4 mr-2 ${style.icon}`} />
             <span>{exam.totalQuestions} questions</span>
           </div>
           {isPremium && (
             <div className="flex items-center">
-              <Users className="h-4 w-4 mr-2 text-mcq-gray-dark" />
+              <Users className={`h-4 w-4 mr-2 ${style.icon}`} />
               <span>500+ attempts</span>
             </div>
           )}
         </div>
 
-        <div className="mt-6 bg-mcq-gray-lightest p-3 rounded-lg flex justify-between items-center">
-          <span className="font-medium">Fee:</span>
-          <span className="font-semibold text-mcq-blue">₹{exam.fee}</span>
+        <div className={`mt-6 bg-white p-3 rounded-lg border border-gray-100 flex justify-between items-center`}>
+          <span className="font-medium flex items-center">
+            <BookOpen className={`h-4 w-4 mr-2 ${style.icon}`} />
+            {exam.category}
+          </span>
+          <span className={`font-semibold ${style.accent}`}>₹{exam.fee}</span>
         </div>
       </CardContent>
       <CardFooter className="p-6 pt-0 flex flex-col sm:flex-row gap-3">
         <Button
           variant="outline"
-          className="w-full sm:w-auto"
+          className={`w-full sm:w-auto ${style.outlineButton}`}
           onClick={handleExamInfo}
         >
           Learn More
         </Button>
         <Button
-          className="w-full sm:w-auto group"
+          className={`w-full sm:w-auto group ${style.button}`}
           onClick={handleExamStart}
         >
           Start Now

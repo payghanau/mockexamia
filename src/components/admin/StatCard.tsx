@@ -19,48 +19,53 @@ const StatCard = ({ title, value, description, icon: Icon, trend, color }: StatC
     switch (color) {
       case "purple":
         return {
-          bg: "bg-purple-50",
-          text: "text-purple-700",
-          iconBg: "bg-purple-100",
-          iconColor: "text-purple-600",
-          trendUp: "text-purple-600",
-          trendDown: "text-red-500"
+          bg: "bg-gradient-to-br from-purple-50 to-purple-100",
+          text: "text-purple-800",
+          iconBg: "bg-gradient-to-br from-purple-600 to-purple-700",
+          iconColor: "text-white",
+          trendUp: "text-green-600",
+          trendDown: "text-red-500",
+          border: "border-purple-200"
         };
       case "blue":
         return {
-          bg: "bg-blue-50",
-          text: "text-blue-700",
-          iconBg: "bg-blue-100",
-          iconColor: "text-blue-600",
-          trendUp: "text-blue-600",
-          trendDown: "text-red-500"
+          bg: "bg-gradient-to-br from-blue-50 to-blue-100",
+          text: "text-blue-800",
+          iconBg: "bg-gradient-to-br from-blue-600 to-blue-700",
+          iconColor: "text-white",
+          trendUp: "text-green-600",
+          trendDown: "text-red-500",
+          border: "border-blue-200"
         };
       case "green":
         return {
-          bg: "bg-green-50",
-          text: "text-green-700",
-          iconBg: "bg-green-100",
-          iconColor: "text-green-600",
+          bg: "bg-gradient-to-br from-green-50 to-green-100",
+          text: "text-green-800",
+          iconBg: "bg-gradient-to-br from-green-600 to-green-700",
+          iconColor: "text-white",
           trendUp: "text-green-600",
-          trendDown: "text-red-500"
+          trendDown: "text-red-500",
+          border: "border-green-200"
         };
       case "orange":
         return {
-          bg: "bg-orange-50",
-          text: "text-orange-700",
-          iconBg: "bg-orange-100",
-          iconColor: "text-orange-600",
+          bg: "bg-gradient-to-br from-orange-50 to-orange-100",
+          text: "text-orange-800",
+          iconBg: "bg-gradient-to-br from-orange-600 to-orange-700",
+          iconColor: "text-white",
           trendUp: "text-green-600",
-          trendDown: "text-red-500"
+          trendDown: "text-red-500",
+          border: "border-orange-200"
         };
       default:
         return {
-          bg: "bg-gray-50",
-          text: "text-gray-700",
-          iconBg: "bg-gray-100",
-          iconColor: "text-gray-600",
+          bg: "bg-gradient-to-br from-gray-50 to-gray-100",
+          text: "text-gray-800",
+          iconBg: "bg-gradient-to-br from-gray-600 to-gray-700",
+          iconColor: "text-white",
           trendUp: "text-green-600",
-          trendDown: "text-red-500"
+          trendDown: "text-red-500",
+          border: "border-gray-200"
         };
     }
   };
@@ -68,21 +73,32 @@ const StatCard = ({ title, value, description, icon: Icon, trend, color }: StatC
   const colors = getColorClasses();
 
   return (
-    <div className={`${colors.bg} p-6 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow`}>
+    <div className={`${colors.bg} p-6 rounded-lg border ${colors.border} shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1`}>
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
           <div className="flex items-baseline mt-1">
             <h3 className={`text-2xl font-bold ${colors.text}`}>{value}</h3>
             {trend && (
-              <span className={`ml-2 text-sm font-medium ${trend.isPositive ? colors.trendUp : colors.trendDown}`}>
+              <span className={`ml-2 text-sm font-medium flex items-center ${trend.isPositive ? colors.trendUp : colors.trendDown}`}>
                 {trend.isPositive ? "+" : "-"}{trend.value}%
+                <svg 
+                  className={`h-3 w-3 ml-1 ${trend.isPositive ? "rotate-0" : "rotate-180"}`} 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
               </span>
             )}
           </div>
-          <p className="mt-1 text-sm text-gray-500">{description}</p>
+          <p className="mt-1 text-sm text-gray-600">{description}</p>
         </div>
-        <div className={`p-2 rounded-full ${colors.iconBg}`}>
+        <div className={`p-3 rounded-full ${colors.iconBg}`}>
           <Icon className={`h-5 w-5 ${colors.iconColor}`} />
         </div>
       </div>
