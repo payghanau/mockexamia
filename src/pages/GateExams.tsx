@@ -104,23 +104,23 @@ const GateExams = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-blue-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-r from-blue-100 to-blue-200 text-gray-800 pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="inline-block bg-white/50 backdrop-blur-md p-3 rounded-full mb-6">
-              <GraduationCap className="h-8 w-8 text-primary" />
+            <div className="inline-block bg-gradient-to-r from-white/50 to-blue-100/50 backdrop-blur-md p-3 rounded-full mb-6">
+              <GraduationCap className="h-8 w-8 text-blue-600" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">GATE Exam Preparation</h1>
-            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-900">GATE Exam Preparation</h1>
+            <p className="text-lg md:text-xl text-blue-800 max-w-3xl mx-auto mb-8">
               Comprehensive mock tests and practice resources to boost your GATE score
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark">
+              <Button asChild size="lg" className="gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800">
                 <Link to="/register">Start Practicing <ChevronRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-primary text-primary hover:bg-blue-100">
+              <Button asChild variant="outline" size="lg" className="border-blue-500 text-blue-600 hover:bg-blue-50">
                 <Link to="/pricing">View Pricing</Link>
               </Button>
             </div>

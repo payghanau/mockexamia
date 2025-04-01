@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,22 +14,22 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      {/* Hero Section with Enhanced Gradient */}
+      <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-blue-50 via-white to-blue-100">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col lg:flex-row items-center">
             <div className="w-full lg:w-1/2 mb-12 lg:mb-0 pr-0 lg:pr-12">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">
                 Excel in Your Certification Journey
               </h1>
               <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-xl">
                 Comprehensive and industry-aligned practice tests for NISM Certifications and GATE Exams. Designed by experts to maximize your success.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-primary hover:bg-primary-dark text-white">
+                <Button asChild size="lg" className="bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800">
                   <Link to="/login">Start Practicing <ArrowRight className="ml-2 h-5 w-5" /></Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-blue-50">
+                <Button asChild size="lg" variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-50">
                   <Link to="/register">Create Free Account</Link>
                 </Button>
               </div>
@@ -49,7 +48,7 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-blue-200 to-blue-300 opacity-30 blur-xl"></div>
                 <div className="relative bg-white rounded-xl shadow-xl overflow-hidden">
-                  <div className="p-4 bg-blue-50 border-b border-blue-100">
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
                     <div className="flex items-center">
                       <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
                       <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
@@ -95,56 +94,36 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Features Section */}
-      <section className="py-16 md:py-24 bg-white">
+      {/* Features Section with Gradient Backgrounds */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-blue-50">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Students Choose myturnindia</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">Why Students Choose myturnindia</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Our platform is designed to help you excel in certification exams with industry-aligned content and advanced tools
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-blue-50 rounded-xl p-6 transition-all hover:shadow-md hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <BookOpen className="h-6 w-6 text-primary" />
+            {[
+              { icon: BookOpen, title: "Exam-Simulated Tests", description: "Experience tests that replicate the actual exam pattern, difficulty levels, and time constraints" },
+              { icon: Layers, title: "Detailed Analytics", description: "Get comprehensive insights into your performance with topic-wise analysis and improvement suggestions" },
+              { icon: Briefcase, title: "Expert-Crafted Content", description: "Questions curated by industry professionals who understand examination patterns and key concepts" },
+              { icon: Award, title: "Success-Oriented", description: "Proven track record of helping students achieve better scores and clear certifications" }
+            ].map((feature, index) => (
+              <div 
+                key={index} 
+                className="bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-xl p-6 transition-all hover:shadow-md hover:-translate-y-1 border border-blue-100"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mb-4">
+                  <feature.icon className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-blue-900">{feature.title}</h3>
+                <p className="text-gray-600">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-3">Exam-Simulated Tests</h3>
-              <p className="text-gray-600">
-                Experience tests that replicate the actual exam pattern, difficulty levels, and time constraints
-              </p>
-            </div>
-            
-            <div className="bg-blue-50 rounded-xl p-6 transition-all hover:shadow-md hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Layers className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Detailed Analytics</h3>
-              <p className="text-gray-600">
-                Get comprehensive insights into your performance with topic-wise analysis and improvement suggestions
-              </p>
-            </div>
-            
-            <div className="bg-blue-50 rounded-xl p-6 transition-all hover:shadow-md hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Briefcase className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Expert-Crafted Content</h3>
-              <p className="text-gray-600">
-                Questions curated by industry professionals who understand examination patterns and key concepts
-              </p>
-            </div>
-            
-            <div className="bg-blue-50 rounded-xl p-6 transition-all hover:shadow-md hover:-translate-y-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Award className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Success-Oriented</h3>
-              <p className="text-gray-600">
-                Proven track record of helping students achieve better scores and clear certifications
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
