@@ -97,43 +97,41 @@ const NismExams = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-blue-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
       <Navbar />
       <main className="flex-1">
-        {/* Hero Section - Light Blue Gradient */}
-        <div className="bg-gradient-to-r from-blue-100 to-blue-200 text-gray-800 pt-24 pb-16 px-4">
+        <div className="bg-gradient-to-r from-blue-100/50 to-blue-200/50 text-gray-800 pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="inline-block bg-white/50 backdrop-blur-md p-3 rounded-full mb-6">
-              <Award className="h-8 w-8 text-primary" />
+            <div className="inline-block bg-white/60 backdrop-blur-md p-3 rounded-full mb-6 shadow-sm">
+              <Award className="h-8 w-8 text-blue-600" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">NISM Certification Preparation</h1>
-            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-900">NISM Certification Preparation</h1>
+            <p className="text-lg md:text-xl text-blue-800 max-w-3xl mx-auto mb-8">
               Expert-curated practice tests to help you excel in NISM certification exams
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark">
+              <Button asChild size="lg" className="gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800 shadow-md">
                 <Link to="/register">Start Practicing <ArrowRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-primary text-primary hover:bg-blue-100">
+              <Button asChild variant="outline" size="lg" className="border-blue-500 text-blue-600 hover:bg-blue-50 shadow-sm">
                 <Link to="/pricing">View Pricing</Link>
               </Button>
             </div>
           </div>
         </div>
 
-        {/* What is NISM Section */}
         <div className="py-16 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold mb-4 text-gray-800">What is NISM?</h2>
+                <h2 className="text-3xl font-bold mb-4 text-blue-900">What is NISM?</h2>
                 <p className="text-gray-700 mb-4">
                   The National Institute of Securities Markets (NISM) is a public trust established by the Securities and Exchange Board of India (SEBI) to enhance the quality of securities markets through educational initiatives.
                 </p>
                 <p className="text-gray-700 mb-6">
                   NISM certifications are mandatory for various professionals working in the securities market, including mutual fund distributors, investment advisers, and securities operations professionals.
                 </p>
-                <div className="flex items-center text-primary font-medium">
+                <div className="flex items-center text-blue-600 font-medium">
                   <Link to="/nism-details" className="group flex items-center hover:underline">
                     Learn more about NISM certifications
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -141,7 +139,7 @@ const NismExams = () => {
                 </div>
               </div>
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-8 shadow-lg border border-blue-200">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800">Why NISM Certification Matters</h3>
+                <h3 className="text-xl font-semibold mb-4 text-blue-800">Why NISM Certification Matters</h3>
                 <ul className="space-y-4">
                   <li className="flex items-start">
                     <div className="bg-blue-100 p-2 rounded-full mr-3 mt-1 flex-shrink-0">
@@ -173,19 +171,21 @@ const NismExams = () => {
           </div>
         </div>
 
-        {/* Our Approach Section */}
         <div className="py-16 px-4 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4 text-gray-800">Our Approach to NISM Preparation</h2>
-              <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4 text-blue-900">Our Approach to NISM Preparation</h2>
+              <p className="text-lg text-blue-700 max-w-3xl mx-auto">
                 Structured learning and practice methodology to help you clear NISM certifications
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {examFeatures.map((feature, index) => (
-                <Card key={index} className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 ${feature.bgClass}`}>
+                <Card 
+                  key={index} 
+                  className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 bg-gradient-to-br from-blue-600/90 to-blue-800/90`}
+                >
                   <CardHeader>
                     <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center mb-4">
                       {feature.icon}
@@ -214,17 +214,19 @@ const NismExams = () => {
           </div>
         </div>
 
-        {/* Popular NISM Courses */}
         <div className="py-16 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Popular NISM Courses</h2>
-            <p className="text-lg text-center text-gray-700 max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">Popular NISM Courses</h2>
+            <p className="text-lg text-center text-blue-700 max-w-3xl mx-auto mb-12">
               Comprehensive test series for all major NISM certifications
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {nismCourses.map((course) => (
-                <Card key={course.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl border-blue-200 bg-white">
+                <Card 
+                  key={course.id} 
+                  className="overflow-hidden transition-all duration-300 hover:shadow-xl border-blue-200 bg-gradient-to-br from-blue-50 to-white"
+                >
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
@@ -264,18 +266,17 @@ const NismExams = () => {
           </div>
         </div>
 
-        {/* Success Stories */}
         <div className="py-16 px-4 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4 text-gray-800">Success Stories</h2>
-              <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4 text-blue-900">Success Stories</h2>
+              <p className="text-lg text-blue-700 max-w-3xl mx-auto">
                 Join thousands of students who cleared their NISM certifications with our practice tests
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100 transform hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -294,7 +295,7 @@ const NismExams = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100 transform hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -313,7 +314,7 @@ const NismExams = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100 transform hover:-translate-y-1">
+              <Card className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-blue-100 transform hover:-translate-y-1">
                 <div className="flex items-center mb-4">
                   <div className="text-yellow-400 flex">
                     {"★★★★★".split("").map((star, i) => (
@@ -335,7 +336,6 @@ const NismExams = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
         <div className="py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <div className="max-w-6xl mx-auto text-center">
             <h3 className="text-3xl font-bold mb-4">Get NISM Ready with myturnindia</h3>
@@ -343,10 +343,10 @@ const NismExams = () => {
               Join our comprehensive NISM preparation platform and clear your certification
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" variant="secondary" className="bg-white text-blue-700 hover:bg-blue-50 gap-2">
+              <Button asChild size="lg" variant="secondary" className="bg-white text-blue-700 hover:bg-blue-50 gap-2 shadow-md">
                 <Link to="/register">Get Started Today <ArrowRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10">
+              <Button asChild variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10 shadow-sm">
                 <Link to="/pricing">View Pricing Plans</Link>
               </Button>
             </div>
