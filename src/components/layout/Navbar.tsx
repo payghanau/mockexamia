@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -21,23 +20,16 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
   
   const lastScrollY = useRef(0);
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Set background when scrolled down
-      if (currentScrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(currentScrollY > 10);
       
-      // Hide navbar when scrolling down, show when scrolling up
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setIsVisible(false); // Scrolling down - hide
+        setIsVisible(false);
       } else {
-        setIsVisible(true); // Scrolling up - show
+        setIsVisible(true);
       }
       
       lastScrollY.current = currentScrollY;
@@ -60,15 +52,15 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-white/95 backdrop-blur-lg shadow-sm py-3"
-            : "bg-white/90 py-5"
+            ? "bg-white/95 backdrop-blur-lg shadow-light py-3"
+            : "bg-white py-5"
         } ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="container px-4 mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-mcq-blue to-mcq-blue-dark bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-primary">
               myturnindia
             </span>
           </Link>
@@ -77,30 +69,30 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/mock-tests"
-              className={`text-sm font-medium transition-base ${
+              className={`text-sm font-medium transition-colors ${
                 location.pathname.includes('mock-tests') 
-                  ? 'text-mcq-blue font-semibold' 
-                  : 'text-foreground hover:text-mcq-blue'
+                  ? 'text-primary font-semibold' 
+                  : 'text-gray-600 hover:text-primary'
               }`}
             >
               Mock Tests
             </Link>
             <Link
               to="/pricing"
-              className={`text-sm font-medium transition-base ${
+              className={`text-sm font-medium transition-colors ${
                 location.pathname.includes('pricing') 
-                  ? 'text-mcq-blue font-semibold' 
-                  : 'text-foreground hover:text-mcq-blue'
+                  ? 'text-primary font-semibold' 
+                  : 'text-gray-600 hover:text-primary'
               }`}
             >
               Pricing
             </Link>
             <Link
               to="/contact"
-              className={`text-sm font-medium transition-base ${
+              className={`text-sm font-medium transition-colors ${
                 location.pathname.includes('contact') 
-                  ? 'text-mcq-blue font-semibold' 
-                  : 'text-foreground hover:text-mcq-blue'
+                  ? 'text-primary font-semibold' 
+                  : 'text-gray-600 hover:text-primary'
               }`}
             >
               Contact
@@ -127,7 +119,6 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    // In real app, add logout logic here
                     window.location.href = "/";
                   }}
                 >
@@ -157,9 +148,9 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
-              <X className="h-6 w-6 text-foreground" />
+              <X className="h-6 w-6 text-gray-800" />
             ) : (
-              <MenuIcon className="h-6 w-6 text-foreground" />
+              <MenuIcon className="h-6 w-6 text-gray-800" />
             )}
           </button>
         </div>
@@ -182,27 +173,26 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           <div className="flex flex-col items-center space-y-8 p-8">
             <Link
               to="/mock-tests"
-              className={`text-lg font-medium ${location.pathname.includes('mock-tests') ? 'text-mcq-blue font-semibold' : ''}`}
+              className={`text-lg font-medium ${location.pathname.includes('mock-tests') ? 'text-primary font-semibold' : ''}`}
               onClick={closeMenu}
             >
               Mock Tests
             </Link>
             <Link
               to="/pricing"
-              className={`text-lg font-medium ${location.pathname.includes('pricing') ? 'text-mcq-blue font-semibold' : ''}`}
+              className={`text-lg font-medium ${location.pathname.includes('pricing') ? 'text-primary font-semibold' : ''}`}
               onClick={closeMenu}
             >
               Pricing
             </Link>
             <Link
               to="/contact"
-              className={`text-lg font-medium ${location.pathname.includes('contact') ? 'text-mcq-blue font-semibold' : ''}`}
+              className={`text-lg font-medium ${location.pathname.includes('contact') ? 'text-primary font-semibold' : ''}`}
               onClick={closeMenu}
             >
               Contact
             </Link>
 
-            {/* Mobile Authentication */}
             <div className="pt-8 flex flex-col space-y-4 w-full">
               {isAuthenticated || propIsAuthenticated ? (
                 <>
@@ -218,7 +208,6 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
                     variant="outline"
                     className="w-full"
                     onClick={() => {
-                      // In real app, add logout logic here
                       window.location.href = "/";
                     }}
                   >
@@ -241,7 +230,6 @@ const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: 
           </div>
         </div>
       </header>
-      {/* Add spacing div to prevent content overlap with fixed navbar */}
       <div className="h-24"></div>
     </>
   );
