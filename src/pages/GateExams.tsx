@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -30,7 +29,7 @@ const GateExams = () => {
     {
       id: "cse",
       title: "Computer Science & Engineering",
-      icon: <BookOpen className="h-5 w-5 text-purple-600" />,
+      icon: <BookOpen className="h-5 w-5 text-primary" />,
       description: "Core CS concepts, data structures, algorithms, OS, DBMS, and more",
       topics: ["Data Structures", "Algorithms", "OS", "DBMS", "TOC", "CN", "COA"],
       students: "25,000+",
@@ -39,7 +38,7 @@ const GateExams = () => {
     {
       id: "ece",
       title: "Electronics & Communication",
-      icon: <PenSquare className="h-5 w-5 text-purple-600" />,
+      icon: <PenSquare className="h-5 w-5 text-primary" />,
       description: "Analog & Digital circuits, Signals & Systems, Communications, and more",
       topics: ["Networks", "Signals & Systems", "Analog Circuits", "Digital Circuits", "EMT"],
       students: "18,000+",
@@ -48,7 +47,7 @@ const GateExams = () => {
     {
       id: "ee",
       title: "Electrical Engineering",
-      icon: <Zap className="h-5 w-5 text-purple-600" />,
+      icon: <Zap className="h-5 w-5 text-primary" />,
       description: "Power systems, Control systems, Electrical machines, and more",
       topics: ["Power Systems", "Control Systems", "Electrical Machines", "Power Electronics"],
       students: "15,000+",
@@ -57,7 +56,7 @@ const GateExams = () => {
     {
       id: "me",
       title: "Mechanical Engineering",
-      icon: <Target className="h-5 w-5 text-purple-600" />,
+      icon: <Target className="h-5 w-5 text-primary" />,
       description: "Thermodynamics, Fluid Mechanics, Manufacturing, and more",
       topics: ["Thermodynamics", "Fluid Mechanics", "Manufacturing", "Industrial Engineering"],
       students: "20,000+",
@@ -76,7 +75,7 @@ const GateExams = () => {
         "Track your progress by topic",
         "Focus on your weak areas"
       ],
-      bgClass: "bg-gradient-to-r from-purple-600 to-purple-800"
+      bgClass: "bg-gradient-to-r from-blue-600 to-blue-800"
     },
     {
       title: "Previous Year Papers",
@@ -88,7 +87,7 @@ const GateExams = () => {
         "Analysis of question patterns",
         "Topic-wise classification"
       ],
-      bgClass: "bg-gradient-to-r from-purple-700 to-purple-900"
+      bgClass: "bg-gradient-to-r from-blue-700 to-blue-900"
     },
     {
       title: "Full Mock Tests",
@@ -100,36 +99,34 @@ const GateExams = () => {
         "NAT and MCQ question types",
         "Detailed performance analysis"
       ],
-      bgClass: "bg-gradient-to-r from-purple-800 to-purple-950"
+      bgClass: "bg-gradient-to-r from-blue-800 to-blue-950"
     }
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-blue-50">
       <Navbar />
       <main className="flex-1">
-        {/* Hero Section - Improved gradient */}
-        <div className="bg-gradient-to-r from-purple-700 to-purple-900 text-white pt-24 pb-16 px-4">
+        <div className="bg-gradient-to-r from-blue-100 to-blue-200 text-gray-800 pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="inline-block bg-white/10 backdrop-blur-md p-3 rounded-full mb-6">
-              <GraduationCap className="h-8 w-8 text-purple-200" />
+            <div className="inline-block bg-white/50 backdrop-blur-md p-3 rounded-full mb-6">
+              <GraduationCap className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">GATE Exam Preparation</h1>
-            <p className="text-lg md:text-xl text-purple-100 max-w-3xl mx-auto mb-8">
+            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8">
               Comprehensive mock tests and practice resources to boost your GATE score
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-white text-purple-800 hover:bg-purple-50">
+              <Button asChild size="lg" className="gap-2 bg-primary text-white hover:bg-primary-dark">
                 <Link to="/register">Start Practicing <ChevronRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
+              <Button asChild variant="outline" size="lg" className="border-primary text-primary hover:bg-blue-100">
                 <Link to="/pricing">View Pricing</Link>
               </Button>
             </div>
           </div>
         </div>
 
-        {/* What is GATE Section */}
         <div className="py-16 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -181,7 +178,6 @@ const GateExams = () => {
           </div>
         </div>
 
-        {/* Our Approach Section */}
         <div className="py-16 px-4 bg-gradient-to-b from-purple-50 to-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -222,7 +218,6 @@ const GateExams = () => {
           </div>
         </div>
 
-        {/* Popular GATE Courses */}
         <div className="py-16 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold mb-6 text-center text-purple-900">Popular GATE Courses</h2>
@@ -272,7 +267,6 @@ const GateExams = () => {
           </div>
         </div>
 
-        {/* Success Stories */}
         <div className="py-16 px-4 bg-gradient-to-b from-slate-50 to-purple-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
@@ -343,7 +337,6 @@ const GateExams = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
         <div className="py-16 px-4 bg-gradient-to-r from-purple-700 to-purple-900 text-white">
           <div className="max-w-6xl mx-auto text-center">
             <h3 className="text-3xl font-bold mb-4">Get GATE Ready with myturnindia</h3>

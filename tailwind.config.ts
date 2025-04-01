@@ -20,7 +20,6 @@ export default {
     },
     extend: {
       colors: {
-        // Simplified color palette
         primary: {
           DEFAULT: "#3B82F6",  // Consistent blue
           light: "#E6F2FF",    // Light blue background
@@ -36,11 +35,9 @@ export default {
         background: "#FFFFFF", // Pure white background
       },
       backgroundImage: {
-        // Simplified gradient options
-        'gradient-blue': 'linear-gradient(to right, #3B82F6, #1D4ED8)',
+        'light-blue-gradient': 'linear-gradient(to right, #E6F2FF, #B6E0FF)', // Soft, light blue gradient
       },
       boxShadow: {
-        // Softer, more professional shadows
         'light': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
         'medium': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       },
