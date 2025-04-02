@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,11 +8,16 @@
 
 @layer base {
   body {
-    @apply bg-white text-gray-800 font-sans antialiased;
+    @apply bg-white text-gray-800 antialiased;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
   }
   
   .page-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
   }
 }
 
@@ -25,6 +31,44 @@
   }
   
   .card-shadow {
-    @apply shadow-light hover:shadow-medium transition-shadow duration-300;
+    @apply shadow-sm hover:shadow-md transition-shadow duration-300;
+  }
+  
+  .apple-card {
+    @apply bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .apple-button {
+    @apply rounded-full px-6 py-3 font-medium transition-all duration-300;
+  }
+  
+  .apple-gradient {
+    @apply bg-gradient-to-r from-blue-400 to-blue-500;
+  }
+  
+  .apple-soft-gradient {
+    @apply bg-gradient-to-br from-gray-50/90 via-white to-gray-50/90;
+  }
+  
+  .apple-glass {
+    @apply backdrop-blur-xl bg-white/80 border border-white/20;
+  }
+  
+  .apple-surface {
+    @apply bg-gradient-to-b from-gray-50 to-white border border-gray-100 rounded-2xl;
+  }
+}
+
+@layer components {
+  .apple-tab {
+    @apply rounded-full px-6 py-2 text-sm font-medium transition-all duration-300;
+  }
+  
+  .apple-input {
+    @apply rounded-lg border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-300;
+  }
+  
+  .apple-card-hover {
+    @apply transform transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
   }
 }

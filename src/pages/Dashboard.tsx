@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/layout/Navbar";
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -41,14 +41,14 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-red-600 mb-4">Failed to load exams</p>
             <button 
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md"
+              className="px-4 py-2 bg-blue-600 text-white rounded-full"
             >
               Try Again
             </button>
@@ -65,18 +65,35 @@ const Dashboard = () => {
   const fullLengthGateExams = gateExams.filter((exam: ExamRow) => exam.type === "full-length");
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
       <Navbar />
-      <main className="flex-1 bg-gradient-to-b from-white to-blue-50 px-4 py-8">
+      <main className="flex-1 px-4 md:px-6 lg:px-8 py-12">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Available Mock Tests</h1>
+          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-8 tracking-tight text-center">Available Mock Tests</h1>
           
           <Tabs defaultValue="nism" className="w-full">
-            <TabsList className="mb-8">
-              <TabsTrigger value="nism">NISM Certification</TabsTrigger>
-              <TabsTrigger value="gate-section">GATE Section-wise</TabsTrigger>
-              <TabsTrigger value="gate-full">GATE Full-length</TabsTrigger>
-            </TabsList>
+            <div className="flex justify-center mb-8">
+              <TabsList className="bg-gray-100 p-1 rounded-full">
+                <TabsTrigger 
+                  value="nism" 
+                  className="rounded-full px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
+                >
+                  NISM Certification
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="gate-section" 
+                  className="rounded-full px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
+                >
+                  GATE Section-wise
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="gate-full" 
+                  className="rounded-full px-6 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm"
+                >
+                  GATE Full-length
+                </TabsTrigger>
+              </TabsList>
+            </div>
             
             <TabsContent value="nism" className="space-y-6">
               {nismExams.length > 0 ? (
@@ -102,7 +119,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
+                <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
                   <p className="text-gray-500">No NISM exams available at the moment.</p>
                 </div>
               )}
@@ -132,7 +149,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
+                <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
                   <p className="text-gray-500">No section-wise GATE exams available at the moment.</p>
                 </div>
               )}
@@ -163,7 +180,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
+                <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
                   <p className="text-gray-500">No full-length GATE exams available at the moment.</p>
                 </div>
               )}
