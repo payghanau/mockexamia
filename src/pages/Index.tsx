@@ -1,9 +1,19 @@
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { ArrowRight, Award, BookOpen, Briefcase, CheckCircle, Clock, Layers, Users } from "lucide-react";
+import { 
+  ArrowRight, 
+  Award, 
+  BookOpen, 
+  CheckCircle, 
+  Clock, 
+  GraduationCap, 
+  Layers, 
+  Users 
+} from "lucide-react";
 
 const Index = () => {
   useEffect(() => {
@@ -11,32 +21,37 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       
-      {/* Hero Section with Enhanced Gradient */}
-      <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-blue-50 via-white to-blue-100">
-        <div className="container px-4 mx-auto">
+      {/* Hero Section with Apple-like Design */}
+      <section className="pt-32 pb-24 md:pt-40 md:pb-32 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
+        <div className="container px-4 mx-auto relative z-10">
           <div className="flex flex-col lg:flex-row items-center">
             <div className="w-full lg:w-1/2 mb-12 lg:mb-0 pr-0 lg:pr-12">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">
-                Excel in Your Certification Journey
+              <span className="inline-block px-4 py-1.5 mb-5 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+                Prepare to Excel
+              </span>
+              <h1 className="apple-hero-text mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">
+                Master Your Certification Journey
               </h1>
-              <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-xl">
-                Comprehensive and industry-aligned practice tests for NISM Certifications and GATE Exams. Designed by experts to maximize your success.
+              <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-xl">
+                Expertly crafted mock tests designed for NISM Certifications and GATE Exams. Developed by industry professionals to help you succeed.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800">
-                  <Link to="/login">Start Practicing <ArrowRight className="ml-2 h-5 w-5" /></Link>
+                <Button asChild size="lg" className="apple-button-primary bg-gradient-to-r from-blue-500 to-blue-700">
+                  <Link to="/mock-tests" className="flex items-center">
+                    Explore Tests <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-50">
-                  <Link to="/register">Create Free Account</Link>
+                <Button asChild size="lg" variant="outline" className="apple-button-secondary">
+                  <Link to="/login">Get Started</Link>
                 </Button>
               </div>
               <div className="mt-8 flex items-center">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-blue-${i * 100}`}></div>
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-blue-400 to-blue-600 opacity-75"></div>
                   ))}
                 </div>
                 <p className="ml-4 text-sm text-gray-600">
@@ -46,8 +61,8 @@ const Index = () => {
             </div>
             <div className="w-full lg:w-1/2">
               <div className="relative">
-                <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-blue-200 to-blue-300 opacity-30 blur-xl"></div>
-                <div className="relative bg-white rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-blue-300 to-blue-500 opacity-30 blur-xl"></div>
+                <div className="relative apple-blur-bg rounded-2xl shadow-xl overflow-hidden">
                   <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
                     <div className="flex items-center">
                       <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
@@ -60,9 +75,9 @@ const Index = () => {
                     <h3 className="text-lg font-semibold mb-4">Securities Market - Chapter 2</h3>
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex items-start p-3 rounded-lg bg-blue-50 border border-blue-100">
-                          <div className="mr-3 mt-1 p-1 bg-white rounded-full">
-                            <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white text-xs font-medium">{i}</div>
+                        <div key={i} className="flex items-start p-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100">
+                          <div className="mr-3 mt-1 p-1 bg-white rounded-full shadow-sm">
+                            <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium">{i}</div>
                           </div>
                           <div>
                             <p className="text-sm font-medium text-gray-700">
@@ -84,41 +99,50 @@ const Index = () => {
                         <Clock className="w-4 h-4 text-gray-600 mr-1" />
                         <span className="text-xs text-gray-600">8:45 remaining</span>
                       </div>
-                      <Button size="sm" className="bg-primary text-white hover:bg-primary-dark">Next Question</Button>
+                      <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full">Next Question</Button>
                     </div>
                   </div>
                 </div>
+                
+                {/* Apple-style floating elements */}
+                <div className="absolute -right-12 top-1/4 w-24 h-24 rounded-full bg-gradient-to-tr from-blue-300 to-blue-100 opacity-50 blur-xl"></div>
+                <div className="absolute -left-16 bottom-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200 to-blue-50 opacity-40 blur-xl"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Features Section with Gradient Backgrounds */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-blue-50">
+      {/* Features Section with Apple-style cards */}
+      <section className="apple-section bg-white">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">Why Students Choose myturnindia</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our platform is designed to help you excel in certification exams with industry-aligned content and advanced tools
+            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+              Why Choose Us
+            </span>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
+              Designed for Your Success
+            </h2>
+            <p className="apple-caption">
+              Our platform combines expert content with innovative learning tools to maximize your exam performance
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: BookOpen, title: "Exam-Simulated Tests", description: "Experience tests that replicate the actual exam pattern, difficulty levels, and time constraints" },
-              { icon: Layers, title: "Detailed Analytics", description: "Get comprehensive insights into your performance with topic-wise analysis and improvement suggestions" },
-              { icon: Briefcase, title: "Expert-Crafted Content", description: "Questions curated by industry professionals who understand examination patterns and key concepts" },
-              { icon: Award, title: "Success-Oriented", description: "Proven track record of helping students achieve better scores and clear certifications" }
+              { icon: BookOpen, title: "Exam-Matched Tests", description: "Experience tests that mirror actual exam patterns and difficulty levels" },
+              { icon: Layers, title: "In-depth Analytics", description: "Gain comprehensive insights with detailed performance analysis and recommendations" },
+              { icon: Award, title: "Expert Content", description: "Questions crafted by industry professionals with deep exam expertise" },
+              { icon: Clock, title: "Time Management", description: "Practice with realistic timing to improve your speed and efficiency" }
             ].map((feature, index) => (
               <div 
                 key={index} 
-                className="bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-xl p-6 transition-all hover:shadow-md hover:-translate-y-1 border border-blue-100"
+                className="apple-feature-card apple-card-hover group"
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-5 group-hover:bg-gradient-to-r group-hover:from-blue-200 group-hover:to-blue-300 transition-all">
                   <feature.icon className="h-6 w-6 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-blue-900">{feature.title}</h3>
+                <h3 className="text-xl font-semibold mb-3 text-gray-800">{feature.title}</h3>
                 <p className="text-gray-600">
                   {feature.description}
                 </p>
@@ -128,13 +152,99 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Testimonials */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-blue-50">
+      {/* Exam Categories Section */}
+      <section className="apple-section bg-gradient-to-b from-gray-50 to-white">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Students Say</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Hear from students who have successfully prepared for their certifications with myturnindia
+            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+              Our Offerings
+            </span>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
+              Specialized Exam Preparation
+            </h2>
+            <p className="apple-caption">
+              Choose from our comprehensive range of mock tests tailored to your certification needs
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* NISM Card */}
+            <div className="apple-showcase-card apple-card-hover overflow-hidden group">
+              <div className="flex items-center mb-6">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white mr-4">
+                  <BookOpen className="h-7 w-7" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-800">NISM Certification</h3>
+                  <p className="text-blue-600">Securities Market Professional</p>
+                </div>
+              </div>
+              <p className="mb-6 text-gray-600">
+                Comprehensive practice tests for all NISM modules covering regulatory requirements, product knowledge, and operational aspects.
+              </p>
+              <ul className="mb-8 space-y-3">
+                {["Mutual Fund Distributor", "Securities Operations", "Investment Adviser", "Research Analyst"].map((item, idx) => (
+                  <li key={idx} className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                      <CheckCircle className="h-3 w-3 text-blue-600" />
+                    </div>
+                    <span className="text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button asChild size="lg" className="w-full apple-button-primary bg-gradient-to-r from-blue-500 to-blue-700">
+                <Link to="/nism-exams" className="flex items-center justify-center gap-2">
+                  Explore NISM Tests <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            
+            {/* GATE Card */}
+            <div className="apple-showcase-card apple-card-hover overflow-hidden group">
+              <div className="flex items-center mb-6">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 flex items-center justify-center text-white mr-4">
+                  <GraduationCap className="h-7 w-7" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-800">GATE Exam</h3>
+                  <p className="text-blue-700">Graduate Aptitude Test in Engineering</p>
+                </div>
+              </div>
+              <p className="mb-6 text-gray-600">
+                Section-wise practice and full-length mock tests designed to help you master GATE exam patterns and concepts.
+              </p>
+              <ul className="mb-8 space-y-3">
+                {["Computer Science", "Electronics Engineering", "Electrical Engineering", "Mechanical Engineering"].map((item, idx) => (
+                  <li key={idx} className="flex items-center">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                      <CheckCircle className="h-3 w-3 text-blue-600" />
+                    </div>
+                    <span className="text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button asChild size="lg" className="w-full apple-button-primary bg-gradient-to-r from-blue-700 to-blue-800">
+                <Link to="/gate-exams" className="flex items-center justify-center gap-2">
+                  Explore GATE Tests <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Testimonials */}
+      <section className="apple-section bg-white">
+        <div className="container px-4 mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+              Student Stories
+            </span>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
+              Success Stories
+            </h2>
+            <p className="apple-caption">
+              Hear from students who have successfully prepared with our practice tests
             </p>
           </div>
           
@@ -143,112 +253,55 @@ const Index = () => {
               {
                 name: "Priya Sharma",
                 role: "NISM Series VIII Certified",
-                content: "The practice tests were invaluable for my NISM preparation. The questions closely matched the actual exam pattern, and the detailed explanations helped me understand concepts better."
+                content: "The practice tests perfectly matched the actual exam pattern. I was able to identify my weak areas and improve systematically."
               },
               {
                 name: "Raj Patel",
-                role: "GATE CSE Qualifier",
-                content: "I cleared GATE with a good score thanks to myturnindia's comprehensive practice tests. The topic-wise analysis helped me focus on my weak areas and improve systematically."
+                role: "GATE CSE AIR 856",
+                content: "The detailed explanations for each question helped me understand complex concepts better. My GATE score improved by 15 points!"
               },
               {
                 name: "Ananya Singh",
                 role: "NISM Series VII Certified",
-                content: "The platform's user interface is intuitive, and the questions are challenging and relevant. The mock tests boosted my confidence and prepared me well for the actual certification exam."
+                content: "The timed mock tests helped me manage my time better during the actual exam. The interface is intuitive and user-friendly."
               }
             ].map((testimonial, idx) => (
-              <div key={idx} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div key={idx} className="apple-blur-bg rounded-2xl p-6 apple-card-hover">
                 <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                    <Users className="h-5 w-5 text-primary" />
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center mr-3">
+                    <Users className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
+                    <p className="text-sm text-blue-600">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">"{testimonial.content}"</p>
+                <p className="text-gray-600 italic">"{testimonial.content}"</p>
+                <div className="mt-4 text-yellow-400 flex">
+                  {"★★★★★".split("").map((star, i) => (
+                    <span key={i}>{star}</span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
       
-      {/* Exam Categories Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container px-4 mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Exam Categories</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Choose from our wide range of practice tests tailored to help you succeed in your certification exams
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-all">
-              <div className="mb-6">
-                <div className="inline-block p-3 bg-blue-100 rounded-lg">
-                  <BookOpen className="h-6 w-6 text-primary" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-semibold mb-4">NISM Certification</h3>
-              <p className="mb-6 text-gray-600">
-                Practice tests for all NISM modules with chapter-wise questions. Take focused 10-question tests in just 12 minutes to master specific topics.
-              </p>
-              <ul className="mb-6 space-y-2">
-                {["Securities Market Foundation", "Mutual Fund Distributor", "Securities Operations", "Investment Advisor"].map((item, idx) => (
-                  <li key={idx} className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    <span className="text-sm text-gray-600">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-blue-50">
-                <Link to="/exams/nism">Explore NISM Tests</Link>
-              </Button>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-all">
-              <div className="mb-6">
-                <div className="inline-block p-3 bg-blue-100 rounded-lg">
-                  <Award className="h-6 w-6 text-primary" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-semibold mb-4">GATE Exam</h3>
-              <p className="mb-6 text-gray-600">
-                Comprehensive practice for GATE exams with both section-wise tests (10 questions, 20 minutes) and full-length mock exams (65 questions, 3 hours).
-              </p>
-              <ul className="mb-6 space-y-2">
-                {["Computer Science", "Electronics & Communication", "Electrical Engineering", "Mechanical Engineering"].map((item, idx) => (
-                  <li key={idx} className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    <span className="text-sm text-gray-600">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-blue-50">
-                <Link to="/exams/gate">Explore GATE Tests</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-blue-50">
-        <div className="container px-4 mx-auto">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Ace Your Certification Exam?</h2>
-            <p className="text-lg text-gray-600 mb-8">
-              Join thousands of successful students who have prepared with myturnindia's comprehensive practice tests
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-primary hover:bg-primary-dark text-white">
-                <Link to="/register">Start Free Trial <ArrowRight className="ml-2 h-5 w-5" /></Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-blue-100">
-                <Link to="/pricing">View Pricing</Link>
-              </Button>
-            </div>
+      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <div className="container mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-6">Ready to Start Your Preparation?</h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of successful students who have prepared with our comprehensive practice tests
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="rounded-full bg-white text-blue-700 hover:bg-blue-50 px-8">
+              <Link to="/register">Start Free Trial</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full border-white text-white hover:bg-white/10">
+              <Link to="/mock-tests">Browse Tests</Link>
+            </Button>
           </div>
         </div>
       </section>

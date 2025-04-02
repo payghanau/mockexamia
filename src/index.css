@@ -17,7 +17,22 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
+    @apply font-medium tracking-tight;
+  }
+  
+  /* Apple-style links */
+  a.apple-link {
+    @apply text-blue-500 hover:text-blue-600 transition-colors relative;
+    text-underline-offset: 2px;
+  }
+  
+  a.apple-link:after {
+    content: '';
+    @apply absolute w-full h-px bg-blue-500 left-0 -bottom-0.5 scale-x-0 origin-bottom-right transition-transform duration-300;
+  }
+  
+  a.apple-link:hover:after {
+    @apply scale-x-100 origin-bottom-left;
   }
 }
 
@@ -61,6 +76,35 @@
   .apple-card-hover {
     @apply transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
   }
+  
+  /* Enhanced Apple-inspired utilities */
+  .apple-blur-bg {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm;
+  }
+  
+  .apple-gradient-blue {
+    @apply bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600;
+  }
+  
+  .apple-gradient-gray {
+    @apply bg-gradient-to-br from-gray-100 to-gray-200;
+  }
+  
+  .apple-gradient-text {
+    @apply bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent;
+  }
+  
+  .apple-highlight {
+    @apply ring-2 ring-blue-100 ring-offset-2;
+  }
+  
+  .apple-section {
+    @apply py-20 px-4 md:px-8 overflow-hidden relative;
+  }
+  
+  .apple-image-shadow {
+    @apply shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)];
+  }
 }
 
 @layer components {
@@ -91,5 +135,22 @@
   
   .apple-text-input {
     @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all;
+  }
+  
+  /* Additional Apple-inspired card styles */
+  .apple-showcase-card {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl p-8 shadow-lg border border-gray-100;
+  }
+  
+  .apple-feature-card {
+    @apply bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .apple-hero-text {
+    @apply text-4xl sm:text-5xl md:text-6xl font-semibold leading-tight;
+  }
+  
+  .apple-caption {
+    @apply text-lg text-gray-500 max-w-2xl mx-auto;
   }
 }

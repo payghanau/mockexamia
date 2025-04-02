@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { ArrowRight, BookOpen, GraduationCap, Clock } from "lucide-react";
+import { ArrowRight, BookOpen, GraduationCap, Clock, Award, CheckCircle, Users, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -12,61 +12,89 @@ const MockTests = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="apple-soft-gradient pt-24 pb-16 px-4">
+        <div className="pt-32 pb-20 px-4 bg-gradient-to-br from-gray-50 via-white to-blue-50">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
+            <span className="inline-block px-4 py-1.5 mb-5 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+              Mock Tests
+            </span>
+            <h1 className="text-4xl md:text-5xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">
               Prepare for Success with Our Mock Tests
             </h1>
-            <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8">
-              Comprehensive practice tests designed to help you ace your exams
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+              Comprehensive practice designed to help you excel in your certification exams
             </p>
+            <div className="flex justify-center">
+              <Button asChild size="lg" className="apple-button-primary bg-gradient-to-r from-blue-500 to-blue-700">
+                <a href="#categories" className="flex items-center gap-2">
+                  View Test Categories <ArrowRight className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Mock Tests Categories */}
-        <div className="py-16 px-4 bg-white">
+        <div id="categories" className="py-20 px-4 bg-white">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">Choose Your Exam Category</h2>
+            <div className="text-center mb-16">
+              <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+                Exam Categories
+              </span>
+              <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
+                Choose Your Exam Category
+              </h2>
+              <p className="apple-caption">
+                Select from our comprehensive range of practice tests designed to match your specific exam needs
+              </p>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* NISM Card */}
-              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200">
+              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200 group">
                 <CardHeader className="pb-2">
-                  <div className="h-12 w-12 rounded-lg apple-glass flex items-center justify-center mb-4">
-                    <BookOpen className="h-6 w-6 text-primary" />
+                  <div className="h-14 w-14 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center mb-4 text-white group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-blue-700 transition-all">
+                    <BookOpen className="h-7 w-7" />
                   </div>
                   <CardTitle className="text-2xl text-gray-800">NISM Mock Tests</CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-blue-600">
                     Securities Market Certification Exams
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-700">
+                  <ul className="space-y-2 text-sm text-gray-700 mb-4">
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Series V-A: Mutual Fund Distributors</span>
                     </li>
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Series VIII: Equity Derivatives</span>
                     </li>
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Series X-A: Investment Adviser</span>
                     </li>
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>And many more...</span>
                     </li>
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button asChild className="apple-button mt-4 w-full bg-primary hover:bg-primary-dark">
-                    <Link to="/exams/nism" className="group flex items-center justify-center gap-2">
+                  <Button asChild className="apple-button w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white">
+                    <Link to="/nism-exams" className="group flex items-center justify-center gap-2">
                       Explore Tests 
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
@@ -75,39 +103,47 @@ const MockTests = () => {
               </Card>
 
               {/* GATE Card */}
-              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200">
+              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200 group">
                 <CardHeader className="pb-2">
-                  <div className="h-12 w-12 rounded-lg apple-glass flex items-center justify-center mb-4">
-                    <GraduationCap className="h-6 w-6 text-primary" />
+                  <div className="h-14 w-14 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 flex items-center justify-center mb-4 text-white group-hover:bg-gradient-to-r group-hover:from-blue-800 group-hover:to-blue-900 transition-all">
+                    <GraduationCap className="h-7 w-7" />
                   </div>
                   <CardTitle className="text-2xl text-gray-800">GATE Mock Tests</CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-blue-700">
                     Graduate Aptitude Test in Engineering
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-700">
+                  <ul className="space-y-2 text-sm text-gray-700 mb-4">
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Section-wise Practice Tests</span>
                     </li>
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Full-length Mock Exams</span>
                     </li>
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Previous Year Papers</span>
                     </li>
                     <li className="flex items-start">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                        <CheckCircle className="h-3 w-3 text-blue-600" />
+                      </div>
                       <span>Subject-specific Questions</span>
                     </li>
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button asChild className="apple-button mt-4 w-full bg-primary hover:bg-primary-dark">
-                    <Link to="/exams/gate" className="group flex items-center justify-center gap-2">
+                  <Button asChild className="apple-button w-full bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white">
+                    <Link to="/gate-exams" className="group flex items-center justify-center gap-2">
                       Explore Tests 
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
@@ -116,10 +152,10 @@ const MockTests = () => {
               </Card>
 
               {/* Other Exams Card */}
-              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200">
+              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200 bg-gradient-to-br from-gray-50 to-white">
                 <CardHeader className="pb-2">
-                  <div className="h-12 w-12 rounded-lg apple-glass flex items-center justify-center mb-4">
-                    <Clock className="h-6 w-6 text-primary" />
+                  <div className="h-14 w-14 rounded-xl bg-gradient-to-r from-gray-400 to-gray-500 flex items-center justify-center mb-4 text-white">
+                    <Clock className="h-7 w-7" />
                   </div>
                   <CardTitle className="text-2xl text-gray-800">Other Exam Tests</CardTitle>
                   <CardDescription className="text-gray-600">
@@ -137,7 +173,7 @@ const MockTests = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button disabled className="mt-4 w-full bg-gray-300 hover:bg-gray-300 opacity-70 cursor-not-allowed apple-button">
+                  <Button disabled className="apple-button w-full bg-gray-300 hover:bg-gray-300 opacity-70 cursor-not-allowed">
                     <span className="flex items-center justify-center gap-2">
                       Coming Soon
                     </span>
@@ -149,16 +185,22 @@ const MockTests = () => {
         </div>
 
         {/* Benefits Section */}
-        <div className="py-16 px-4 apple-soft-gradient">
+        <div className="py-20 px-4 bg-gradient-to-br from-gray-50 via-white to-blue-50">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-12 text-gray-800">Why Choose Our Mock Tests?</h2>
+            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+              Why Choose Us
+            </span>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
+              Why Choose Our Mock Tests?
+            </h2>
+            <p className="apple-caption mb-12">
+              We combine expert content with innovative learning tools to help you achieve your best results
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="apple-card p-6 rounded-2xl apple-card-hover">
-                <div className="h-12 w-12 rounded-full apple-glass flex items-center justify-center mx-auto mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
+              <div className="apple-feature-card apple-card-hover group">
+                <div className="h-16 w-16 rounded-xl apple-glass flex items-center justify-center mx-auto mb-6 group-hover:bg-gradient-to-r group-hover:from-blue-200 group-hover:to-blue-300 transition-all">
+                  <Layers className="h-8 w-8 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Realistic Exam Simulation</h3>
                 <p className="text-gray-600">
@@ -166,11 +208,9 @@ const MockTests = () => {
                 </p>
               </div>
               
-              <div className="apple-card p-6 rounded-2xl apple-card-hover">
-                <div className="h-12 w-12 rounded-full apple-glass flex items-center justify-center mx-auto mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
+              <div className="apple-feature-card apple-card-hover group">
+                <div className="h-16 w-16 rounded-xl apple-glass flex items-center justify-center mx-auto mb-6 group-hover:bg-gradient-to-r group-hover:from-blue-200 group-hover:to-blue-300 transition-all">
+                  <Award className="h-8 w-8 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Detailed Performance Analysis</h3>
                 <p className="text-gray-600">
@@ -178,11 +218,9 @@ const MockTests = () => {
                 </p>
               </div>
               
-              <div className="apple-card p-6 rounded-2xl apple-card-hover">
-                <div className="h-12 w-12 rounded-full apple-glass flex items-center justify-center mx-auto mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                  </svg>
+              <div className="apple-feature-card apple-card-hover group">
+                <div className="h-16 w-16 rounded-xl apple-glass flex items-center justify-center mx-auto mb-6 group-hover:bg-gradient-to-r group-hover:from-blue-200 group-hover:to-blue-300 transition-all">
+                  <Clock className="h-8 w-8 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Customizable Practice</h3>
                 <p className="text-gray-600">
@@ -194,15 +232,20 @@ const MockTests = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="py-16 px-4 bg-gradient-to-r from-blue-400 to-blue-500 text-white">
+        <div className="py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-3xl font-bold mb-4">Ready to Start Practicing?</h3>
-            <p className="text-xl mb-8">
+            <h3 className="text-3xl font-semibold mb-4">Ready to Start Practicing?</h3>
+            <p className="text-xl text-blue-100 mb-8">
               Choose your exam category and begin your preparation journey today
             </p>
-            <Button asChild size="lg" variant="secondary" className="apple-button bg-white text-primary hover:bg-gray-100">
-              <Link to="/register">Get Started</Link>
-            </Button>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button asChild size="lg" variant="secondary" className="apple-button bg-white text-blue-700 hover:bg-blue-50">
+                <Link to="/register">Get Started</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="apple-button border-white text-white hover:bg-white/10">
+                <Link to="/pricing">View Pricing</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </main>
