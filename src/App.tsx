@@ -72,6 +72,11 @@ const App = () => {
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/mock-tests" element={<MockTests />} />
+                
+                {/* Add redirects for the old paths to maintain backward compatibility */}
+                <Route path="/nism-exams" element={<Navigate to="/exams/nism" replace />} />
+                <Route path="/gate-exams" element={<Navigate to="/exams/gate" replace />} />
+                
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

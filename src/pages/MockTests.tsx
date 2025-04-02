@@ -94,7 +94,7 @@ const MockTests = () => {
                 </CardContent>
                 <CardFooter>
                   <Button asChild className="apple-button w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white">
-                    <Link to="/nism-exams" className="group flex items-center justify-center gap-2">
+                    <Link to="/exams/nism" className="group flex items-center justify-center gap-2">
                       Explore Tests 
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
@@ -143,7 +143,7 @@ const MockTests = () => {
                 </CardContent>
                 <CardFooter>
                   <Button asChild className="apple-button w-full bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white">
-                    <Link to="/gate-exams" className="group flex items-center justify-center gap-2">
+                    <Link to="/exams/gate" className="group flex items-center justify-center gap-2">
                       Explore Tests 
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
