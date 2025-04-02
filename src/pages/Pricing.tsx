@@ -103,17 +103,17 @@ const Pricing = () => {
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="bg-primary-light text-gray-800 pt-24 pb-16 px-4">
+        <div className="bg-primary-light pt-24 pb-16 px-4 apple-soft-gradient">
           <div className="max-w-6xl mx-auto text-center">
-            <div className="inline-block bg-white p-2 rounded-full mb-6">
+            <div className="inline-block apple-glass p-2 rounded-full mb-6">
               <CreditCard className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Simple, Transparent Pricing</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">Simple, Transparent Pricing</h1>
             <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto mb-8">
               Choose the perfect plan for your exam preparation journey
             </p>
             
-            <div className="flex items-center justify-center mt-8 mb-4">
+            <div className="flex items-center justify-center mt-8 mb-4 apple-glass px-3 py-2 rounded-full inline-flex">
               <span className={`mr-3 text-lg ${!annual ? 'font-medium text-gray-800' : 'text-gray-600'}`}>Monthly</span>
               <Switch 
                 checked={annual} 
@@ -132,7 +132,7 @@ const Pricing = () => {
               {plans.map((plan, index) => (
                 <Card 
                   key={index} 
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-xl border-gray-200 ${
+                  className={`overflow-hidden transition-all duration-300 hover:shadow-xl border-gray-200 apple-card apple-card-hover ${
                     plan.popular ? 'ring-2 ring-primary relative' : ''
                   }`}
                 >
@@ -145,7 +145,7 @@ const Pricing = () => {
                     <CardTitle className="text-2xl text-gray-800">{plan.name}</CardTitle>
                     <CardDescription className="text-gray-600">{plan.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-4xl font-bold text-gray-800">₹{annual ? plan.annual : plan.monthly}</span>
+                      <span className="text-4xl font-bold text-primary">₹{annual ? plan.annual : plan.monthly}</span>
                       <span className="text-gray-600 ml-2">{annual ? '/year' : '/month'}</span>
                     </div>
                   </CardHeader>
@@ -179,7 +179,7 @@ const Pricing = () => {
                   <CardFooter>
                     <Button 
                       asChild 
-                      className={`w-full mt-4 ${
+                      className={`w-full mt-4 apple-button ${
                         plan.buttonVariant === 'default' 
                           ? 'bg-primary hover:bg-primary-dark' 
                           : 'border-primary text-primary hover:bg-primary-light'
@@ -196,13 +196,13 @@ const Pricing = () => {
         </div>
 
         {/* Features Section */}
-        <div className="py-16 px-4 bg-gray-50">
+        <div className="py-16 px-4 apple-soft-gradient">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold mb-12 text-center text-gray-800">All Plans Include</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mb-4">
+              <div className="apple-card p-6 rounded-xl flex flex-col items-center text-center apple-card-hover">
+                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mb-4 apple-glass">
                   <CheckCircle className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">High-Quality Content</h3>
@@ -211,8 +211,8 @@ const Pricing = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mb-4">
+              <div className="apple-card p-6 rounded-xl flex flex-col items-center text-center apple-card-hover">
+                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mb-4 apple-glass">
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Secure Platform</h3>
@@ -221,8 +221,8 @@ const Pricing = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-xl shadow-sm flex flex-col items-center text-center">
-                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mb-4">
+              <div className="apple-card p-6 rounded-xl flex flex-col items-center text-center apple-card-hover">
+                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mb-4 apple-glass">
                   <Clock className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">Regular Updates</h3>
@@ -241,7 +241,7 @@ const Pricing = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {faqs.map((faq, index) => (
-                <Card key={index} className="overflow-hidden border-gray-200 hover:shadow-md transition-all duration-300">
+                <Card key={index} className="apple-card hover:shadow-md transition-all duration-300">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-2">{faq.question}</h3>
                     <p className="text-gray-700">{faq.answer}</p>
@@ -254,7 +254,7 @@ const Pricing = () => {
               <p className="text-lg text-gray-700 mb-6">
                 Have more questions about our pricing or plans?
               </p>
-              <Button asChild className="bg-primary hover:bg-primary-dark">
+              <Button asChild className="apple-button bg-primary hover:bg-primary-dark">
                 <Link to="/contact" className="inline-flex items-center">
                   Contact Our Team <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -264,16 +264,16 @@ const Pricing = () => {
         </div>
 
         {/* Guarantee Section */}
-        <div className="py-16 px-4 bg-gray-50">
+        <div className="py-16 px-4 apple-soft-gradient">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block bg-primary-light p-3 rounded-full mb-6">
+            <div className="inline-block apple-glass p-3 rounded-full mb-6">
               <Shield className="h-8 w-8 text-primary" />
             </div>
             <h2 className="text-3xl font-bold mb-4 text-gray-800">Money-Back Guarantee</h2>
             <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
               We're confident in the quality of our platform. If you're not satisfied with our services, we offer a 7-day money-back guarantee.
             </p>
-            <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary-light">
+            <Button asChild variant="outline" className="apple-button border-primary text-primary hover:bg-primary-light">
               <Link to="/refund-policy">View Refund Policy</Link>
             </Button>
           </div>

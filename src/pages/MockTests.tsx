@@ -16,7 +16,7 @@ const MockTests = () => {
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="bg-primary-light pt-24 pb-16 px-4">
+        <div className="apple-soft-gradient pt-24 pb-16 px-4">
           <div className="max-w-6xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
               Prepare for Success with Our Mock Tests
@@ -34,9 +34,9 @@ const MockTests = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* NISM Card */}
-              <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl bg-white border border-gray-200">
+              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200">
                 <CardHeader className="pb-2">
-                  <div className="h-12 w-12 rounded-lg bg-primary-light flex items-center justify-center mb-4">
+                  <div className="h-12 w-12 rounded-lg apple-glass flex items-center justify-center mb-4">
                     <BookOpen className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-2xl text-gray-800">NISM Mock Tests</CardTitle>
@@ -65,7 +65,7 @@ const MockTests = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button asChild className="mt-4 w-full bg-primary hover:bg-primary-dark">
+                  <Button asChild className="apple-button mt-4 w-full bg-primary hover:bg-primary-dark">
                     <Link to="/exams/nism" className="group flex items-center justify-center gap-2">
                       Explore Tests 
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -75,9 +75,9 @@ const MockTests = () => {
               </Card>
 
               {/* GATE Card */}
-              <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl bg-white border border-gray-200">
+              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200">
                 <CardHeader className="pb-2">
-                  <div className="h-12 w-12 rounded-lg bg-primary-light flex items-center justify-center mb-4">
+                  <div className="h-12 w-12 rounded-lg apple-glass flex items-center justify-center mb-4">
                     <GraduationCap className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-2xl text-gray-800">GATE Mock Tests</CardTitle>
@@ -106,7 +106,7 @@ const MockTests = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button asChild className="mt-4 w-full bg-primary hover:bg-primary-dark">
+                  <Button asChild className="apple-button mt-4 w-full bg-primary hover:bg-primary-dark">
                     <Link to="/exams/gate" className="group flex items-center justify-center gap-2">
                       Explore Tests 
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -116,9 +116,9 @@ const MockTests = () => {
               </Card>
 
               {/* Other Exams Card */}
-              <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl bg-white border border-gray-200">
+              <Card className="apple-card apple-card-hover overflow-hidden transition-all duration-300 border border-gray-200">
                 <CardHeader className="pb-2">
-                  <div className="h-12 w-12 rounded-lg bg-primary-light flex items-center justify-center mb-4">
+                  <div className="h-12 w-12 rounded-lg apple-glass flex items-center justify-center mb-4">
                     <Clock className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-2xl text-gray-800">Other Exam Tests</CardTitle>
@@ -137,7 +137,7 @@ const MockTests = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button disabled className="mt-4 w-full bg-gray-300 hover:bg-gray-300 opacity-70 cursor-not-allowed">
+                  <Button disabled className="mt-4 w-full bg-gray-300 hover:bg-gray-300 opacity-70 cursor-not-allowed apple-button">
                     <span className="flex items-center justify-center gap-2">
                       Coming Soon
                     </span>
@@ -149,13 +149,13 @@ const MockTests = () => {
         </div>
 
         {/* Benefits Section */}
-        <div className="py-16 px-4 bg-gray-50">
+        <div className="py-16 px-4 apple-soft-gradient">
           <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-12 text-gray-800">Why Choose Our Mock Tests?</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mx-auto mb-4">
+              <div className="apple-card p-6 rounded-2xl apple-card-hover">
+                <div className="h-12 w-12 rounded-full apple-glass flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
@@ -166,8 +166,8 @@ const MockTests = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mx-auto mb-4">
+              <div className="apple-card p-6 rounded-2xl apple-card-hover">
+                <div className="h-12 w-12 rounded-full apple-glass flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
@@ -178,8 +178,8 @@ const MockTests = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <div className="h-12 w-12 rounded-full bg-primary-light flex items-center justify-center mx-auto mb-4">
+              <div className="apple-card p-6 rounded-2xl apple-card-hover">
+                <div className="h-12 w-12 rounded-full apple-glass flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                   </svg>
@@ -194,13 +194,13 @@ const MockTests = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="py-16 px-4 bg-primary text-white">
+        <div className="py-16 px-4 bg-gradient-to-r from-blue-400 to-blue-500 text-white">
           <div className="max-w-4xl mx-auto text-center">
             <h3 className="text-3xl font-bold mb-4">Ready to Start Practicing?</h3>
             <p className="text-xl mb-8">
               Choose your exam category and begin your preparation journey today
             </p>
-            <Button asChild size="lg" variant="secondary">
+            <Button asChild size="lg" variant="secondary" className="apple-button bg-white text-primary hover:bg-gray-100">
               <Link to="/register">Get Started</Link>
             </Button>
           </div>
