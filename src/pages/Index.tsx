@@ -1,9 +1,9 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { motion } from "framer-motion";
 import { 
   ArrowRight, 
   Award, 
@@ -14,6 +14,15 @@ import {
   Layers, 
   Users 
 } from "lucide-react";
+import { 
+  floatingAnimation,
+  pulseAnimation,
+  rotateAnimation,
+  gradientShift,
+  fadeIn,
+  slideUp,
+  staggerContainer
+} from "@/lib/animations";
 
 const Index = () => {
   useEffect(() => {
@@ -21,24 +30,107 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Animated gradient circles */}
+        <motion.div 
+          className="absolute top-20 right-20 w-64 h-64 rounded-full bg-gradient-to-r from-blue-300/20 to-blue-500/20 blur-3xl"
+          variants={pulseAnimation}
+          initial="initial"
+          animate="animate"
+        />
+        <motion.div 
+          className="absolute bottom-40 left-10 w-96 h-96 rounded-full bg-gradient-to-r from-blue-100/30 to-indigo-300/30 blur-3xl"
+          variants={pulseAnimation}
+          initial="initial"
+          animate="animate"
+          custom={1.5}
+        />
+        <motion.div 
+          className="absolute top-1/4 left-1/3 w-72 h-72 rounded-full bg-gradient-to-r from-blue-200/20 to-purple-300/20 blur-3xl"
+          variants={floatingAnimation}
+          initial="initial"
+          animate="animate"
+        />
+        
+        {/* Animated mesh grid background */}
+        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="1"></path>
+            </pattern>
+          </defs>
+          <motion.rect 
+            width="100%" 
+            height="100%" 
+            fill="url(#grid-pattern)"
+            variants={rotateAnimation}
+            initial="initial"
+            animate="animate"
+            style={{ transformOrigin: 'center' }}
+          ></motion.rect>
+        </svg>
+
+        {/* Floating particles */}
+        {[...Array(15)].map((_, index) => (
+          <motion.div
+            key={index}
+            className="absolute rounded-full bg-blue-500"
+            style={{
+              width: Math.random() * 8 + 2,
+              height: Math.random() * 8 + 2,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.3 + 0.1,
+            }}
+            variants={floatingAnimation}
+            initial="initial"
+            animate="animate"
+            custom={Math.random() * 2 + 1}
+          />
+        ))}
+      </div>
+      
       <Navbar />
       
       {/* Hero Section with Apple-like Design */}
-      <section className="pt-32 pb-24 md:pt-40 md:pb-32 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
+      <motion.section 
+        className="pt-32 pb-24 md:pt-40 md:pb-32 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="container px-4 mx-auto relative z-10">
-          <div className="flex flex-col lg:flex-row items-center">
+          <motion.div 
+            className="flex flex-col lg:flex-row items-center"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
             <div className="w-full lg:w-1/2 mb-12 lg:mb-0 pr-0 lg:pr-12">
-              <span className="inline-block px-4 py-1.5 mb-5 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
+              <motion.span 
+                className="inline-block px-4 py-1.5 mb-5 text-sm font-medium bg-blue-100 text-blue-600 rounded-full"
+                variants={slideUp}
+              >
                 Prepare to Excel
-              </span>
-              <h1 className="apple-hero-text mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900">
+              </motion.span>
+              <motion.h1 
+                className="apple-hero-text mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900"
+                variants={slideUp}
+              >
                 Master Your Certification Journey
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-xl">
+              </motion.h1>
+              <motion.p 
+                className="text-lg md:text-xl text-gray-600 mb-8 max-w-xl"
+                variants={slideUp}
+              >
                 Expertly crafted mock tests designed for NISM Certifications and GATE Exams. Developed by industry professionals to help you succeed.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              </motion.p>
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4"
+                variants={slideUp}
+              >
                 <Button asChild size="lg" className="apple-button-primary bg-gradient-to-r from-blue-500 to-blue-700">
                   <Link to="/mock-tests" className="flex items-center">
                     Explore Tests <ArrowRight className="ml-2 h-5 w-5" />
@@ -47,8 +139,11 @@ const Index = () => {
                 <Button asChild size="lg" variant="outline" className="apple-button-secondary">
                   <Link to="/login">Get Started</Link>
                 </Button>
-              </div>
-              <div className="mt-8 flex items-center">
+              </motion.div>
+              <motion.div 
+                className="mt-8 flex items-center"
+                variants={slideUp}
+              >
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-blue-400 to-blue-600 opacity-75"></div>
@@ -57,11 +152,20 @@ const Index = () => {
                 <p className="ml-4 text-sm text-gray-600">
                   <span className="font-semibold">2,000+</span> students trust our exam preparations
                 </p>
-              </div>
+              </motion.div>
             </div>
-            <div className="w-full lg:w-1/2">
+            <motion.div 
+              className="w-full lg:w-1/2"
+              variants={fadeIn}
+              custom={0.5}
+            >
               <div className="relative">
-                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-blue-300 to-blue-500 opacity-30 blur-xl"></div>
+                <motion.div 
+                  className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-blue-300 to-blue-500 opacity-30 blur-xl"
+                  variants={pulseAnimation}
+                  initial="initial"
+                  animate="animate"
+                ></motion.div>
                 <div className="relative apple-blur-bg rounded-2xl shadow-xl overflow-hidden">
                   <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
                     <div className="flex items-center">
@@ -75,7 +179,12 @@ const Index = () => {
                     <h3 className="text-lg font-semibold mb-4">Securities Market - Chapter 2</h3>
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex items-start p-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100">
+                        <motion.div 
+                          key={i}
+                          className="flex items-start p-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100"
+                          variants={slideUp}
+                          custom={i * 0.2}
+                        >
                           <div className="mr-3 mt-1 p-1 bg-white rounded-full shadow-sm">
                             <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium">{i}</div>
                           </div>
@@ -91,7 +200,7 @@ const Index = () => {
                               ))}
                             </div>
                           </div>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                     <div className="mt-4 flex justify-between items-center">
@@ -105,16 +214,34 @@ const Index = () => {
                 </div>
                 
                 {/* Apple-style floating elements */}
-                <div className="absolute -right-12 top-1/4 w-24 h-24 rounded-full bg-gradient-to-tr from-blue-300 to-blue-100 opacity-50 blur-xl"></div>
-                <div className="absolute -left-16 bottom-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200 to-blue-50 opacity-40 blur-xl"></div>
+                <motion.div 
+                  className="absolute -right-12 top-1/4 w-24 h-24 rounded-full bg-gradient-to-tr from-blue-300 to-blue-100 opacity-50 blur-xl"
+                  variants={floatingAnimation}
+                  initial="initial"
+                  animate="animate"
+                  custom={2}
+                ></motion.div>
+                <motion.div 
+                  className="absolute -left-16 bottom-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200 to-blue-50 opacity-40 blur-xl"
+                  variants={floatingAnimation}
+                  initial="initial"
+                  animate="animate"
+                  custom={1.5}
+                ></motion.div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
       
       {/* Features Section with Apple-style cards */}
-      <section className="apple-section bg-white">
+      <motion.section 
+        className="apple-section bg-white"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        viewport={{ once: true }}
+      >
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
@@ -150,10 +277,16 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
       
       {/* Exam Categories Section */}
-      <section className="apple-section bg-gradient-to-b from-gray-50 to-white">
+      <motion.section 
+        className="apple-section bg-gradient-to-b from-gray-50 to-white"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        viewport={{ once: true }}
+      >
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
@@ -231,10 +364,16 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
       
       {/* Testimonials */}
-      <section className="apple-section bg-white">
+      <motion.section 
+        className="apple-section bg-white"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        viewport={{ once: true }}
+      >
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
@@ -286,11 +425,40 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
       
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <div className="container mx-auto text-center">
+      <motion.section 
+        className="py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white relative overflow-hidden"
+        variants={fadeIn}
+        initial="hidden"
+        animate="visible"
+        viewport={{ once: true }}
+      >
+        <motion.div
+          className="absolute inset-0 w-full h-full"
+          style={{ 
+            background: "linear-gradient(120deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)",
+            backgroundSize: "200% 200%"
+          }}
+          variants={gradientShift}
+          initial="initial"
+          animate="animate"
+        />
+        
+        {/* Animated wave pattern */}
+        <svg className="absolute bottom-0 left-0 w-full opacity-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <motion.path 
+            d="M0,0 C150,90 350,0 500,100 C650,190 700,120 900,30 C1050,-30 1200,90 1200,90 L1200,120 L0,120 Z" 
+            fill="white"
+            variants={floatingAnimation}
+            initial="initial"
+            animate="animate"
+            custom={1.2}
+          ></motion.path>
+        </svg>
+        
+        <div className="container mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-semibold mb-6">Ready to Start Your Preparation?</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Join thousands of successful students who have prepared with our comprehensive practice tests
@@ -304,7 +472,7 @@ const Index = () => {
             </Button>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <Footer />
     </div>

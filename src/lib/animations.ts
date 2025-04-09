@@ -98,3 +98,66 @@ export const pageTransition = {
   exit: { opacity: 0, x: 10 },
   transition: { duration: 0.3 }
 };
+
+export const floatingAnimation = {
+  initial: { y: 0 },
+  animate: {
+    y: [0, -10, 0],
+    transition: {
+      duration: 4,
+      ease: "easeInOut",
+      repeat: Infinity,
+    }
+  }
+};
+
+export const pulseAnimation = {
+  initial: { opacity: 0.7, scale: 0.95 },
+  animate: {
+    opacity: [0.7, 1, 0.7],
+    scale: [0.95, 1, 0.95],
+    transition: {
+      duration: 3,
+      ease: "easeInOut",
+      repeat: Infinity,
+    }
+  }
+};
+
+export const rotateAnimation = {
+  initial: { rotate: 0 },
+  animate: {
+    rotate: 360,
+    transition: {
+      duration: 20,
+      ease: "linear",
+      repeat: Infinity,
+    }
+  }
+};
+
+export const waveAnimation = {
+  initial: { pathLength: 0, pathOffset: 0 },
+  animate: {
+    pathLength: 1,
+    pathOffset: 0,
+    transition: {
+      duration: 2,
+      ease: "easeInOut",
+      repeat: Infinity,
+      repeatType: "loop",
+    }
+  }
+};
+
+export const gradientShift = {
+  initial: { backgroundPosition: '0% 50%' },
+  animate: {
+    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+    transition: {
+      duration: 10,
+      ease: "easeInOut",
+      repeat: Infinity,
+    }
+  }
+};
