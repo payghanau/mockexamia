@@ -1,354 +1,221 @@
 
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { examService, paymentService } from "@/services/api";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Shield, CreditCard, CheckCircle } from "lucide-react";
-import { ExamRow } from "@/types/supabase";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import { CreditCard, ArrowLeft, CheckCircle, ShieldCheck } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { paymentService } from "@/services/api";
 
+// Replace with actual implementation when required
 declare global {
   interface Window {
     Razorpay: any;
   }
 }
 
-enum PaymentStatus {
-  LOADING = "loading",
-  PENDING = "pending",
-  PROCESSING = "processing",
-  COMPLETED = "completed",
-  FAILED = "failed"
-}
-
 const PaymentPage = () => {
-  const { examId } = useParams<{ examId: string }>();
-  const [exam, setExam] = useState<ExamRow | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(PaymentStatus.LOADING);
-  const [isLoadingRazorpay, setIsLoadingRazorpay] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { examId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [paymentInitiated, setPaymentInitiated] = useState(false);
+  
+  // Get plan info from location state
+  const planInfo = location.state || {
+    planName: "Standard Plan",
+    amount: 599,
+    duration: "monthly"
+  };
 
-  // Fetch exam details
   useEffect(() => {
-    const fetchExam = async () => {
-      try {
-        if (!examId) return;
-        const examData = await examService.getExamById(examId);
-        setExam(examData);
-        
-        // Check if payment already made
-        const paymentData = await paymentService.getPaymentStatus(examId);
-        
-        if (paymentData.status === "completed") {
-          setPaymentStatus(PaymentStatus.COMPLETED);
-        } else {
-          setPaymentStatus(PaymentStatus.PENDING);
-        }
-      } catch (error) {
-        console.error("Error fetching exam:", error);
-        setPaymentStatus(PaymentStatus.FAILED);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load exam details. Please try again.",
-        });
-      }
+    document.title = "Payment - myturnindia";
+    
+    // Load Razorpay script
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
     };
-
-    fetchExam();
-  }, [examId, toast]);
-
-  // Load Razorpay script
-  useEffect(() => {
-    if (paymentStatus !== PaymentStatus.PENDING) return;
-
-    const loadRazorpayScript = async () => {
-      setIsLoadingRazorpay(true);
-      
-      return new Promise((resolve) => {
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.async = true;
-        script.onload = () => {
-          resolve(true);
-          setIsLoadingRazorpay(false);
-        };
-        document.body.appendChild(script);
-      });
-    };
-
-    if (!window.Razorpay) {
-      loadRazorpayScript();
-    } else {
-      setIsLoadingRazorpay(false);
-    }
-  }, [paymentStatus]);
-
+  }, []);
+  
   const handlePayment = async () => {
     try {
-      if (!exam) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Exam details not found. Please try again.",
-        });
-        return;
-      }
+      setLoading(true);
       
-      setIsProcessing(true);
-      
-      // For demo purposes, we'll create a mock order
-      // In production, you would use the Razorpay endpoint
-      const order = await paymentService.createPaymentOrder(examId!);
-      
-      if (!order.id) {
-        throw new Error("Failed to create payment order");
-      }
-      
-      const options = {
-        key: "rzp_test_yourkeyhere", // Replace with actual Razorpay key for production
-        amount: exam.fee * 100, // Razorpay expects amount in paise
+      // Mock implementation - replace with actual API call
+      const orderData = {
+        id: "order_" + Math.random().toString(36).substring(2, 15),
+        amount: planInfo.amount * 100, // Convert to smallest currency unit
         currency: "INR",
-        name: "MCQ Pro",
-        description: `Payment for ${exam.title}`,
-        order_id: order.id,
-        handler: async (response: any) => {
-          try {
-            // Verify payment
-            const data = await paymentService.verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            });
-            
-            if (data.success) {
-              setPaymentStatus(PaymentStatus.COMPLETED);
-              toast({
-                title: "Payment Successful",
-                description: "You can now access the exam.",
-              });
-              
-              // Navigate to exam page after successful payment
-              setTimeout(() => {
-                navigate(`/exam/${examId}`);
-              }, 2000);
-            } else {
-              setPaymentStatus(PaymentStatus.FAILED);
-              toast({
-                variant: "destructive",
-                title: "Payment Verification Failed",
-                description: "Please contact support if payment was deducted.",
-              });
-            }
-          } catch (error) {
-            console.error("Payment verification error:", error);
-            setPaymentStatus(PaymentStatus.FAILED);
-            toast({
-              variant: "destructive",
-              title: "Payment Processing Error",
-              description: "Please contact support if payment was deducted.",
-            });
-          }
+        key_id: "rzp_test_YourTestKey", // Replace with actual key in production
+      };
+
+      // Create Razorpay instance
+      const razorpay = new window.Razorpay({
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: "INR",
+        name: "myturnindia",
+        description: `${planInfo.planName} - ${planInfo.duration} subscription`,
+        order_id: orderData.id,
+        handler: function(response: any) {
+          // Handle successful payment
+          handlePaymentSuccess(response);
         },
         prefill: {
-          name: user?.user_metadata?.name || "",
+          name: user?.name || "",
           email: user?.email || "",
         },
         theme: {
-          color: "#3B82F6",
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-      
-      razorpay.on('payment.failed', (response: any) => {
-        console.error("Payment failed:", response.error);
-        setPaymentStatus(PaymentStatus.FAILED);
-        toast({
-          variant: "destructive",
-          title: "Payment Failed",
-          description: response.error.description,
-        });
+          color: "#3B82F6"
+        }
       });
+      
+      razorpay.open();
+      setPaymentInitiated(true);
     } catch (error) {
-      console.error("Payment initiation error:", error);
-      setPaymentStatus(PaymentStatus.FAILED);
+      console.error("Payment error:", error);
       toast({
-        variant: "destructive",
         title: "Payment Error",
-        description: "Failed to initiate payment. Please try again.",
+        description: "Failed to initialize payment. Please try again.",
+        variant: "destructive"
       });
     } finally {
-      setIsProcessing(false);
+      setLoading(false);
+    }
+  };
+  
+  const handlePaymentSuccess = async (response: any) => {
+    try {
+      setLoading(true);
+      
+      // Mock API call - replace with actual implementation
+      const verificationResponse = {
+        success: true,
+        message: "Payment verified successfully"
+      };
+      
+      if (verificationResponse.success) {
+        toast({
+          title: "Payment Successful",
+          description: "Your subscription has been activated.",
+        });
+        
+        // Redirect to dashboard
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Payment Verification Failed",
+          description: "Please contact support.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Payment verification error:", error);
+      toast({
+        title: "Verification Error",
+        description: "Failed to verify payment. Please contact support.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (paymentStatus === PaymentStatus.LOADING) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-        <p className="text-lg font-medium">Loading payment details...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="container max-w-6xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-center">Exam Payment</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-        <div className="col-span-1 md:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">{exam?.title || "Exam"}</CardTitle>
-              <CardDescription>
-                Please review the exam details before making the payment
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium mb-2">Exam Details</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Type</p>
-                    <p className="font-medium">{exam?.type || "N/A"}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Questions</p>
-                    <p className="font-medium">{exam?.total_questions || "N/A"}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Duration</p>
-                    <p className="font-medium">{exam?.duration || "N/A"} minutes</p>
-                  </div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
+      <Navbar />
+      <main className="flex-1 py-16 px-4">
+        <div className="max-w-3xl mx-auto">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/pricing")}
+            className="mb-6 text-gray-700 hover:text-blue-700"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Pricing
+          </Button>
+          
+          <Card className="overflow-hidden border-gray-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl">Complete Your Purchase</CardTitle>
+                  <CardDescription className="text-blue-100 mt-1">
+                    Secure payment powered by Razorpay
+                  </CardDescription>
+                </div>
+                <div className="bg-white/20 p-3 rounded-full">
+                  <CreditCard className="h-6 w-6 text-white" />
                 </div>
               </div>
-              
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-medium mb-4">Fee Details</h3>
-                <div className="flex justify-between items-center">
-                  <span>Exam Fee</span>
-                  <span className="font-semibold">₹{exam?.fee || 0}</span>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="font-medium text-lg text-gray-800 mb-2">Order Summary</h3>
+                  <div className="flex justify-between py-2 border-b border-blue-100">
+                    <span className="text-gray-600">Plan</span>
+                    <span className="font-medium text-gray-800">{planInfo.planName}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-blue-100">
+                    <span className="text-gray-600">Duration</span>
+                    <span className="font-medium text-gray-800">{planInfo.duration}</span>
+                  </div>
+                  <div className="flex justify-between py-2 text-lg">
+                    <span className="font-medium text-gray-800">Total Amount</span>
+                    <span className="font-bold text-blue-700">₹{planInfo.amount}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center mt-2">
-                  <span>GST (18%)</span>
-                  <span className="font-semibold">₹{exam ? (exam.fee * 0.18).toFixed(2) : 0}</span>
+                
+                <div>
+                  <h3 className="font-medium text-lg text-gray-800 mb-2">Payment Method</h3>
+                  <div className="border rounded-lg p-4 bg-white">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src="https://cdn.razorpay.com/static/assets/logo/payment/razorpay.svg" 
+                        alt="Razorpay" 
+                        className="h-8" 
+                      />
+                      <div>
+                        <h4 className="font-medium">Razorpay Secure Checkout</h4>
+                        <p className="text-sm text-gray-500">Credit/Debit Card, UPI, Netbanking & more</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center mt-4 border-t pt-2">
-                  <span className="font-bold">Total</span>
-                  <span className="font-bold text-lg">₹{exam ? (exam.fee * 1.18).toFixed(2) : 0}</span>
+                
+                <div className="flex items-center text-sm text-gray-600 space-x-2">
+                  <ShieldCheck className="h-4 w-4 text-green-600" />
+                  <span>Your payment information is processed securely.</span>
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
-              {paymentStatus === PaymentStatus.PENDING && (
-                <Button 
-                  className="w-full" 
-                  onClick={handlePayment}
-                  disabled={isLoadingRazorpay || isProcessing}
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : isLoadingRazorpay ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Loading Payment Gateway...
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Pay Now (₹{exam?.fee || 0})
-                    </>
-                  )}
-                </Button>
-              )}
+            <CardFooter className="bg-gray-50 flex flex-col space-y-4 p-6">
+              <Button 
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+                onClick={handlePayment}
+                disabled={loading || paymentInitiated}
+              >
+                {loading ? "Processing..." : "Pay ₹" + planInfo.amount}
+              </Button>
               
-              {paymentStatus === PaymentStatus.COMPLETED && (
-                <div className="w-full text-center">
-                  <div className="flex items-center justify-center mb-2 text-green-500">
-                    <CheckCircle className="h-6 w-6 mr-2" />
-                    <span className="font-medium">Payment Completed</span>
-                  </div>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => navigate(`/exam/${examId}`)}
-                  >
-                    Start Exam
-                  </Button>
-                </div>
-              )}
-              
-              {paymentStatus === PaymentStatus.FAILED && (
-                <div className="w-full">
-                  <p className="text-red-500 text-center mb-2">Payment failed. Please try again.</p>
-                  <Button 
-                    className="w-full" 
-                    onClick={handlePayment}
-                    disabled={isLoadingRazorpay || isProcessing}
-                  >
-                    Retry Payment
-                  </Button>
-                </div>
-              )}
+              <p className="text-xs text-center text-gray-500">
+                By proceeding, you agree to our Terms of Service and Privacy Policy.
+              </p>
             </CardFooter>
           </Card>
         </div>
-        
-        <div className="col-span-1 md:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Secure Payment</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start">
-                <Shield className="h-5 w-5 mr-2 text-primary" />
-                <div>
-                  <h4 className="font-medium">100% Secure Payments</h4>
-                  <p className="text-sm text-gray-500">All major credit & debit cards accepted</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <Shield className="h-5 w-5 mr-2 text-primary" />
-                <div>
-                  <h4 className="font-medium">Easy Refunds</h4>
-                  <p className="text-sm text-gray-500">In case of technical issues, get a full refund</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <Shield className="h-5 w-5 mr-2 text-primary" />
-                <div>
-                  <h4 className="font-medium">Instant Access</h4>
-                  <p className="text-sm text-gray-500">Start your exam immediately after payment</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Need Help?</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm">
-                If you're facing any issues with payment or have questions, 
-                our support team is available 24/7 to assist you.
-              </p>
-              <Button variant="outline" className="w-full" onClick={() => navigate('/contact')}>
-                Contact Support
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
