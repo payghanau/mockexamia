@@ -21,6 +21,7 @@ import GateExams from "./pages/GateExams";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import MockTests from "./pages/MockTests";
+import BackgroundAnimation from "./components/ui/BackgroundAnimation";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => {
       <AuthProvider>
         <TooltipProvider>
           <div className="min-h-screen flex flex-col bg-gray-50">
+            <BackgroundAnimation variant="default" />
             <Toaster />
             <Sonner />
             <Routes>
