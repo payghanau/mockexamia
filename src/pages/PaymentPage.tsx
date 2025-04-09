@@ -1,14 +1,13 @@
 
 import { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { CreditCard, ArrowLeft, CheckCircle, ShieldCheck } from "lucide-react";
+import { CreditCard, ArrowLeft, ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { paymentService } from "@/services/api";
 
 // Replace with actual implementation when required
 declare global {
@@ -19,7 +18,6 @@ declare global {
 
 const PaymentPage = () => {
   const { examId } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -27,7 +25,7 @@ const PaymentPage = () => {
   const [paymentInitiated, setPaymentInitiated] = useState(false);
   
   // Get plan info from location state
-  const planInfo = location.state || {
+  const planInfo = {
     planName: "Standard Plan",
     amount: 599,
     duration: "monthly"
@@ -72,7 +70,7 @@ const PaymentPage = () => {
           handlePaymentSuccess(response);
         },
         prefill: {
-          name: user?.name || "",
+          name: user?.email ? user.email.split('@')[0] : "",
           email: user?.email || "",
         },
         theme: {
