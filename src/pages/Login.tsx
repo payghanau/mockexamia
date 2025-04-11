@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import AuthForm from "@/components/auth/AuthForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GraduationCap, BookOpen, ShieldCheck } from "lucide-react";
+import DrifterStars from "@/components/ui/DrifterStars";
 
 const Login = () => {
   useEffect(() => {
@@ -14,8 +15,9 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <DrifterStars starCount={150} starColor="#4f7df0" speed={0.3} />
       <Navbar />
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white pt-24 pb-16 px-4">
+      <main className="flex-1 pt-24 pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
             {/* Left content */}
@@ -64,7 +66,7 @@ const Login = () => {
             
             {/* Right content - Login form */}
             <div className="lg:col-span-3">
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-gray-100">
                 <Tabs defaultValue="user" className="w-full">
                   <TabsList className="grid w-full grid-cols-2 mb-8">
                     <TabsTrigger value="user" className="py-3">User Login</TabsTrigger>
@@ -72,11 +74,11 @@ const Login = () => {
                   </TabsList>
                   
                   <TabsContent value="user">
-                    <AuthForm type="login" userRole="user" />
+                    <AuthForm type="login" userRole="user" hideGoogleAuth={true} />
                   </TabsContent>
                   
                   <TabsContent value="admin">
-                    <AuthForm type="login" userRole="admin" />
+                    <AuthForm type="login" userRole="admin" hideGoogleAuth={true} />
                   </TabsContent>
                 </Tabs>
               </div>

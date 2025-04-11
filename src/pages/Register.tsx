@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import AuthForm from "@/components/auth/AuthForm";
 import { Award, Zap, ShieldCheck } from "lucide-react";
+import DrifterStars from "@/components/ui/DrifterStars";
 
 const Register = () => {
   useEffect(() => {
@@ -13,8 +14,9 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <DrifterStars starCount={150} starColor="#4f7df0" speed={0.3} />
       <Navbar />
-      <main className="flex-1 bg-gradient-to-b from-blue-50 to-white pt-24 pb-16 px-4">
+      <main className="flex-1 pt-24 pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
             {/* Left content */}
@@ -63,12 +65,12 @@ const Register = () => {
             
             {/* Right content - Registration form */}
             <div className="lg:col-span-3">
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-gray-100">
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold tracking-tight text-gray-800 mb-1">Get Started</h2>
                   <p className="text-gray-600">Fill out the form below to create your account</p>
                 </div>
-                <AuthForm type="register" />
+                <AuthForm type="register" hideGoogleAuth={true} useOtpVerification={true} />
               </div>
             </div>
           </div>

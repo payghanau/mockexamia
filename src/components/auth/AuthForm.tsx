@@ -1,29 +1,112 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react";
-import GoogleAuth from "./GoogleAuth";
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon, CheckCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/AuthContext";
+import { 
+  InputOTP, 
+  InputOTPGroup, 
+  InputOTPSlot 
+} from "@/components/ui/input-otp";
 
 type AuthFormProps = {
   type: "login" | "register";
   userRole?: "user" | "admin";
+  hideGoogleAuth?: boolean;
+  useOtpVerification?: boolean;
 };
 
-const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
+const AuthForm = ({ 
+  type, 
+  userRole = "user", 
+  hideGoogleAuth = false,
+  useOtpVerification = false
+}: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // OTP verification states
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login, register } = useAuth();
+
+  const sendVerificationEmail = async () => {
+    setIsEmailSent(true);
+    toast({
+      title: "Verification code sent",
+      description: "Please check your email for the OTP verification code",
+    });
+    // In a real application, we would call an API to send the OTP to the user's email
+    // For this demo, we're simulating the email being sent
+  };
+
+  const verifyOtp = async () => {
+    setIsVerifying(true);
+    
+    try {
+      // In a real application, we would call an API to verify the OTP
+      // For this demo, we're accepting any 6-digit code
+      if (otp.length === 6) {
+        // Simulate server delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Proceed with registration
+        await handleRegistration();
+        
+        toast({
+          title: "Email verified",
+          description: "Your email has been successfully verified.",
+        });
+      } else {
+        throw new Error("Invalid verification code. Please try again.");
+      }
+    } catch (error) {
+      toast({
+        title: "Verification failed",
+        description: error instanceof Error ? error.message : "Failed to verify email",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleRegistration = async () => {
+    try {
+      if (!email || !password || !name) {
+        throw new Error("Please fill all required fields");
+      }
+
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+
+      await register(email, password, name);
+      navigate("/login");
+      
+      toast({
+        title: "Registration successful",
+        description: "Your account has been created. You can now log in.",
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,13 +117,15 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
         throw new Error("Please fill all required fields");
       }
 
-      if (type === "register" && password !== confirmPassword) {
-        throw new Error("Passwords do not match");
-      }
-
       if (type === "register") {
-        await register(email, password, name);
-        navigate("/login");
+        if (useOtpVerification && !showOtpVerification) {
+          await sendVerificationEmail();
+          setShowOtpVerification(true);
+          setIsLoading(false);
+          return;
+        } else if (!useOtpVerification) {
+          await handleRegistration();
+        }
       } else {
         try {
           await login(email, password);
@@ -78,6 +163,75 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
     }
   };
 
+  // Registration form with OTP verification step
+  if (type === "register" && showOtpVerification) {
+    return (
+      <Card className="w-full max-w-md mx-auto glass">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            Verify Your Email
+          </CardTitle>
+          <CardDescription>
+            We've sent a 6-digit verification code to {email}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="otp">Verification Code</Label>
+            <div className="flex justify-center py-4">
+              <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+            <div className="text-center mt-2">
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="text-blue-600"
+                onClick={sendVerificationEmail}
+                disabled={isEmailSent && !isVerifying}
+              >
+                Resend Code
+              </Button>
+            </div>
+          </div>
+          
+          <Button 
+            type="button" 
+            className="w-full" 
+            onClick={verifyOtp}
+            disabled={otp.length !== 6 || isVerifying}
+          >
+            {isVerifying ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                Verifying...
+              </div>
+            ) : (
+              "Verify & Create Account"
+            )}
+          </Button>
+          
+          <Button 
+            type="button" 
+            variant="ghost" 
+            className="w-full"
+            onClick={() => setShowOtpVerification(false)}
+          >
+            Back to Registration
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto glass">
       <CardHeader className="space-y-1">
@@ -108,6 +262,7 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="pl-10"
+                  required
                 />
               </div>
             </div>
@@ -199,27 +354,10 @@ const AuthForm = ({ type, userRole = "user" }: AuthFormProps) => {
                     : "Creating account..."}
               </div>
             ) : (
-              <>{userRole === "admin" ? "Admin Sign In" : type === "login" ? "Sign In" : "Create Account"}</>
+              <>{userRole === "admin" ? "Admin Sign In" : type === "login" ? "Sign In" : "Continue"}</>
             )}
           </Button>
         </form>
-
-        {userRole !== "admin" && (
-          <>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <GoogleAuth type={type} />
-          </>
-        )}
       </CardContent>
       <CardFooter className="flex justify-center">
         {userRole !== "admin" && (
