@@ -47,6 +47,7 @@ export default {
         'light-blue-gradient': 'linear-gradient(to right, #E6F2FF, #B6E0FF)', // Soft, light blue gradient
         'blue-gradient': 'linear-gradient(to right, #3B82F6, #1D4ED8)',
         'indigo-gradient': 'linear-gradient(to right, #6366F1, #4F46E5)',
+        'grid-pattern': 'linear-gradient(to right, rgba(99, 102, 241, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(99, 102, 241, 0.1) 1px, transparent 1px)'
       },
       boxShadow: {
         'light': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
@@ -57,16 +58,25 @@ export default {
       borderRadius: {
         'xl': '1rem',
         '2xl': '1.5rem',
+        '3xl': '2rem',
       },
       animation: {
         'float': 'float 5s ease-in-out infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'shimmer': 'shimmer 2s linear infinite',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+        shimmer: {
+          from: { backgroundPosition: '0 0' },
+          to: { backgroundPosition: '-200% 0' },
+        },
+      },
+      backgroundSize: {
+        'grid': '40px 40px',
       },
     },
   },
