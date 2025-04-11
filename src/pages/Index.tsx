@@ -1,6 +1,8 @@
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { motion } from "framer-motion";
@@ -12,17 +14,20 @@ import {
   Clock, 
   GraduationCap, 
   Layers, 
-  Users 
+  User, 
+  Play,
+  Search,
+  Star,
+  Users,
+  BarChart
 } from "lucide-react";
 import { 
-  floatingAnimation,
-  pulseAnimation,
-  rotateAnimation,
-  gradientShift,
   fadeIn,
   slideUp,
   staggerContainer
 } from "@/lib/animations";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const Index = () => {
   useEffect(() => {
@@ -31,448 +36,467 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Animated gradient circles */}
-        <motion.div 
-          className="absolute top-20 right-20 w-64 h-64 rounded-full bg-gradient-to-r from-blue-300/20 to-blue-500/20 blur-3xl"
-          variants={pulseAnimation}
-          initial="initial"
-          animate="animate"
-        />
-        <motion.div 
-          className="absolute bottom-40 left-10 w-96 h-96 rounded-full bg-gradient-to-r from-blue-100/30 to-indigo-300/30 blur-3xl"
-          variants={pulseAnimation}
-          initial="initial"
-          animate="animate"
-          custom={1.5}
-        />
-        <motion.div 
-          className="absolute top-1/4 left-1/3 w-72 h-72 rounded-full bg-gradient-to-r from-blue-200/20 to-purple-300/20 blur-3xl"
-          variants={floatingAnimation}
-          initial="initial"
-          animate="animate"
-        />
-        
-        {/* Animated mesh grid background */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59, 130, 246, 0.2)" strokeWidth="1"></path>
-            </pattern>
-          </defs>
-          <motion.rect 
-            width="100%" 
-            height="100%" 
-            fill="url(#grid-pattern)"
-            variants={rotateAnimation}
-            initial="initial"
-            animate="animate"
-            style={{ transformOrigin: 'center' }}
-          ></motion.rect>
-        </svg>
-
-        {/* Floating particles */}
-        {[...Array(15)].map((_, index) => (
-          <motion.div
-            key={index}
-            className="absolute rounded-full bg-blue-500"
-            style={{
-              width: Math.random() * 8 + 2,
-              height: Math.random() * 8 + 2,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.3 + 0.1,
-            }}
-            variants={floatingAnimation}
-            initial="initial"
-            animate="animate"
-            custom={Math.random() * 2 + 1}
-          />
-        ))}
-      </div>
-      
       <Navbar />
       
-      {/* Hero Section with Apple-like Design */}
-      <motion.section 
-        className="pt-32 pb-24 md:pt-40 md:pb-32 bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-      >
+      {/* Hero Section */}
+      <section className="pt-28 md:pt-32 pb-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-white pointer-events-none"></div>
         <div className="container px-4 mx-auto relative z-10">
-          <motion.div 
-            className="flex flex-col lg:flex-row items-center"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-          >
-            <div className="w-full lg:w-1/2 mb-12 lg:mb-0 pr-0 lg:pr-12">
-              <motion.span 
-                className="inline-block px-4 py-1.5 mb-5 text-sm font-medium bg-blue-100 text-blue-600 rounded-full"
-                variants={slideUp}
-              >
-                Prepare to Excel
-              </motion.span>
-              <motion.h1 
-                className="apple-hero-text mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900"
-                variants={slideUp}
-              >
-                Master Your Certification Journey
-              </motion.h1>
-              <motion.p 
-                className="text-lg md:text-xl text-gray-600 mb-8 max-w-xl"
-                variants={slideUp}
-              >
-                Expertly crafted mock tests designed for NISM Certifications and GATE Exams. Developed by industry professionals to help you succeed.
-              </motion.p>
-              <motion.div 
-                className="flex flex-col sm:flex-row gap-4"
-                variants={slideUp}
-              >
-                <Button asChild size="lg" className="apple-button-primary bg-gradient-to-r from-blue-500 to-blue-700">
-                  <Link to="/mock-tests" className="flex items-center">
-                    Explore Tests <ArrowRight className="ml-2 h-5 w-5" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              className="space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 font-medium text-sm">
+                <Star className="w-4 h-4 mr-1.5" /> Trusted by over 2,000+ students
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
+                Ace Your <span className="text-blue-600">Certification</span> With Expert-Led Preparation
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 max-w-xl">
+                Our comprehensive mock tests for NISM and GATE exams are designed by industry experts to maximize your success rate.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild size="lg" className="rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-6">
+                  <Link to="/mock-tests">Explore Mock Tests</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-lg border-blue-200 hover:bg-blue-50 px-6">
+                  <Link to="/login" className="flex items-center">
+                    Start Learning <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="apple-button-secondary">
-                  <Link to="/login">Get Started</Link>
-                </Button>
-              </motion.div>
-              <motion.div 
-                className="mt-8 flex items-center"
-                variants={slideUp}
-              >
+              </div>
+              <div className="flex items-center space-x-4 pt-2">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-blue-400 to-blue-600 opacity-75"></div>
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-blue-400 to-blue-600"></div>
                   ))}
                 </div>
-                <p className="ml-4 text-sm text-gray-600">
-                  <span className="font-semibold">2,000+</span> students trust our exam preparations
-                </p>
-              </motion.div>
-            </div>
-            <motion.div 
-              className="w-full lg:w-1/2"
-              variants={fadeIn}
-              custom={0.5}
-            >
-              <div className="relative">
-                <motion.div 
-                  className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-blue-300 to-blue-500 opacity-30 blur-xl"
-                  variants={pulseAnimation}
-                  initial="initial"
-                  animate="animate"
-                ></motion.div>
-                <div className="relative apple-blur-bg rounded-2xl shadow-xl overflow-hidden">
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                      <div className="mx-auto text-sm font-medium text-gray-700">NISM Mock Exam</div>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">Securities Market - Chapter 2</h3>
-                    <div className="space-y-3">
-                      {[1, 2, 3].map((i) => (
-                        <motion.div 
-                          key={i}
-                          className="flex items-start p-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-100"
-                          variants={slideUp}
-                          custom={i * 0.2}
-                        >
-                          <div className="mr-3 mt-1 p-1 bg-white rounded-full shadow-sm">
-                            <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium">{i}</div>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-700">
-                              Which of the following entities regulate the securities market in India?
-                            </p>
-                            <div className="mt-2 space-y-1">
-                              {["SEBI", "RBI", "Both SEBI and RBI", "None of the above"].map((option, idx) => (
-                                <div key={idx} className={`text-xs p-1.5 px-3 rounded ${idx === 2 ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-gray-100 text-gray-700'}`}>
-                                  {option} {idx === 2 && <CheckCircle className="inline-block w-3 h-3 ml-1" />}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                    <div className="mt-4 flex justify-between items-center">
-                      <div className="flex items-center">
-                        <Clock className="w-4 h-4 text-gray-600 mr-1" />
-                        <span className="text-xs text-gray-600">8:45 remaining</span>
-                      </div>
-                      <Button size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full">Next Question</Button>
-                    </div>
-                  </div>
+                <div className="text-sm text-gray-600">
+                  <span className="font-semibold">4.9/5</span> from over 2,000+ reviews
                 </div>
-                
-                {/* Apple-style floating elements */}
-                <motion.div 
-                  className="absolute -right-12 top-1/4 w-24 h-24 rounded-full bg-gradient-to-tr from-blue-300 to-blue-100 opacity-50 blur-xl"
-                  variants={floatingAnimation}
-                  initial="initial"
-                  animate="animate"
-                  custom={2}
-                ></motion.div>
-                <motion.div 
-                  className="absolute -left-16 bottom-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200 to-blue-50 opacity-40 blur-xl"
-                  variants={floatingAnimation}
-                  initial="initial"
-                  animate="animate"
-                  custom={1.5}
-                ></motion.div>
               </div>
             </motion.div>
-          </motion.div>
-        </div>
-      </motion.section>
-      
-      {/* Features Section with Apple-style cards */}
-      <motion.section 
-        className="apple-section bg-white"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-        viewport={{ once: true }}
-      >
-        <div className="container px-4 mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
-              Why Choose Us
-            </span>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
-              Designed for Your Success
-            </h2>
-            <p className="apple-caption">
-              Our platform combines expert content with innovative learning tools to maximize your exam performance
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: BookOpen, title: "Exam-Matched Tests", description: "Experience tests that mirror actual exam patterns and difficulty levels" },
-              { icon: Layers, title: "In-depth Analytics", description: "Gain comprehensive insights with detailed performance analysis and recommendations" },
-              { icon: Award, title: "Expert Content", description: "Questions crafted by industry professionals with deep exam expertise" },
-              { icon: Clock, title: "Time Management", description: "Practice with realistic timing to improve your speed and efficiency" }
-            ].map((feature, index) => (
-              <div 
-                key={index} 
-                className="apple-feature-card apple-card-hover group"
-              >
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-5 group-hover:bg-gradient-to-r group-hover:from-blue-200 group-hover:to-blue-300 transition-all">
-                  <feature.icon className="h-6 w-6 text-blue-600" />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl blur-xl opacity-20"></div>
+              <div className="relative bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div className="text-sm font-medium text-gray-600">NISM - Series VIII: Equity Derivatives</div>
+                  <div></div>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">{feature.title}</h3>
-                <p className="text-gray-600">
-                  {feature.description}
-                </p>
+                <div className="p-6">
+                  <div className="mb-6 space-y-1">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold text-gray-800">Quiz Progress</h3>
+                      <span className="text-sm text-blue-600 font-medium">14 of 30 questions</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '45%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                      <h4 className="font-medium text-gray-800 mb-2">Question 14:</h4>
+                      <p className="text-gray-700 mb-3">Which of the following is NOT a function of Securities and Exchange Board of India (SEBI)?</p>
+                      <div className="space-y-2">
+                        {[
+                          "Regulating the business of stock exchanges",
+                          "Setting monetary policy for the country",
+                          "Protecting the interests of investors",
+                          "Promoting development of securities market"
+                        ].map((option, idx) => (
+                          <div 
+                            key={idx} 
+                            className={`p-3 rounded-lg border ${idx === 1 ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'} cursor-pointer hover:border-blue-300 transition-colors`}
+                          >
+                            <div className="flex items-center">
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center mr-3 ${idx === 1 ? 'bg-green-500 text-white' : 'border border-gray-300'}`}>
+                                {idx === 1 && <CheckCircle className="w-3 h-3" />}
+                              </div>
+                              <span className={`${idx === 1 ? 'font-medium' : ''}`}>{option}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2">
+                      <Button variant="outline" size="sm" className="border-gray-200">Previous</Button>
+                      <div className="flex items-center space-x-1 text-sm text-gray-500">
+                        <Clock className="w-4 h-4" />
+                        <span>12:45 remaining</span>
+                      </div>
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">Next Question</Button>
+                    </div>
+                  </div>
+                </div>
               </div>
+              
+              <div className="absolute -right-20 -bottom-10 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50 z-0"></div>
+              <div className="absolute -left-20 -top-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50 z-0"></div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Trusted By Section */}
+      <section className="py-10 bg-gray-50">
+        <div className="container px-4 mx-auto">
+          <div className="text-center mb-8">
+            <p className="text-gray-600 font-medium">Trusted by top universities and companies</p>
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-70">
+            {["IIT Delhi", "BITS Pilani", "Delhi University", "SBI Securities", "HDFC Bank"].map((partner, idx) => (
+              <div key={idx} className="text-lg md:text-xl font-bold text-gray-400">{partner}</div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
       
-      {/* Exam Categories Section */}
-      <motion.section 
-        className="apple-section bg-gradient-to-b from-gray-50 to-white"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-        viewport={{ once: true }}
-      >
+      {/* Features Section */}
+      <section className="py-20 bg-white">
         <div className="container px-4 mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
-              Our Offerings
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">What Makes Our Mock Tests Exceptional</h2>
+            <p className="text-lg text-gray-600">Our comprehensive approach to test preparation goes beyond conventional methods</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: BookOpen,
+                title: "Exam-Aligned Content",
+                description: "Our questions are meticulously crafted to match the actual exam pattern and difficulty level"
+              },
+              {
+                icon: BarChart,
+                title: "Detailed Analytics",
+                description: "Comprehensive performance reports to identify strengths and areas for improvement"
+              },
+              {
+                icon: Award,
+                title: "Expert-Crafted Questions",
+                description: "Created by industry professionals with years of experience in their respective fields"
+              },
+              {
+                icon: Clock,
+                title: "Time Management",
+                description: "Practice with realistic time constraints to improve speed and accuracy"
+              },
+              {
+                icon: Users,
+                title: "Community Support",
+                description: "Join a community of learners for support, motivation, and shared knowledge"
+              },
+              {
+                icon: Layers,
+                title: "Diverse Question Bank",
+                description: "Thousands of questions covering every topic in the syllabus with regular updates"
+              }
+            ].map((feature, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 text-blue-600">
+                  <feature.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+      
+      {/* Exam Categories */}
+      <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
+        <div className="container px-4 mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full mb-3">
+              Our Specializations
             </span>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
-              Specialized Exam Preparation
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+              Choose Your Certification Path
             </h2>
-            <p className="apple-caption">
-              Choose from our comprehensive range of mock tests tailored to your certification needs
+            <p className="text-lg text-gray-600">
+              Select from our comprehensive range of mock tests designed for your specific certification needs
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* NISM Card */}
-            <div className="apple-showcase-card apple-card-hover overflow-hidden group">
-              <div className="flex items-center mb-6">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white mr-4">
-                  <BookOpen className="h-7 w-7" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-800">NISM Certification</h3>
-                  <p className="text-blue-600">Securities Market Professional</p>
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group hover:shadow-xl transition-shadow"
+            >
+              <div className="h-40 bg-gradient-to-r from-blue-600 to-blue-700 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZmluYW5jZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60')] opacity-20 bg-cover bg-center"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <h3 className="text-2xl font-bold mb-1">NISM Certification</h3>
+                  <p className="opacity-90">National Institute of Securities Markets</p>
                 </div>
               </div>
-              <p className="mb-6 text-gray-600">
-                Comprehensive practice tests for all NISM modules covering regulatory requirements, product knowledge, and operational aspects.
-              </p>
-              <ul className="mb-8 space-y-3">
-                {["Mutual Fund Distributor", "Securities Operations", "Investment Adviser", "Research Analyst"].map((item, idx) => (
-                  <li key={idx} className="flex items-center">
-                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                      <CheckCircle className="h-3 w-3 text-blue-600" />
+              <div className="p-6">
+                <div className="mb-6">
+                  <p className="text-gray-600 mb-4">
+                    Comprehensive practice tests for all NISM modules covering regulatory requirements, product knowledge, and operational aspects.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {[
+                      "Series VIII: Equity Derivatives",
+                      "Series VII: Securities Operations",
+                      "Series V-A: Mutual Fund Distributors",
+                      "Series X-A: Investment Adviser"
+                    ].map((module, idx) => (
+                      <div key={idx} className="flex items-center">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">{module}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-1">
+                    <div className="flex -space-x-1">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-blue-200"></div>
+                      ))}
                     </div>
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button asChild size="lg" className="w-full apple-button-primary bg-gradient-to-r from-blue-500 to-blue-700">
-                <Link to="/nism-exams" className="flex items-center justify-center gap-2">
-                  Explore NISM Tests <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
+                    <span className="text-sm text-gray-500 ml-2">1,200+ students</span>
+                  </div>
+                  <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Link to="/exams/nism">View Tests</Link>
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
             
             {/* GATE Card */}
-            <div className="apple-showcase-card apple-card-hover overflow-hidden group">
-              <div className="flex items-center mb-6">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-blue-700 to-blue-800 flex items-center justify-center text-white mr-4">
-                  <GraduationCap className="h-7 w-7" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-800">GATE Exam</h3>
-                  <p className="text-blue-700">Graduate Aptitude Test in Engineering</p>
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group hover:shadow-xl transition-shadow"
+            >
+              <div className="h-40 bg-gradient-to-r from-indigo-600 to-indigo-700 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1581092921461-39b13a45e8b0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGVuZ2luZWVyaW5nfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60')] opacity-20 bg-cover bg-center"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <h3 className="text-2xl font-bold mb-1">GATE Examination</h3>
+                  <p className="opacity-90">Graduate Aptitude Test in Engineering</p>
                 </div>
               </div>
-              <p className="mb-6 text-gray-600">
-                Section-wise practice and full-length mock tests designed to help you master GATE exam patterns and concepts.
-              </p>
-              <ul className="mb-8 space-y-3">
-                {["Computer Science", "Electronics Engineering", "Electrical Engineering", "Mechanical Engineering"].map((item, idx) => (
-                  <li key={idx} className="flex items-center">
-                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                      <CheckCircle className="h-3 w-3 text-blue-600" />
+              <div className="p-6">
+                <div className="mb-6">
+                  <p className="text-gray-600 mb-4">
+                    Section-wise practice and full-length mock tests designed to help you master GATE exam patterns and concepts.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {[
+                      "Computer Science",
+                      "Electronics Engineering",
+                      "Electrical Engineering",
+                      "Mechanical Engineering"
+                    ].map((module, idx) => (
+                      <div key={idx} className="flex items-center">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">{module}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-1">
+                    <div className="flex -space-x-1">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-indigo-200"></div>
+                      ))}
                     </div>
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button asChild size="lg" className="w-full apple-button-primary bg-gradient-to-r from-blue-700 to-blue-800">
-                <Link to="/gate-exams" className="flex items-center justify-center gap-2">
-                  Explore GATE Tests <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
+                    <span className="text-sm text-gray-500 ml-2">800+ students</span>
+                  </div>
+                  <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
+                    <Link to="/exams/gate">View Tests</Link>
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </motion.section>
+      </section>
       
       {/* Testimonials */}
-      <motion.section 
-        className="apple-section bg-white"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-        viewport={{ once: true }}
-      >
+      <section className="py-20 bg-white">
         <div className="container px-4 mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100 text-blue-600 rounded-full">
-              Student Stories
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full mb-3">
+              Student Success Stories
             </span>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4 apple-gradient-text">
-              Success Stories
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+              What Our Students Say
             </h2>
-            <p className="apple-caption">
+            <p className="text-lg text-gray-600">
               Hear from students who have successfully prepared with our practice tests
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Priya Sharma",
-                role: "NISM Series VIII Certified",
-                content: "The practice tests perfectly matched the actual exam pattern. I was able to identify my weak areas and improve systematically."
-              },
-              {
-                name: "Raj Patel",
-                role: "GATE CSE AIR 856",
-                content: "The detailed explanations for each question helped me understand complex concepts better. My GATE score improved by 15 points!"
-              },
-              {
-                name: "Ananya Singh",
-                role: "NISM Series VII Certified",
-                content: "The timed mock tests helped me manage my time better during the actual exam. The interface is intuitive and user-friendly."
-              }
-            ].map((testimonial, idx) => (
-              <div key={idx} className="apple-blur-bg rounded-2xl p-6 apple-card-hover">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 flex items-center justify-center mr-3">
-                    <Users className="h-5 w-5 text-blue-600" />
+          <Carousel className="max-w-5xl mx-auto">
+            <CarouselContent>
+              {[
+                {
+                  name: "Priya Sharma",
+                  role: "NISM Series VIII Certified",
+                  content: "The practice tests perfectly matched the actual exam pattern. I was able to identify my weak areas and improve systematically. I passed my certification with a score of 87%.",
+                  image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                },
+                {
+                  name: "Rajat Patel",
+                  role: "GATE CSE AIR 856",
+                  content: "The detailed explanations for each question helped me understand complex concepts better. My GATE score improved by 15 points compared to my previous attempt!",
+                  image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                },
+                {
+                  name: "Ananya Singh",
+                  role: "NISM Series VII Certified",
+                  content: "The timed mock tests helped me manage my time better during the actual exam. The interface is intuitive and user-friendly. I'll be using this platform for my next certification too.",
+                  image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                }
+              ].map((testimonial, idx) => (
+                <CarouselItem key={idx} className="md:basis-1/1 lg:basis-1/1">
+                  <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 rounded-full mr-4 overflow-hidden">
+                        <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                        <p className="text-sm text-blue-600">{testimonial.role}</p>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 italic mb-4">"{testimonial.content}"</p>
+                    <div className="flex text-yellow-400">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star key={star} className="w-4 h-4 fill-current" />
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-                    <p className="text-sm text-blue-600">{testimonial.role}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">"{testimonial.content}"</p>
-                <div className="mt-4 text-yellow-400 flex">
-                  {"★★★★★".split("").map((star, i) => (
-                    <span key={i}>{star}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-center mt-8 gap-2">
+              <CarouselPrevious className="relative inset-0 translate-y-0" />
+              <CarouselNext className="relative inset-0 translate-y-0" />
+            </div>
+          </Carousel>
+        </div>
+      </section>
+      
+      {/* FAQ Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container px-4 mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full mb-3">
+              Common Questions
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-lg text-gray-600">
+              Find answers to common questions about our mock tests and preparation materials
+            </p>
+          </div>
+          
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-4">
+              {[
+                {
+                  question: "How up-to-date are your mock tests?",
+                  answer: "Our mock tests are regularly updated to reflect the latest exam patterns, syllabus changes, and industry developments. We have a team of experts who continuously monitor changes in certification requirements and update our question bank accordingly."
+                },
+                {
+                  question: "Can I access the mock tests on mobile devices?",
+                  answer: "Yes, our platform is fully responsive and works seamlessly on all devices including smartphones, tablets, laptops, and desktop computers. You can prepare for your exams anytime, anywhere."
+                },
+                {
+                  question: "How do I track my progress?",
+                  answer: "Our platform provides comprehensive analytics and performance tracking. You can view detailed reports of your test attempts, including time spent on each question, accuracy by topic, and improvement over time. These insights help you focus your study efforts more effectively."
+                },
+                {
+                  question: "Are the mock tests similar to the actual exams?",
+                  answer: "Absolutely. Our mock tests are designed to closely mimic the actual exam experience in terms of content, difficulty level, question format, and time constraints. Many of our successful students report that our mock tests were very similar to what they encountered in the actual certification exams."
+                },
+                {
+                  question: "Do you offer any free tests before purchasing?",
+                  answer: "Yes, we offer free demo tests for each certification category so you can experience our platform and question quality before making a purchase. Simply create a free account to access these demo tests."
+                }
+              ].map((faq, idx) => (
+                <AccordionItem key={idx} value={`item-${idx}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <AccordionTrigger className="px-6 py-4 text-left font-medium text-gray-900 hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-4 text-gray-600">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
-      </motion.section>
+      </section>
       
       {/* CTA Section */}
-      <motion.section 
-        className="py-20 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white relative overflow-hidden"
-        variants={fadeIn}
-        initial="hidden"
-        animate="visible"
-        viewport={{ once: true }}
-      >
-        <motion.div
-          className="absolute inset-0 w-full h-full"
-          style={{ 
-            background: "linear-gradient(120deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)",
-            backgroundSize: "200% 200%"
-          }}
-          variants={gradientShift}
-          initial="initial"
-          animate="animate"
-        />
-        
-        {/* Animated wave pattern */}
-        <svg className="absolute bottom-0 left-0 w-full opacity-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <motion.path 
-            d="M0,0 C150,90 350,0 500,100 C650,190 700,120 900,30 C1050,-30 1200,90 1200,90 L1200,120 L0,120 Z" 
-            fill="white"
-            variants={floatingAnimation}
-            initial="initial"
-            animate="animate"
-            custom={1.2}
-          ></motion.path>
-        </svg>
-        
-        <div className="container mx-auto text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-6">Ready to Start Your Preparation?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of successful students who have prepared with our comprehensive practice tests
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="rounded-full bg-white text-blue-700 hover:bg-blue-50 px-8">
-              <Link to="/register">Start Free Trial</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full border-white text-white hover:bg-white/10">
-              <Link to="/mock-tests">Browse Tests</Link>
-            </Button>
-          </div>
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700">
+          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         </div>
-      </motion.section>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="container px-4 mx-auto relative z-10"
+        >
+          <div className="max-w-4xl mx-auto text-center text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Certification Journey?</h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of successful professionals who have prepared with our expert-led mock tests
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50 shadow-lg">
+                <Link to="/register">Get Started Today</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
+                <Link to="/pricing">View Pricing</Link>
+              </Button>
+            </div>
+            <div className="mt-8 flex justify-center items-center">
+              <Play className="w-10 h-10 text-white mr-4" />
+              <Link to="#" className="text-white hover:underline">Watch how it works</Link>
+            </div>
+          </div>
+        </motion.div>
+      </section>
 
       <Footer />
     </div>
@@ -480,3 +504,4 @@ const Index = () => {
 };
 
 export default Index;
+

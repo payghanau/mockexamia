@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
 
@@ -108,9 +109,30 @@
   /* Background pattern */
   .bg-grid-pattern {
     background-image: 
-      linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+  
+  /* Premium course-specific classes */
+  .premium-card {
+    @apply bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200;
+  }
+  
+  .premium-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700;
+  }
+  
+  .premium-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800;
+  }
+  
+  .premium-button {
+    @apply rounded-lg font-medium shadow-sm transition-all duration-200;
+  }
+  
+  .premium-input {
+    @apply rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all;
   }
 }
 
@@ -160,4 +182,167 @@
   .apple-caption {
     @apply text-lg text-gray-500 max-w-2xl mx-auto;
   }
+  
+  /* Premium educational platform components */
+  .course-card {
+    @apply bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100;
+  }
+  
+  .instructor-badge {
+    @apply flex items-center space-x-2 text-sm font-medium text-gray-500;
+  }
+  
+  .topic-tag {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 mr-2 mb-2;
+  }
+  
+  .rating-stars {
+    @apply flex text-yellow-400;
+  }
+  
+  .progress-bar {
+    @apply w-full h-2 bg-gray-100 rounded-full overflow-hidden;
+  }
+  
+  .progress-value {
+    @apply h-full bg-blue-600 rounded-full;
+  }
+}
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Fix for content overlap with fixed navbar */
+main.content-area {
+  padding-top: 6rem;
+  min-height: calc(100vh - 6rem);
+}
+
+/* NISM theme colors */
+.nism-gradient {
+  background: linear-gradient(135deg, #1a365d 0%, #2563eb 100%);
+}
+
+.nism-card {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+/* GATE theme colors */
+.gate-gradient {
+  background: linear-gradient(135deg, #4a1d96 0%, #8b5cf6 100%);
+}
+
+.gate-card {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+/* Admin dashboard specific styles */
+.admin-layout {
+  display: flex;
+  min-height: calc(100vh - 6rem);
+  margin-top: 6rem;
+}
+
+.admin-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.admin-content {
+  flex-grow: 1;
+  padding: 1.5rem;
+}
+
+/* Fix interactive elements */
+.interactive-card {
+  transition: all 0.3s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure sidebar doesn't overlap with page content on smaller screens */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+  }
+  
+  .admin-content {
+    padding: 1rem;
+  }
+}
+
+/* Page specific theme colors */
+.contact-gradient {
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+}
+
+.pricing-gradient {
+  background: linear-gradient(135deg, #0e7490 0%, #06b6d4 100%);
+}
+
+/* NISM and GATE page improvements */
+.nism-page-container {
+  background-color: #f0f7ff;
+  min-height: calc(100vh - 6rem);
+  padding-top: 2rem;
+}
+
+.gate-page-container {
+  background-color: #f5f3ff;
+  min-height: calc(100vh - 6rem);
+  padding-top: 2rem;
+}
+
+.mock-tests-container {
+  min-height: calc(100vh - 6rem);
+  padding-top: 2rem;
 }

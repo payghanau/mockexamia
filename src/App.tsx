@@ -31,7 +31,7 @@ const App = () => {
       <AuthProvider>
         <TooltipProvider>
           <div className="min-h-screen flex flex-col bg-gray-50">
-            <BackgroundAnimation variant="default" />
+            <BackgroundAnimation variant="minimal" />
             <Toaster />
             <Sonner />
             <Routes>
