@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
@@ -18,21 +18,22 @@ declare global {
 
 const PaymentPage = () => {
   const { examId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [paymentInitiated, setPaymentInitiated] = useState(false);
   
-  // Get plan info from location state
-  const planInfo = {
+  // Get plan info from location state with fallback values
+  const planInfo = location.state || {
     planName: "Standard Plan",
     amount: 599,
     duration: "monthly"
   };
 
   useEffect(() => {
-    document.title = "Payment - myturnindia";
+    document.title = `Payment for ${planInfo.planName} - myturnindia`;
     
     // Load Razorpay script
     const script = document.createElement("script");
@@ -41,9 +42,11 @@ const PaymentPage = () => {
     document.body.appendChild(script);
     
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
-  }, []);
+  }, [planInfo.planName]);
   
   const handlePayment = async () => {
     try {
@@ -57,7 +60,7 @@ const PaymentPage = () => {
         key_id: "rzp_test_YourTestKey", // Replace with actual key in production
       };
 
-      // Create Razorpay instance
+      // Create Razorpay instance with more options enabled
       const razorpay = new window.Razorpay({
         key: orderData.key_id,
         amount: orderData.amount,
@@ -75,6 +78,24 @@ const PaymentPage = () => {
         },
         theme: {
           color: "#3B82F6"
+        },
+        // Enable all payment methods
+        modal: {
+          confirm_close: true,
+          ondismiss: function() {
+            setPaymentInitiated(false);
+            setLoading(false);
+          }
+        },
+        // Show all payment options
+        methods: {
+          netbanking: true,
+          card: true,
+          upi: true,
+          wallet: true,
+          emi: true,
+          cardless_emi: true,
+          paylater: true
         }
       });
       
@@ -203,7 +224,7 @@ const PaymentPage = () => {
                 onClick={handlePayment}
                 disabled={loading || paymentInitiated}
               >
-                {loading ? "Processing..." : "Pay ₹" + planInfo.amount}
+                {loading ? "Processing..." : `Pay ₹${planInfo.amount}`}
               </Button>
               
               <p className="text-xs text-center text-gray-500">
