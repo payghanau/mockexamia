@@ -5,6 +5,7 @@ import { CreditCard } from "lucide-react";
 import PaymentSummary from "./PaymentSummary";
 import PaymentMethod from "./PaymentMethod";
 import PaymentDetails from "./PaymentDetails";
+import { useState } from "react";
 
 type PlanInfo = {
   planName: string;
@@ -14,9 +15,17 @@ type PlanInfo = {
 
 interface PaymentCardProps {
   planInfo: PlanInfo;
+  examId?: string;
 }
 
-const PaymentCard = ({ planInfo }: PaymentCardProps) => {
+const PaymentCard = ({ planInfo, examId = "" }: PaymentCardProps) => {
+  const [paymentComplete, setPaymentComplete] = useState(false);
+  
+  const handlePaymentSuccess = (paymentId: string) => {
+    console.log("Payment completed successfully:", paymentId);
+    setPaymentComplete(true);
+  };
+
   return (
     <Card className="overflow-hidden border-gray-200 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
@@ -35,7 +44,10 @@ const PaymentCard = ({ planInfo }: PaymentCardProps) => {
       <CardContent className="pt-6">
         <div className="space-y-6">
           <PaymentSummary planInfo={planInfo} />
-          <PaymentMethod />
+          <PaymentMethod 
+            examId={examId} 
+            onPaymentSuccess={handlePaymentSuccess} 
+          />
         </div>
       </CardContent>
       <CardFooter className="p-0">

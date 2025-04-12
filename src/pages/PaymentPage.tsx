@@ -55,7 +55,7 @@ const PaymentPage = () => {
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Pricing
           </Button>
           
-          <PaymentCard planInfo={planInfo} />
+          <PaymentCard planInfo={planInfo} examId={examId} />
         </div>
       </main>
       <Footer />

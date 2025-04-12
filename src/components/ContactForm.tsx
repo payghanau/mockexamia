@@ -44,16 +44,15 @@ const ContactForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Store message in Supabase database
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          user_id: user?.id || null
-        });
+      // Store message directly using fetch to the Supabase API
+      // This is a workaround since the contact_messages table is not in TypeScript types yet
+      const { error } = await supabase.rpc('submit_contact_form', {
+        p_name: formData.name,
+        p_email: formData.email,
+        p_subject: formData.subject,
+        p_message: formData.message,
+        p_user_id: user?.id || null
+      });
       
       if (error) throw error;
       
