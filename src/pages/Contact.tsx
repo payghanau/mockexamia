@@ -1,38 +1,16 @@
-
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle, ArrowRight } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Phone, Mail, MapPin, Clock, MessageSquare, ArrowRight } from "lucide-react";
+import ContactForm from "@/components/ContactForm";
 
 const Contact = () => {
-  const { toast } = useToast();
-
   useEffect(() => {
     document.title = "Contact Us - myturnindia";
   }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Contact form submission logic would go here
-    console.log("Form submitted");
-    
-    // Display success message
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you within 24 hours.",
-      action: (
-        <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-          <CheckCircle className="h-5 w-5 text-green-600" />
-        </div>
-      ),
-    });
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,64 +42,7 @@ const Contact = () => {
                   Fill out the form below, and we'll get back to you within 24 hours.
                 </p>
 
-                <form onSubmit={handleSubmit} className="space-y-6 bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Name
-                      </label>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Your Name"
-                        required
-                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="your@email.com"
-                        required
-                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                      Subject
-                    </label>
-                    <Input
-                      id="subject"
-                      type="text"
-                      placeholder="How can we help you?"
-                      required
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Message
-                    </label>
-                    <Textarea
-                      id="message"
-                      placeholder="Your message..."
-                      rows={5}
-                      required
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg w-full"
-                    />
-                  </div>
-                  
-                  <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg py-3 text-white gap-2">
-                    Send Message <Send className="h-4 w-4" />
-                  </Button>
-                </form>
+                <ContactForm />
               </div>
 
               {/* Contact Information */}
@@ -203,7 +124,6 @@ const Contact = () => {
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">Find Us</h2>
             <div className="rounded-2xl overflow-hidden shadow-lg h-96 border border-gray-100">
-              {/* Placeholder for a map. In a real application, you would integrate Google Maps or another map service here */}
               <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                 <p className="text-gray-800 text-lg font-medium">Interactive Map Loading...</p>
               </div>

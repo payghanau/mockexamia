@@ -1,6 +1,6 @@
 
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,129 +14,105 @@ serve(async (req) => {
   }
 
   try {
-    // Get request body
-    const { examId } = await req.json();
+    // Get request data
+    const { examId, userId } = await req.json();
     
     if (!examId) {
-      return new Response(
-        JSON.stringify({ error: 'Exam ID is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      throw new Error('Exam ID is required');
+    }
+    
+    if (!userId) {
+      throw new Error('User ID is required');
     }
 
-    // Get authorization header
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'Authorization header is required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create Supabase client
+    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') || '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Verify the user is authenticated
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     // Get exam details
-    const { data: exam, error: examError } = await supabase
+    const { data: examData, error: examError } = await supabase
       .from('exams')
       .select('*')
       .eq('id', examId)
       .single();
     
-    if (examError || !exam) {
-      return new Response(
-        JSON.stringify({ error: 'Exam not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (examError || !examData) {
+      throw new Error('Exam not found');
     }
 
-    // Initialize Razorpay
-    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID');
-    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
-    
+    // Create Razorpay order
+    const razorpayKeyId = Deno.env.get('RAZORPAY_KEY_ID') || '';
+    const razorpayKeySecret = Deno.env.get('RAZORPAY_KEY_SECRET') || '';
+
     if (!razorpayKeyId || !razorpayKeySecret) {
-      return new Response(
-        JSON.stringify({ error: 'Razorpay configuration is missing' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      throw new Error('Razorpay credentials not configured');
     }
 
-    // Create order in Razorpay
-    const amount = Math.round(exam.fee * 100); // Convert to paise
-    const currency = 'INR';
-    const receipt = `exam_${examId}_${Date.now()}`;
-    
-    const response = await fetch('https://api.razorpay.com/v1/orders', {
+    // Basic auth for Razorpay API
+    const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
+
+    // Create order
+    const orderResponse = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: {
+        'Authorization': `Basic ${auth}`,
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${razorpayKeyId}:${razorpayKeySecret}`)}`,
       },
       body: JSON.stringify({
-        amount,
-        currency,
-        receipt,
+        amount: examData.fee * 100, // amount in paisa
+        currency: 'INR',
+        receipt: `exam_${examId}_${userId}_${Date.now()}`,
+        notes: {
+          examId: examId,
+          userId: userId,
+          examTitle: examData.title
+        }
       }),
     });
 
-    const orderData = await response.json();
+    const orderData = await orderResponse.json();
     
-    if (!orderData.id) {
-      console.error('Razorpay order creation failed:', orderData);
-      return new Response(
-        JSON.stringify({ error: 'Failed to create order' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!orderResponse.ok) {
+      throw new Error(orderData.error?.description || 'Failed to create Razorpay order');
     }
 
-    // Create payment record in Supabase
+    // Store payment record in database
     const { data: paymentData, error: paymentError } = await supabase
       .from('payments')
       .insert({
-        user_id: user.id,
+        user_id: userId,
         exam_id: examId,
-        amount: exam.fee,
+        amount: examData.fee,
         status: 'pending',
-        order_id: orderData.id,
+        order_id: orderData.id
       })
-      .select()
-      .single();
-
+      .select();
+    
     if (paymentError) {
-      console.error('Payment record creation failed:', paymentError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to create payment record' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      throw new Error('Failed to store payment record');
     }
 
     return new Response(
       JSON.stringify({
-        id: orderData.id,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        payment_id: paymentData.id,
+        success: true,
+        order: orderData,
+        payment: paymentData[0]
       }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
     );
   } catch (error) {
-    console.error('Error processing request:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
     );
   }
 });

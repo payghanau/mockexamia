@@ -316,13 +316,26 @@ export const userExamService = {
   }
 };
 
-// Payment services - continue using Razorpay
+// Payment services - using Supabase edge functions for Razorpay
 export const paymentService = {
   createPaymentOrder: async (examId: string) => {
     try {
-      // For Razorpay we still need a server endpoint
-      const response = await api.post('/payments/create-order', { examId });
-      return response.data;
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (!userData.user) throw new Error('Not authenticated');
+      
+      const { data, error } = await supabase.functions.invoke('razorpay-create-order', {
+        body: {
+          examId,
+          userId: userData.user.id
+        }
+      });
+      
+      if (error || !data.success) {
+        throw new Error(error?.message || data?.error || 'Failed to create payment order');
+      }
+      
+      return data;
     } catch (error: any) {
       console.error('Create payment order failed:', error);
       toast.error('Failed to create payment order');
@@ -334,10 +347,28 @@ export const paymentService = {
     razorpay_order_id: string;
     razorpay_payment_id: string;
     razorpay_signature: string;
+    examId: string;
   }) => {
     try {
-      const response = await api.post('/payments/verify', paymentData);
-      return response.data;
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (!userData.user) throw new Error('Not authenticated');
+      
+      const { data, error } = await supabase.functions.invoke('razorpay-verify-payment', {
+        body: {
+          razorpay_order_id: paymentData.razorpay_order_id,
+          razorpay_payment_id: paymentData.razorpay_payment_id,
+          razorpay_signature: paymentData.razorpay_signature,
+          userId: userData.user.id,
+          examId: paymentData.examId
+        }
+      });
+      
+      if (error || !data.success) {
+        throw new Error(error?.message || data?.error || 'Failed to verify payment');
+      }
+      
+      return data;
     } catch (error: any) {
       console.error('Verify payment failed:', error);
       toast.error('Failed to verify payment');
