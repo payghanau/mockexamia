@@ -53,7 +53,7 @@ export const paymentService = {
       }
 
       const data = await response.json();
-      return data.order;
+      return data;
     } catch (error: any) {
       console.error('Error creating Razorpay order:', error.message);
       throw error;

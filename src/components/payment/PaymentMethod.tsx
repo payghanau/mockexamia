@@ -34,7 +34,11 @@ const PaymentMethod = ({ examId, onPaymentSuccess }: PaymentMethodProps) => {
 
     try {
       // Create order
-      const orderData = await paymentService.createPaymentOrder(examId);
+      const orderData = await paymentService.createRazorpayOrder(
+        1000, // Default amount, you can adjust as needed
+        examId,
+        user.id
+      );
       
       if (!orderData || !orderData.order) {
         throw new Error("Failed to create payment order");
@@ -55,12 +59,11 @@ const PaymentMethod = ({ examId, onPaymentSuccess }: PaymentMethodProps) => {
         handler: async function (response: any) {
           try {
             // Verify payment
-            await paymentService.verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              examId
-            });
+            await paymentService.verifyRazorpayPayment(
+              response.razorpay_order_id,
+              response.razorpay_payment_id,
+              response.razorpay_signature
+            );
 
             // Call success callback
             onPaymentSuccess(response.razorpay_payment_id);

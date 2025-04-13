@@ -1,10 +1,13 @@
 import React from 'react';
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { 
   ArrowRight, 
   BookOpen, 
@@ -23,6 +26,10 @@ import {
 } from "lucide-react";
 
 const NismExams = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  
   useEffect(() => {
     document.title = "NISM Certifications - myturnindia";
   }, []);
@@ -158,7 +165,7 @@ const NismExams = () => {
     }
   ];
 
-  const handlePackageClick = (examPackage) => {
+  const handlePackageClick = (pkg: any) => {
     if (!isAuthenticated) {
       toast({
         title: "Authentication Required",
@@ -169,7 +176,7 @@ const NismExams = () => {
       return;
     }
     
-    navigate(`/payment/${examPackage.examId}`);
+    navigate(`/payment/${pkg.examId}`);
   };
 
   return (
