@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -396,6 +397,33 @@ export const paymentService = {
     } catch (error: any) {
       console.error('Get payment status failed:', error);
       toast.error('Failed to get payment status');
+      throw error;
+    }
+  }
+};
+
+// Contact form service - using Supabase edge function
+export const contactService = {
+  submitContactForm: async (formData: { 
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    user_id?: string | null;
+  }) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('submit-contact-form', {
+        body: formData
+      });
+      
+      if (error || !data.success) {
+        throw new Error(error?.message || data?.error || 'Failed to submit contact form');
+      }
+      
+      return data;
+    } catch (error: any) {
+      console.error('Submit contact form failed:', error);
+      toast.error('Failed to submit contact form');
       throw error;
     }
   }

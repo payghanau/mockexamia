@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -193,15 +194,19 @@ export interface Database {
   }
 }
 
+export type ExamRow = Database['public']['Tables']['exams']['Row'];
+export type QuestionRow = Database['public']['Tables']['questions']['Row'];
+export type UserExamRow = Database['public']['Tables']['user_exams']['Row'];
+export type PaymentRow = Database['public']['Tables']['payments']['Row'];
+export type ContactMessageRow = Database['public']['Tables']['contact_messages']['Row'];
+
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & { step: any })
+    | keyof Database["public"]["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-      ? PublicTableNameOrOptions
-      : never
+    : PublicTableNameOrOptions
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Row: infer R
@@ -209,7 +214,7 @@ export type Tables<
     ? R
     : never
   : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][TableName] extends {
+    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -222,9 +227,7 @@ export type TablesInsert<
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-      ? PublicTableNameOrOptions
-      : never
+    : PublicTableNameOrOptions
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
@@ -232,7 +235,7 @@ export type TablesInsert<
     ? I
     : never
   : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][TableName] extends {
+    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -245,9 +248,7 @@ export type TablesUpdate<
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-      ? PublicTableNameOrOptions
-      : never
+    : PublicTableNameOrOptions
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
@@ -255,7 +256,7 @@ export type TablesUpdate<
     ? U
     : never
   : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][TableName] extends {
+    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -268,184 +269,9 @@ export type Enums<
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-      ? PublicEnumNameOrOptions
-      : never
+    : PublicEnumNameOrOptions
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-    ? Database["public"]["Enums"][EnumName]
+    ? Database["public"]["Enums"][PublicEnumNameOrOptions]
     : never
-// Add the contact_messages table to the Tables interface
-export interface ExamRow {
-  id: string;
-  title: string;
-  description: string | null;
-  duration: number;
-  total_questions: number;
-  category: string;
-  subcategory: string | null;
-  type: string;
-  fee: number;
-  created_by: string | null;
-  created_at: string | null;
-  is_active: boolean | null;
-}
-
-export interface Tables {
-  exams: {
-    Row: ExamRow;
-    Insert: {
-      id?: string;
-      title: string;
-      description?: string | null;
-      duration: number;
-      total_questions: number;
-      category: string;
-      subcategory?: string | null;
-      type: string;
-      fee: number;
-      created_by?: string | null;
-      created_at?: string | null;
-      is_active?: boolean | null;
-    };
-    Update: {
-      id?: string;
-      title?: string;
-      description?: string | null;
-      duration?: number;
-      total_questions?: number;
-      category?: string;
-      subcategory?: string | null;
-      type?: string;
-      fee?: number;
-      created_by?: string | null;
-      created_at?: string | null;
-      is_active?: boolean | null;
-    };
-    Relationships: [];
-  };
-  payments: {
-    Row: {
-      id: string;
-      user_id: string;
-      amount: number;
-      status: string;
-      created_at: string | null;
-      payment_id: string | null;
-      exam_id: string | null;
-    };
-    Insert: {
-      id?: string;
-      user_id: string;
-      amount: number;
-      status?: string;
-      created_at?: string | null;
-      payment_id?: string | null;
-      exam_id?: string | null;
-    };
-    Update: {
-      id?: string;
-      user_id?: string;
-      amount?: number;
-      status?: string;
-      created_at?: string | null;
-      payment_id?: string | null;
-      exam_id?: string | null;
-    };
-    Relationships: [];
-  };
-  questions: {
-    Row: {
-      id: string;
-      exam_id: string;
-      question_text: string;
-      options: string[] | null;
-      correct_answer: string;
-      explanation: string | null;
-      created_at: string | null;
-    };
-    Insert: {
-      id?: string;
-      exam_id: string;
-      question_text: string;
-      options?: string[] | null;
-      correct_answer: string;
-      explanation?: string | null;
-      created_at?: string | null;
-    };
-    Update: {
-      id?: string;
-      exam_id?: string;
-      question_text?: string;
-      options?: string[] | null;
-      correct_answer?: string;
-      explanation?: string | null;
-      created_at?: string | null;
-    };
-    Relationships: [];
-  };
-  user_exams: {
-    Row: {
-      id: string;
-      user_id: string;
-      exam_id: string;
-      score: number;
-      time_taken: number;
-      created_at: string | null;
-      answers: Record<string, string> | null;
-    };
-    Insert: {
-      id?: string;
-      user_id: string;
-      exam_id: string;
-      score: number;
-      time_taken: number;
-      created_at?: string | null;
-      answers?: Record<string, string> | null;
-    };
-    Update: {
-      id?: string;
-      user_id?: string;
-      exam_id?: string;
-      score?: number;
-      time_taken?: number;
-      created_at?: string | null;
-      answers?: Record<string, string> | null;
-    };
-    Relationships: [];
-  };
-  contact_messages: {
-    Row: {
-      id: string;
-      name: string;
-      email: string;
-      subject: string;
-      message: string;
-      created_at: string;
-      status: string;
-      user_id: string | null;
-    };
-    Insert: {
-      id?: string;
-      name: string;
-      email: string;
-      subject: string;
-      message: string;
-      created_at?: string;
-      status?: string;
-      user_id?: string | null;
-    };
-    Update: {
-      id?: string;
-      name?: string;
-      email?: string;
-      subject?: string;
-      message?: string;
-      created_at?: string;
-      status?: string;
-      user_id?: string | null;
-    };
-    Relationships: [];
-  };
-}

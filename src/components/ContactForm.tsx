@@ -8,8 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { contactService } from '@/services/api';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -38,26 +38,17 @@ const ContactForm: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
-      // Use the edge function to submit the contact form
-      const response = await fetch('/api/submit-contact-form', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          user_id: user?.id || null
-        }),
+      await contactService.submitContactForm({
+        ...data,
+        user_id: user?.id || null
       });
 
-      if (response.ok) {
-        toast({
-          title: "Message sent!",
-          description: "We will get back to you soon.",
-          variant: "default",
-        });
-        form.reset();
-      } else {
-        throw new Error('Failed to send message');
-      }
+      toast({
+        title: "Message sent!",
+        description: "We will get back to you soon.",
+        variant: "default",
+      });
+      form.reset();
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
