@@ -35,9 +35,24 @@ const App = () => {
             <Toaster />
             <Sonner />
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/exams/nism" element={<NismExams />} />
+              <Route path="/exams/gate" element={<GateExams />} />
+              <Route path="/exams/gate/section-wise" element={<Navigate to="/exams/gate" replace />} />
+              <Route path="/exams/gate/full-length" element={<Navigate to="/exams/gate" replace />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/mock-tests" element={<MockTests />} />
+              <Route path="/faq" element={<Navigate to="/contact" replace />} />
+              <Route path="/terms" element={<Navigate to="/contact" replace />} />
+              <Route path="/privacy" element={<Navigate to="/contact" replace />} />
+              <Route path="/cookies" element={<Navigate to="/contact" replace />} />
+              <Route path="/help" element={<Navigate to="/contact" replace />} />
+              
+              {/* Protected Routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
@@ -58,6 +73,8 @@ const App = () => {
                   <PaymentPage />
                 </ProtectedRoute>
               } />
+              
+              {/* Admin Routes */}
               <Route path="/admin" element={
                 <AdminRoute>
                   <AdminDashboard />
@@ -68,17 +85,12 @@ const App = () => {
                   <AdminDashboard />
                 </AdminRoute>
               } />
-              <Route path="/exams/nism" element={<NismExams />} />
-              <Route path="/exams/gate" element={<GateExams />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/mock-tests" element={<MockTests />} />
               
-              {/* Add redirects for the old paths to maintain backward compatibility */}
+              {/* Legacy URL redirects */}
               <Route path="/nism-exams" element={<Navigate to="/exams/nism" replace />} />
               <Route path="/gate-exams" element={<Navigate to="/exams/gate" replace />} />
               
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

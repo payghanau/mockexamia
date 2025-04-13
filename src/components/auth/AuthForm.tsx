@@ -56,15 +56,35 @@ const AuthForm = ({
     const newOtp = generateOTP();
     setIsEmailSent(true);
     
-    // Display the OTP in a toast for testing purposes
-    // In a real app, this would be sent via email
-    toast({
-      title: "Verification code sent",
-      description: `Your OTP code is: ${newOtp}`,
-    });
-    
-    // In a real application, we would call an API to send the OTP to the user's email
-    console.log(`OTP code generated for ${email}: ${newOtp}`);
+    try {
+      // In a real app, this would call an API to send the email with OTP
+      // For this demo, we're just showing it in the UI
+      
+      // Display a toast notification with the OTP
+      toast({
+        title: "Verification code sent",
+        description: `Your OTP code is: ${newOtp}`,
+      });
+      
+      console.log(`OTP code generated for ${email}: ${newOtp}`);
+      
+      // In a real implementation, we would make an API call here to send an email
+      // containing the OTP to the user's email address
+      // For example:
+      // await fetch('/api/send-verification-email', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ email, otp: newOtp }),
+      // });
+      
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send verification code. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const verifyOtp = async () => {
@@ -183,13 +203,15 @@ const AuthForm = ({
           <CardDescription>
             We've sent a 6-digit verification code to {email}
           </CardDescription>
-          <CardDescription className="font-semibold text-blue-600">
-            Your verification code is: {generatedOtp}
-          </CardDescription>
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
+            <p className="text-sm text-gray-700 mb-1">For this demo purpose, your verification code is:</p>
+            <p className="text-lg font-semibold text-blue-600">{generatedOtp}</p>
+            <p className="text-xs text-gray-500 mt-1">In a real app, this would be sent to your email</p>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="otp">Verification Code</Label>
+            <Label htmlFor="otp">Enter Verification Code</Label>
             <div className="flex justify-center py-4">
               <InputOTP maxLength={6} value={otp} onChange={setOtp}>
                 <InputOTPGroup>

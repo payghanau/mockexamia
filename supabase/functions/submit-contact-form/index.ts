@@ -41,8 +41,11 @@ serve(async (req) => {
     
     if (error) throw error;
     
-    // Send confirmation email would be here in a real implementation
+    // Log the submission for debugging
     console.log(`Contact form submission from ${name} (${email}): ${subject}`);
+
+    // In a real implementation, you would send a confirmation email here
+    // For example using an email service like Resend or SendGrid
 
     // Return success response
     return new Response(
