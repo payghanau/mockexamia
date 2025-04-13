@@ -1,3 +1,4 @@
+
 import { supabaseClient } from "@/lib/supabase";
 import { ContactFormValues } from "@/types";
 
@@ -15,9 +16,13 @@ export const authService = {
     }
   },
 
-  register: async (email: string) => {
+  register: async (email: string, password: string) => {
     try {
-      const { error } = await supabaseClient.auth.signUp({ email, options: { emailRedirectTo: `${window.location.origin}/dashboard` } });
+      const { error } = await supabaseClient.auth.signUp({ 
+        email, 
+        password, 
+        options: { emailRedirectTo: `${window.location.origin}/dashboard` } 
+      });
       if (error) throw error;
       return { success: true, message: 'Check your email to complete registration' };
     } catch (err: any) {

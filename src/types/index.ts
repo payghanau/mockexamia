@@ -62,3 +62,10 @@ export type ExamAnalysis = {
   timeTaken: number; // in seconds
   accuracy: number;
 };
+
+export type ContactFormValues = {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+};
