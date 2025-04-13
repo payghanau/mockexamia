@@ -1,5 +1,6 @@
-import React from 'react';
-import { useEffect } from "react";
+
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
@@ -24,10 +25,17 @@ import {
   Trophy,
   Users,
   BookCheck,
-  Calculator
+  Calculator,
+  IndianRupee
 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 const GateExams = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+  
   useEffect(() => {
     document.title = "GATE Exams - myturnindia";
   }, []);
@@ -77,6 +85,7 @@ const GateExams = () => {
 
   const examTypes = [
     {
+      id: "subject",
       title: "Subject-wise Practice",
       icon: <BookOpen className="h-6 w-6 text-white" />,
       description: "Master individual subjects with focused practice tests",
@@ -86,9 +95,13 @@ const GateExams = () => {
         "Track your progress by topic",
         "Focus on your weak areas"
       ],
-      bgClass: "from-blue-600 to-blue-800"
+      bgClass: "from-blue-600 to-blue-800",
+      price: 299,
+      gst: "18%",
+      examId: "gate-subject-practice"
     },
     {
+      id: "previous",
       title: "Previous Year Papers",
       icon: <Clock className="h-6 w-6 text-white" />,
       description: "Practice with actual questions from previous GATE exams",
@@ -98,9 +111,13 @@ const GateExams = () => {
         "Analysis of question patterns",
         "Topic-wise classification"
       ],
-      bgClass: "from-blue-700 to-blue-900"
+      bgClass: "from-blue-700 to-blue-900",
+      price: 299,
+      gst: "18%",
+      examId: "gate-previous-papers"
     },
     {
+      id: "full",
       title: "Full Mock Tests",
       icon: <Brain className="h-6 w-6 text-white" />,
       description: "Simulate the actual GATE exam experience",
@@ -110,9 +127,41 @@ const GateExams = () => {
         "NAT and MCQ question types",
         "Detailed performance analysis"
       ],
-      bgClass: "from-blue-800 to-blue-950"
+      bgClass: "from-blue-800 to-blue-950",
+      price: 599,
+      gst: "18%",
+      examId: "gate-full-mock"
     }
   ];
+  
+  const comboPackage = {
+    id: "combo",
+    title: "GATE Combo Package",
+    description: "Complete GATE preparation package including all mock tests",
+    features: [
+      "Subject-wise Practice",
+      "Previous Year Papers",
+      "Full Mock Tests",
+      "10 days validity for all tests"
+    ],
+    price: 899,
+    gst: "18%",
+    examId: "gate-combo-package"
+  };
+  
+  const handleExamTypeClick = (examType) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access this exam package",
+        variant: "destructive"
+      });
+      navigate("/login");
+      return;
+    }
+    
+    navigate(`/payment/${examType.examId}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -245,7 +294,8 @@ const GateExams = () => {
               {examTypes.map((type, index) => (
                 <Card 
                   key={index} 
-                  className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 bg-gradient-to-br ${type.bgClass} border-none rounded-2xl`}
+                  className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 bg-gradient-to-br ${type.bgClass} border-none rounded-2xl cursor-pointer`}
+                  onClick={() => handleExamTypeClick(type)}
                 >
                   <div className="absolute top-0 right-0 opacity-10">
                     <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -271,14 +321,73 @@ const GateExams = () => {
                         </li>
                       ))}
                     </ul>
+                    <div className="mt-6 py-3 px-4 bg-white/10 rounded-lg backdrop-blur-sm flex items-center justify-between">
+                      <div className="flex items-center">
+                        <IndianRupee className="h-4 w-4 text-white mr-1" />
+                        <span className="text-xl font-bold">{type.price}</span>
+                        <span className="text-sm ml-1">+{type.gst} GST</span>
+                      </div>
+                      <div className="text-sm text-blue-100">
+                        10 days validity
+                      </div>
+                    </div>
                   </CardContent>
                   <CardFooter>
-                    <Button asChild className="w-full bg-white hover:bg-blue-50 text-blue-800 rounded-xl font-medium shadow-md">
-                      <Link to="/dashboard">Explore Tests</Link>
+                    <Button className="w-full bg-white hover:bg-blue-50 text-blue-800 rounded-xl font-medium shadow-md">
+                      Purchase Now
                     </Button>
                   </CardFooter>
                 </Card>
               ))}
+            </div>
+            
+            {/* Combo Package Card */}
+            <div className="mt-12">
+              <Card className="overflow-hidden rounded-2xl border-2 border-blue-400 shadow-xl bg-gradient-to-br from-blue-50 to-white">
+                <div className="absolute top-5 right-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 rounded-full text-sm font-medium shadow-md">
+                  Best Value
+                </div>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-blue-900">{comboPackage.title}</CardTitle>
+                      <CardDescription className="text-blue-700 mt-1">{comboPackage.description}</CardDescription>
+                    </div>
+                    <div className="bg-blue-100 p-4 rounded-xl flex items-center">
+                      <div>
+                        <div className="flex items-center">
+                          <IndianRupee className="h-4 w-4 text-blue-700" />
+                          <span className="text-2xl font-bold text-blue-900">{comboPackage.price}</span>
+                          <span className="text-sm ml-1 text-blue-700">+{comboPackage.gst} GST</span>
+                        </div>
+                        <div className="text-xs text-blue-600 mt-1">10 days validity</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-3">
+                    {comboPackage.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center bg-blue-50 p-3 rounded-lg">
+                        <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                        <span className="text-blue-800">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-blue-600 text-sm mt-4 bg-blue-50 p-3 rounded-lg">
+                    <Star className="h-4 w-4 text-yellow-500 inline mr-2" />
+                    Save ₹298 compared to purchasing individual packages!
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white rounded-xl py-6 text-lg font-medium shadow-lg"
+                    onClick={() => handleExamTypeClick(comboPackage)}
+                  >
+                    Get Complete Package
+                  </Button>
+                </CardFooter>
+              </Card>
             </div>
           </div>
         </div>

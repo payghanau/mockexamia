@@ -1,432 +1,168 @@
+import { supabaseClient } from "@/lib/supabase";
+import { ContactFormValues } from "@/types";
 
-import axios from 'axios';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import type { Json } from '@/integrations/supabase/types';
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
-// Create axios instance for any external APIs we might still need
-const api = axios.create({
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 10000, // 10 second timeout
-});
-
-// Auth services
 export const authService = {
-  register: async (userData: { email: string; password: string; name?: string }) => {
+  login: async (email: string) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: userData.email,
-        password: userData.password,
-        options: {
-          data: {
-            name: userData.name || ''
-          }
-        }
-      });
-      
+      const { error } = await supabaseClient.auth.signInWithOtp({ email });
       if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Registration failed:', error);
-      throw error;
+      return { success: true, message: 'Check your email for the login link' };
+    } catch (err: any) {
+      console.error('Login error:', err.message);
+      return { success: false, message: err.message || 'Failed to login' };
     }
   },
-  
-  login: async (credentials: { email: string; password: string }) => {
+
+  register: async (email: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password
-      });
-      
+      const { error } = await supabaseClient.auth.signUp({ email, options: { emailRedirectTo: `${window.location.origin}/dashboard` } });
       if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Login failed:', error);
-      throw error;
+      return { success: true, message: 'Check your email to complete registration' };
+    } catch (err: any) {
+      console.error('Registration error:', err.message);
+      return { success: false, message: err.message || 'Failed to register' };
     }
   },
-  
-  getCurrentUser: async () => {
+
+  logout: async () => {
     try {
-      const { data, error } = await supabase.auth.getUser();
-      
+      const { error } = await supabaseClient.auth.signOut();
       if (error) throw error;
-      
-      return data.user;
-    } catch (error: any) {
-      console.error('Get current user failed:', error);
-      throw error;
+      return { success: true };
+    } catch (err: any) {
+      console.error('Logout error:', err.message);
+      return { success: false, message: err.message || 'Failed to logout' };
     }
-  }
+  },
 };
 
-// Exam services - using Supabase
-export const examService = {
-  getAllExams: async (params?: { category?: string; type?: string }) => {
+export const paymentService = {
+  createRazorpayOrder: async (amount: number, examId: string, userId: string) => {
     try {
-      let query = supabase.from('exams').select('*');
-      
-      if (params?.category) {
-        query = query.eq('category', params.category);
+      const response = await fetch('/api/razorpay-create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, examId, userId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create Razorpay order');
       }
-      
-      if (params?.type) {
-        query = query.eq('type', params.type);
-      }
-      
-      const { data, error } = await query;
-      
-      if (error) throw error;
-      
-      return data;
+
+      const data = await response.json();
+      return data.order;
     } catch (error: any) {
-      console.error('Get all exams failed:', error);
-      toast.error('Failed to load exams');
+      console.error('Error creating Razorpay order:', error.message);
       throw error;
     }
   },
-  
+
+  verifyRazorpayPayment: async (razorpayOrderId: string, razorpayPaymentId: string, razorpaySignature: string) => {
+    try {
+      const response = await fetch('/api/razorpay-verify-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ razorpayOrderId, razorpayPaymentId, razorpaySignature }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to verify Razorpay payment');
+      }
+
+      const data = await response.json();
+      return data.success;
+    } catch (error: any) {
+      console.error('Error verifying Razorpay payment:', error.message);
+      throw error;
+    }
+  },
+};
+
+export const contactService = {
+  submitContactForm: async (values: ContactFormValues) => {
+    try {
+      const response = await fetch('/api/submit-contact-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit contact form');
+      }
+
+      const data = await response.json();
+      return data.success;
+    } catch (error: any) {
+      console.error('Error submitting contact form:', error.message);
+      throw error;
+    }
+  },
+};
+
+export const examService = {
+  getAllExams: async () => {
+    try {
+      const { data, error } = await supabaseClient
+        .from('exams')
+        .select('*')
+        .eq('is_active', true);
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error fetching exams:', error);
+      throw error;
+    }
+  },
+
   getExamById: async (examId: string) => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('exams')
         .select('*')
         .eq('id', examId)
         .single();
-      
-      if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Get exam by ID failed:', error);
-      toast.error('Failed to load exam details');
-      throw error;
-    }
-  },
-  
-  getExamQuestions: async (examId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('exam_id', examId);
-      
-      if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Get exam questions failed:', error);
-      toast.error('Failed to load exam questions');
-      throw error;
-    }
-  },
-  
-  createExam: async (examData: any) => {
-    try {
-      const { data, error } = await supabase
-        .from('exams')
-        .insert(examData)
-        .select();
-      
-      if (error) throw error;
-      
-      return data[0];
-    } catch (error: any) {
-      console.error('Create exam failed:', error);
-      toast.error('Failed to create exam');
-      throw error;
-    }
-  },
-  
-  updateExam: async (examId: string, examData: any) => {
-    try {
-      const { data, error } = await supabase
-        .from('exams')
-        .update(examData)
-        .eq('id', examId)
-        .select();
-      
-      if (error) throw error;
-      
-      return data[0];
-    } catch (error: any) {
-      console.error('Update exam failed:', error);
-      toast.error('Failed to update exam');
-      throw error;
-    }
-  },
-  
-  deleteExam: async (examId: string) => {
-    try {
-      // First delete associated questions
-      const { error: questionsError } = await supabase
-        .from('questions')
-        .delete()
-        .eq('exam_id', examId);
-      
-      if (questionsError) throw questionsError;
-      
-      // Then delete the exam
-      const { error } = await supabase
-        .from('exams')
-        .delete()
-        .eq('id', examId);
-      
-      if (error) throw error;
-      
-      return { success: true };
-    } catch (error: any) {
-      console.error('Delete exam failed:', error);
-      toast.error('Failed to delete exam');
-      throw error;
-    }
-  },
-  
-  addQuestions: async (examId: string, questions: any[]) => {
-    try {
-      const questionsWithExamId = questions.map(q => ({
-        ...q,
-        exam_id: examId
-      }));
-      
-      const { data, error } = await supabase
-        .from('questions')
-        .insert(questionsWithExamId)
-        .select();
-      
-      if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Add questions failed:', error);
-      toast.error('Failed to add questions');
-      throw error;
-    }
-  }
-};
 
-// User exam services - using Supabase
-export const userExamService = {
-  getUserExams: async () => {
-    try {
-      const { data, error } = await supabase
-        .from('user_exams')
-        .select('*');
-      
       if (error) throw error;
-      
       return data;
-    } catch (error: any) {
-      console.error('Get user exams failed:', error);
-      toast.error('Failed to load your exam results');
+    } catch (error) {
+      console.error('Error fetching exam:', error);
       throw error;
     }
   },
   
-  getUserExamById: async (resultId: string) => {
+  getUserPurchases: async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('user_exams')
-        .select('*')
-        .eq('id', resultId)
-        .single();
+      if (!userId) throw new Error("User ID is required");
       
-      if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Get user exam by ID failed:', error);
-      toast.error('Failed to load exam result');
-      throw error;
-    }
-  },
-  
-  startExam: async (examId: string) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (!userData.user) throw new Error('Not authenticated');
-      
-      const { data, error } = await supabase
-        .from('user_exams')
-        .insert({
-          exam_id: examId,
-          user_id: userData.user.id,
-          status: 'in_progress',
-          start_time: new Date().toISOString()
-        })
-        .select();
-      
-      if (error) throw error;
-      
-      return data[0];
-    } catch (error: any) {
-      console.error('Start exam failed:', error);
-      toast.error('Failed to start exam');
-      throw error;
-    }
-  },
-  
-  submitExam: async (userExamId: string, answers: any[]) => {
-    try {
-      // First, update the user_exam record
-      const { data: examData, error: examError } = await supabase
-        .from('user_exams')
-        .update({
-          status: 'completed',
-          end_time: new Date().toISOString(),
-          answers: answers
-        })
-        .eq('id', userExamId)
-        .select();
-      
-      if (examError) throw examError;
-      
-      return examData[0];
-    } catch (error: any) {
-      console.error('Submit exam failed:', error);
-      toast.error('Failed to submit exam');
-      throw error;
-    }
-  },
-  
-  getExamAnalysis: async (resultId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('user_exams')
+      const { data, error } = await supabaseClient
+        .from('payments')
         .select(`
           *,
-          exam:exams(*)
+          exam:exam_id (
+            id,
+            title,
+            description,
+            category,
+            type,
+            duration,
+            total_questions
+          )
         `)
-        .eq('id', resultId)
-        .single();
-      
-      if (error) throw error;
-      
-      return data;
-    } catch (error: any) {
-      console.error('Get exam analysis failed:', error);
-      toast.error('Failed to load exam analysis');
-      throw error;
-    }
-  }
-};
+        .eq('user_id', userId)
+        .eq('status', 'success');
 
-// Payment services - using Supabase edge functions for Razorpay
-export const paymentService = {
-  createPaymentOrder: async (examId: string) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (!userData.user) throw new Error('Not authenticated');
-      
-      const { data, error } = await supabase.functions.invoke('razorpay-create-order', {
-        body: {
-          examId,
-          userId: userData.user.id
-        }
-      });
-      
-      if (error || !data.success) {
-        throw new Error(error?.message || data?.error || 'Failed to create payment order');
-      }
-      
+      if (error) throw error;
       return data;
-    } catch (error: any) {
-      console.error('Create payment order failed:', error);
-      toast.error('Failed to create payment order');
-      throw error;
+    } catch (error) {
+      console.error('Error fetching user purchases:', error);
+      return [];
     }
   },
-  
-  verifyPayment: async (paymentData: {
-    razorpay_order_id: string;
-    razorpay_payment_id: string;
-    razorpay_signature: string;
-    examId: string;
-  }) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (!userData.user) throw new Error('Not authenticated');
-      
-      const { data, error } = await supabase.functions.invoke('razorpay-verify-payment', {
-        body: {
-          razorpay_order_id: paymentData.razorpay_order_id,
-          razorpay_payment_id: paymentData.razorpay_payment_id,
-          razorpay_signature: paymentData.razorpay_signature,
-          userId: userData.user.id,
-          examId: paymentData.examId
-        }
-      });
-      
-      if (error || !data.success) {
-        throw new Error(error?.message || data?.error || 'Failed to verify payment');
-      }
-      
-      return data;
-    } catch (error: any) {
-      console.error('Verify payment failed:', error);
-      toast.error('Failed to verify payment');
-      throw error;
-    }
-  },
-  
-  getPaymentStatus: async (examId: string) => {
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (!userData.user) throw new Error('Not authenticated');
-      
-      const { data, error } = await supabase
-        .from('payments')
-        .select('*')
-        .eq('exam_id', examId)
-        .eq('user_id', userData.user.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
-      
-      if (error) throw error;
-      
-      return data.length > 0 ? data[0] : { status: 'not_paid' };
-    } catch (error: any) {
-      console.error('Get payment status failed:', error);
-      toast.error('Failed to get payment status');
-      throw error;
-    }
-  }
 };
-
-// Contact form service - using Supabase edge function
-export const contactService = {
-  submitContactForm: async (formData: { 
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
-    user_id?: string | null;
-  }) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('submit-contact-form', {
-        body: formData
-      });
-      
-      if (error || !data.success) {
-        throw new Error(error?.message || data?.error || 'Failed to submit contact form');
-      }
-      
-      return data;
-    } catch (error: any) {
-      console.error('Submit contact form failed:', error);
-      toast.error('Failed to submit contact form');
-      throw error;
-    }
-  }
-};
-
-export default api;

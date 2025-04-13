@@ -1,238 +1,167 @@
-
-import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { MenuIcon, X } from "lucide-react";
+import React from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { LogOut, Menu, Layout, User } from "lucide-react"
+import { ModeToggle } from "@/components/ui/mode-toggle"
+import { cn } from "@/lib/utils";
 
-type NavbarProps = {
-  isAuthenticated?: boolean;
-  isAdmin?: boolean;
-};
-
-const Navbar = ({ isAuthenticated: propIsAuthenticated, isAdmin: propIsAdmin }: NavbarProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+const Navbar = () => {
+  const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
-  
-  const { user, isAuthenticated } = useAuth();
-  const isAdmin = propIsAdmin || user?.role === 'admin';
-  
-  const lastScrollY = useRef(0);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      setIsScrolled(currentScrollY > 10);
-      
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  const isLoginPage = location.pathname === '/login';
+  const isRegisterPage = location.pathname === '/register';
 
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-white/95 backdrop-blur-lg shadow-light py-3"
-            : "bg-white py-5"
-        } ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="container px-4 mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary">
-              myturnindia
-            </span>
+    <div className="bg-white sticky top-0 z-50 border-b">
+      <div className="container py-4 px-4 mx-auto flex items-center justify-between">
+        <Link to="/" className="font-bold text-xl text-gray-800">
+          myturnindia
+        </Link>
+
+        <div className="hidden md:flex items-center space-x-6">
+          <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800">
+            Mock Tests
           </Link>
+          <Link to="/pricing" className="text-gray-600 hover:text-gray-800">
+            Pricing
+          </Link>
+          <Link to="/contact" className="text-gray-600 hover:text-gray-800">
+            Contact
+          </Link>
+        </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/mock-tests"
-              className={`text-sm font-medium transition-colors ${
-                location.pathname.includes('mock-tests') 
-                  ? 'text-primary font-semibold' 
-                  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              Mock Tests
-            </Link>
-            <Link
-              to="/pricing"
-              className={`text-sm font-medium transition-colors ${
-                location.pathname.includes('pricing') 
-                  ? 'text-primary font-semibold' 
-                  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              Pricing
-            </Link>
-            <Link
-              to="/contact"
-              className={`text-sm font-medium transition-colors ${
-                location.pathname.includes('contact') 
-                  ? 'text-primary font-semibold' 
-                  : 'text-gray-600 hover:text-primary'
-              }`}
-            >
-              Contact
-            </Link>
-          </nav>
-
-          {/* Desktop Authentication */}
-          <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated || propIsAuthenticated ? (
-              <>
-                {isAdmin && (
-                  <Link to="/admin">
-                    <Button variant="outline" size="sm">
-                      Admin Dashboard
-                    </Button>
-                  </Link>
-                )}
-                <Link to="/dashboard">
-                  <Button variant="outline" size="sm">
-                    Dashboard
-                  </Button>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    window.location.href = "/";
-                  }}
-                >
-                  Sign Out
+        <div className="flex items-center space-x-4">
+          <ModeToggle />
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="px-2">
+                  <Menu className="h-4 w-4" />
                 </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="ghost" size="sm">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button variant="default" size="sm">
-                    Register
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden flex items-center"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6 text-gray-800" />
-            ) : (
-              <MenuIcon className="h-6 w-6 text-gray-800" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden fixed inset-0 z-50 bg-white transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-        >
-          <div className="flex justify-end p-4">
-            <button
-              onClick={closeMenu}
-              className="text-foreground"
-              aria-label="Close menu"
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
-          <div className="flex flex-col items-center space-y-8 p-8">
-            <Link
-              to="/mock-tests"
-              className={`text-lg font-medium ${location.pathname.includes('mock-tests') ? 'text-primary font-semibold' : ''}`}
-              onClick={closeMenu}
-            >
-              Mock Tests
-            </Link>
-            <Link
-              to="/pricing"
-              className={`text-lg font-medium ${location.pathname.includes('pricing') ? 'text-primary font-semibold' : ''}`}
-              onClick={closeMenu}
-            >
-              Pricing
-            </Link>
-            <Link
-              to="/contact"
-              className={`text-lg font-medium ${location.pathname.includes('contact') ? 'text-primary font-semibold' : ''}`}
-              onClick={closeMenu}
-            >
-              Contact
-            </Link>
-
-            <div className="pt-8 flex flex-col space-y-4 w-full">
-              {isAuthenticated || propIsAuthenticated ? (
-                <>
-                  {isAdmin && (
-                    <Link to="/admin" onClick={closeMenu}>
-                      <Button className="w-full">Admin Dashboard</Button>
-                    </Link>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-60">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription>
+                    Navigate through myturnindia
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="grid gap-4 py-4">
+                  <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 block py-2">
+                    Mock Tests
+                  </Link>
+                  <Link to="/pricing" className="text-gray-600 hover:text-gray-800 block py-2">
+                    Pricing
+                  </Link>
+                  <Link to="/contact" className="text-gray-600 hover:text-gray-800 block py-2">
+                    Contact
+                  </Link>
+                  {isAuthenticated ? (
+                    <>
+                      <Link to="/dashboard" className="text-gray-600 hover:text-gray-800 block py-2">
+                        Dashboard
+                      </Link>
+                      <Link to="/profile" className="text-gray-600 hover:text-gray-800 block py-2">
+                        My Profile
+                      </Link>
+                      <Button variant="ghost" className="justify-start" onClick={logout}>
+                        Log out
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" className={cn("text-gray-600 hover:text-gray-800 block py-2", isLoginPage ? 'hidden' : '')}>
+                        Login
+                      </Link>
+                      <Link to="/register" className={cn("text-gray-600 hover:text-gray-800 block py-2", isRegisterPage ? 'hidden' : '')}>
+                        Register
+                      </Link>
+                    </>
                   )}
-                  <Link to="/dashboard" onClick={closeMenu}>
-                    <Button className="w-full">Dashboard</Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      window.location.href = "/";
-                    }}
-                  >
-                    Sign Out
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" onClick={closeMenu}>
-                    <Button variant="outline" className="w-full">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link to="/register" onClick={closeMenu}>
-                    <Button className="w-full">Register</Button>
-                  </Link>
-                </>
-              )}
-            </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
+
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="/placeholder.svg" alt="Profile" />
+                    <AvatarFallback>
+                      {user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.email?.split('@')[0]}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard">
+                    <Layout className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>My Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              {!isLoginPage && (
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    Log In
+                  </Button>
+                </Link>
+              )}
+              {!isRegisterPage && (
+                <Link to="/register">
+                  <Button size="sm">Sign Up</Button>
+                </Link>
+              )}
+            </>
+          )}
         </div>
-      </header>
-      <div className="h-24"></div>
-    </>
+      </div>
+    </div>
   );
 };
 

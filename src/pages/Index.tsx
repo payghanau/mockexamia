@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,8 @@ import {
   Search,
   Star,
   Users,
-  BarChart
+  BarChart,
+  Youtube
 } from "lucide-react";
 import { 
   fadeIn,
@@ -33,6 +33,42 @@ const Index = () => {
   useEffect(() => {
     document.title = "myturnindia - NISM & GATE Mock Exams";
   }, []);
+
+  // YouTube Videos Data
+  const youtubeVideos = [
+    {
+      id: "video1",
+      title: "NISM Series VIII: Essential Concepts Explained",
+      thumbnail: "https://img.youtube.com/vi/Yf5d_Zx3AaI/maxresdefault.jpg",
+      videoId: "Yf5d_Zx3AaI",
+      duration: "15:24",
+      views: "2.5K"
+    },
+    {
+      id: "video2",
+      title: "How to Prepare for GATE Exam in 3 Months",
+      thumbnail: "https://img.youtube.com/vi/N2bLMCJ8jjw/maxresdefault.jpg",
+      videoId: "N2bLMCJ8jjw",
+      duration: "22:15",
+      views: "4.2K"
+    },
+    {
+      id: "video3",
+      title: "NISM Mock Test Strategy for Success",
+      thumbnail: "https://img.youtube.com/vi/aJzRGNpZZ4E/maxresdefault.jpg",
+      videoId: "aJzRGNpZZ4E",
+      duration: "18:10",
+      views: "1.9K"
+    },
+    {
+      id: "video4",
+      title: "GATE CSE: Data Structures Crash Course",
+      thumbnail: "https://img.youtube.com/vi/Xvekin8SQcM/maxresdefault.jpg",
+      videoId: "Xvekin8SQcM",
+      duration: "31:42",
+      views: "7.8K"
+    }
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-white relative overflow-hidden">
@@ -346,6 +382,81 @@ const Index = () => {
         </div>
       </section>
       
+      {/* YouTube Videos Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container px-4 mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="inline-block px-3 py-1 text-sm font-medium bg-red-100 text-red-700 rounded-full mb-3">
+              <Youtube className="w-4 h-4 inline-block mr-1" /> Educational Content
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+              Learn From Our Video Tutorials
+            </h2>
+            <p className="text-lg text-gray-600">
+              Watch expert-led video tutorials to complement your exam preparation
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {youtubeVideos.map((video) => (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow group"
+              >
+                <a 
+                  href={`https://www.youtube.com/watch?v=${video.videoId}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block relative"
+                >
+                  <div className="aspect-video relative overflow-hidden">
+                    <img 
+                      src={video.thumbnail} 
+                      alt={video.title} 
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                      <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                        <Play className="w-5 h-5 text-white fill-current ml-1" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                      {video.duration}
+                    </div>
+                  </div>
+                </a>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
+                  <div className="flex items-center text-xs text-gray-600">
+                    <span>{video.views} views</span>
+                    <span className="mx-2">•</span>
+                    <span>myturnindia</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-10">
+            <Button asChild variant="outline" className="rounded-full">
+              <a 
+                href="https://www.youtube.com/@myturnindia" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <Youtube className="mr-2 h-4 w-4" />
+                Visit Our YouTube Channel
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+      
       {/* Testimonials */}
       <section className="py-20 bg-white">
         <div className="container px-4 mx-auto">
@@ -504,4 +615,3 @@ const Index = () => {
 };
 
 export default Index;
-

@@ -109,6 +109,69 @@ const NismExams = () => {
     }
   ];
 
+  const examPackages = [
+    {
+      id: "chapter-wise",
+      title: "NISM Chapter-wise Tests",
+      description: "Practice with comprehensive chapter-wise tests covering all NISM modules",
+      features: [
+        "In-depth coverage of all chapters",
+        "Detailed explanations for every question",
+        "Track progress by chapter",
+        "Focus on specific areas"
+      ],
+      price: 499,
+      gst: "18%",
+      validity: "10 days",
+      examId: "nism-chapter-wise"
+    },
+    {
+      id: "full-mock",
+      title: "NISM Full Mock Tests",
+      description: "4 complete mock tests simulating the actual NISM certification experience",
+      features: [
+        "4 full-length mock tests",
+        "Real exam-like interface",
+        "Time management practice",
+        "Comprehensive performance analysis"
+      ],
+      price: 599,
+      gst: "18%",
+      validity: "10 days",
+      examId: "nism-full-mock"
+    },
+    {
+      id: "combo",
+      title: "NISM Combo Package",
+      description: "Complete preparation package including both chapter-wise and full mock tests",
+      features: [
+        "All chapter-wise tests",
+        "4 full-length mock tests",
+        "Comprehensive question bank",
+        "Best value package"
+      ],
+      price: 799,
+      gst: "18%",
+      validity: "10 days",
+      examId: "nism-combo-package",
+      isBest: true
+    }
+  ];
+
+  const handlePackageClick = (examPackage) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access this exam package",
+        variant: "destructive"
+      });
+      navigate("/login");
+      return;
+    }
+    
+    navigate(`/payment/${examPackage.examId}`);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
@@ -429,6 +492,65 @@ const NismExams = () => {
             </div>
           </div>
         </div>
+
+        {/* Pricing Section */}
+        <section className="py-16 bg-white">
+          <div className="container px-4 mx-auto">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Choose Your NISM Exam Package
+              </h2>
+              <p className="text-gray-600">
+                Select the package that best fits your preparation needs
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {examPackages.map((pkg) => (
+                <Card 
+                  key={pkg.id} 
+                  className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${pkg.isBest ? 'border-blue-400 shadow-lg' : 'border-gray-200'}`}
+                >
+                  {pkg.isBest && (
+                    <div className="absolute top-5 right-5 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                      Best Value
+                    </div>
+                  )}
+                  
+                  <CardHeader>
+                    <CardTitle className="text-xl font-bold">{pkg.title}</CardTitle>
+                    <CardDescription>{pkg.description}</CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-bold text-gray-900">₹{pkg.price}</div>
+                      <div className="text-sm text-gray-500">+{pkg.gst} GST • {pkg.validity} validity</div>
+                    </div>
+                    
+                    <ul className="space-y-3">
+                      {pkg.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start">
+                          <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  
+                  <CardFooter>
+                    <Button 
+                      className={`w-full ${pkg.isBest ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                      onClick={() => handlePackageClick(pkg)}
+                    >
+                      Purchase Now
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

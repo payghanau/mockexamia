@@ -21,6 +21,7 @@ import GateExams from "./pages/GateExams";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import MockTests from "./pages/MockTests";
+import UserProfile from "./pages/UserProfile";
 import BackgroundAnimation from "./components/ui/BackgroundAnimation";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,11 @@ const App = () => {
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <UserProfile />
                 </ProtectedRoute>
               } />
               <Route path="/exam/:examId" element={

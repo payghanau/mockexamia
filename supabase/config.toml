@@ -6,3 +6,8 @@ project_id = "nufzndolknzcpsiszsev"
 [functions.razorpay-verify-payment]
 
 [functions.submit-contact-form]
+
+[functions.process-nism-orders]
+
+[functions.process-gate-orders]
+
