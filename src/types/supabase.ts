@@ -1,4 +1,3 @@
-
 export type Json =
   | string
   | number
@@ -200,7 +199,6 @@ export type UserExamRow = Database['public']['Tables']['user_exams']['Row'];
 export type PaymentRow = Database['public']['Tables']['payments']['Row'];
 export type ContactMessageRow = Database['public']['Tables']['contact_messages']['Row'];
 
-// Fix the Tables generic type to not duplicate the identifier
 export type TablesType<
   PublicTableNameOrOptions extends
     | keyof Database["public"]["Tables"]
@@ -264,7 +262,6 @@ export type TablesUpdate<
       : never
     : never
 
-// Remove the duplicate Enums type and fix the issue with EnumName indexing
 export type EnumsType<
   PublicEnumNameOrOptions extends
     | keyof Database["public"]["Enums"]
@@ -273,7 +270,7 @@ export type EnumsType<
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : PublicEnumNameOrOptions
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName extends keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"] ? EnumName : never]
   : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
     ? Database["public"]["Enums"][PublicEnumNameOrOptions]
     : never

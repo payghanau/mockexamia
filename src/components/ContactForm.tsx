@@ -38,8 +38,12 @@ const ContactForm: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
+      // Fixed: Pass all required fields explicitly, not as optional
       await contactService.submitContactForm({
-        ...data,
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
         user_id: user?.id || null
       });
 
