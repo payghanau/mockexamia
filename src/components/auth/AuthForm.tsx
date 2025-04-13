@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,31 +39,40 @@ const AuthForm = ({
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [generatedOtp, setGeneratedOtp] = useState<string>("");
   
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login, register } = useAuth();
 
+  // Generate a 6-digit OTP
+  const generateOTP = () => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(otp);
+    return otp;
+  };
+
   const sendVerificationEmail = async () => {
+    const newOtp = generateOTP();
     setIsEmailSent(true);
+    
+    // Display the OTP in a toast for testing purposes
+    // In a real app, this would be sent via email
     toast({
       title: "Verification code sent",
-      description: "Please check your email for the OTP verification code",
+      description: `Your OTP code is: ${newOtp}`,
     });
+    
     // In a real application, we would call an API to send the OTP to the user's email
-    // For this demo, we're simulating the email being sent
+    console.log(`OTP code generated for ${email}: ${newOtp}`);
   };
 
   const verifyOtp = async () => {
     setIsVerifying(true);
     
     try {
-      // In a real application, we would call an API to verify the OTP
-      // For this demo, we're accepting any 6-digit code
-      if (otp.length === 6) {
-        // Simulate server delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+      // Check if entered OTP matches the generated one
+      if (otp === generatedOtp) {
         // Proceed with registration
         await handleRegistration();
         
@@ -173,6 +182,9 @@ const AuthForm = ({
           </CardTitle>
           <CardDescription>
             We've sent a 6-digit verification code to {email}
+          </CardDescription>
+          <CardDescription className="font-semibold text-blue-600">
+            Your verification code is: {generatedOtp}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
