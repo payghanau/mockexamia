@@ -41,10 +41,27 @@
   color: #888;
 }
 
+/* Dark mode support */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+}
+
 /* Fix for content overlap with fixed navbar */
 main.content-area {
-  padding-top: 6rem;
+  padding-top: 0;
   min-height: calc(100vh - 6rem);
+}
+
+/* Fix for profile page scrolling issue */
+.profile-container {
+  overflow-x: hidden;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
 }
 
 /* NISM theme colors */
@@ -52,9 +69,18 @@ main.content-area {
   background: linear-gradient(135deg, #1a365d 0%, #2563eb 100%);
 }
 
+.dark .nism-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%);
+}
+
 .nism-card {
   border-color: #3b82f6;
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.dark .nism-card {
+  border-color: #2563eb;
+  background: linear-gradient(135deg, #1e293b 0%, #172554 100%);
 }
 
 /* GATE theme colors */
@@ -62,16 +88,25 @@ main.content-area {
   background: linear-gradient(135deg, #4a1d96 0%, #8b5cf6 100%);
 }
 
+.dark .gate-gradient {
+  background: linear-gradient(135deg, #2e1065 0%, #6d28d9 100%);
+}
+
 .gate-card {
   border-color: #8b5cf6;
   background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+.dark .gate-card {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, #2e1065 0%, #4c1d95 100%);
 }
 
 /* Admin dashboard specific styles */
 .admin-layout {
   display: flex;
   min-height: calc(100vh - 6rem);
-  margin-top: 6rem;
+  margin-top: 0;
 }
 
 .admin-sidebar {
@@ -92,6 +127,10 @@ main.content-area {
 .interactive-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .interactive-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
 /* Ensure sidebar doesn't overlap with page content on smaller screens */
@@ -115,8 +154,16 @@ main.content-area {
   background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
 }
 
+.dark .contact-gradient {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+}
+
 .pricing-gradient {
   background: linear-gradient(135deg, #0e7490 0%, #06b6d4 100%);
+}
+
+.dark .pricing-gradient {
+  background: linear-gradient(135deg, #155e75 0%, #0891b2 100%);
 }
 
 /* NISM and GATE page improvements */
@@ -126,13 +173,78 @@ main.content-area {
   padding-top: 2rem;
 }
 
+.dark .nism-page-container {
+  background-color: #111827;
+}
+
 .gate-page-container {
   background-color: #f5f3ff;
   min-height: calc(100vh - 6rem);
   padding-top: 2rem;
 }
 
+.dark .gate-page-container {
+  background-color: #1e1b4b;
+}
+
 .mock-tests-container {
   min-height: calc(100vh - 6rem);
   padding-top: 2rem;
+}
+
+/* Premium gradients */
+.premium-gradient-blue {
+  background: linear-gradient(135deg, #1a365d 0%, #3b82f6 100%);
+}
+
+.dark .premium-gradient-blue {
+  background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
+}
+
+.premium-gradient-purple {
+  background: linear-gradient(135deg, #4a1d96 0%, #8b5cf6 100%);
+}
+
+.dark .premium-gradient-purple {
+  background: linear-gradient(135deg, #2e1065 0%, #7c3aed 100%);
+}
+
+.premium-card {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(226, 232, 240, 0.3);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .premium-card {
+  border: 1px solid rgba(30, 41, 59, 0.5);
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.4);
+}
+
+.premium-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .premium-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3d3d3d;
+  border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

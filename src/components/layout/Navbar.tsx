@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -11,16 +12,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+  Avatar, AvatarImage, AvatarFallback
+} from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { LogOut, Menu, Layout, User } from "lucide-react"
+import { LogOut, Menu, Layout, User, Home, BookOpen, CreditCard, Phone, LogIn, UserPlus } from "lucide-react"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import { cn } from "@/lib/utils";
 
@@ -32,21 +27,33 @@ const Navbar = () => {
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
 
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
-    <div className="bg-white sticky top-0 z-50 border-b">
+    <div className="bg-white dark:bg-gray-900 sticky top-0 z-50 border-b dark:border-gray-800">
       <div className="container py-4 px-4 mx-auto flex items-center justify-between">
-        <Link to="/" className="font-bold text-xl text-gray-800">
-          myturnindia
+        <Link to="/" className="font-bold text-xl text-gray-800 dark:text-white flex items-center">
+          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">myturnindia</span>
         </Link>
 
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800">
+          <Link to="/" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
+            Home
+          </Link>
+          <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
             Mock Tests
           </Link>
-          <Link to="/pricing" className="text-gray-600 hover:text-gray-800">
+          <Link to="/pricing" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
             Pricing
           </Link>
-          <Link to="/contact" className="text-gray-600 hover:text-gray-800">
+          <Link to="/contact" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
             Contact
           </Link>
         </div>
@@ -56,45 +63,60 @@ const Navbar = () => {
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="px-2">
+                <Button variant="ghost" size="sm" className="px-2 dark:text-gray-300">
                   <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-60">
+              <SheetContent side="left" className="w-72 dark:bg-gray-900 dark:border-gray-800">
                 <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                  <SheetDescription>
+                  <SheetTitle className="text-left text-gray-900 dark:text-white">Menu</SheetTitle>
+                  <SheetDescription className="text-left text-gray-600 dark:text-gray-400">
                     Navigate through myturnindia
                   </SheetDescription>
                 </SheetHeader>
-                <div className="grid gap-4 py-4">
-                  <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 block py-2">
+                <div className="grid gap-4 py-6">
+                  <Link to="/" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                    <Home className="mr-2 h-4 w-4" />
+                    Home
+                  </Link>
+                  <Link to="/mock-tests" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                    <BookOpen className="mr-2 h-4 w-4" />
                     Mock Tests
                   </Link>
-                  <Link to="/pricing" className="text-gray-600 hover:text-gray-800 block py-2">
+                  <Link to="/pricing" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                    <CreditCard className="mr-2 h-4 w-4" />
                     Pricing
                   </Link>
-                  <Link to="/contact" className="text-gray-600 hover:text-gray-800 block py-2">
+                  <Link to="/contact" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                    <Phone className="mr-2 h-4 w-4" />
                     Contact
                   </Link>
+                  
+                  <div className="border-t dark:border-gray-800 pt-4 mt-2"></div>
+                  
                   {isAuthenticated ? (
                     <>
-                      <Link to="/dashboard" className="text-gray-600 hover:text-gray-800 block py-2">
+                      <Link to="/dashboard" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                        <Layout className="mr-2 h-4 w-4" />
                         Dashboard
                       </Link>
-                      <Link to="/profile" className="text-gray-600 hover:text-gray-800 block py-2">
+                      <Link to="/profile" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                        <User className="mr-2 h-4 w-4" />
                         My Profile
                       </Link>
-                      <Button variant="ghost" className="justify-start" onClick={logout}>
+                      <Button variant="ghost" className="justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-0 h-auto" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
                         Log out
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Link to="/login" className={cn("text-gray-600 hover:text-gray-800 block py-2", isLoginPage ? 'hidden' : '')}>
+                      <Link to="/login" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2", isLoginPage ? 'hidden' : '')}>
+                        <LogIn className="mr-2 h-4 w-4" />
                         Login
                       </Link>
-                      <Link to="/register" className={cn("text-gray-600 hover:text-gray-800 block py-2", isRegisterPage ? 'hidden' : '')}>
+                      <Link to="/register" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2", isRegisterPage ? 'hidden' : '')}>
+                        <UserPlus className="mr-2 h-4 w-4" />
                         Register
                       </Link>
                     </>
@@ -105,56 +127,52 @@ const Navbar = () => {
           </div>
 
           {isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg" alt="Profile" />
-                    <AvatarFallback>
-                      {user?.email?.charAt(0)?.toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.email?.split('@')[0]}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard">
-                    <Layout className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/profile">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>My Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/dashboard')} 
+                className="hidden md:flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white gap-2 px-3 py-2"
+              >
+                <Layout className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full p-0"
+                onClick={handleProfileClick}
+              >
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src="/placeholder.svg" alt="Profile" />
+                  <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                    {user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="hidden md:flex text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           ) : (
             <>
               {!isLoginPage && (
                 <Link to="/login">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="dark:text-gray-300 dark:border-gray-700">
                     Log In
                   </Button>
                 </Link>
               )}
               {!isRegisterPage && (
                 <Link to="/register">
-                  <Button size="sm">Sign Up</Button>
+                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                    Sign Up
+                  </Button>
                 </Link>
               )}
             </>
