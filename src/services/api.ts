@@ -1,5 +1,5 @@
 
-import { supabaseClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { ContactFormValues } from "@/types";
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT;
@@ -7,7 +7,7 @@ const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT;
 export const authService = {
   login: async (email: string) => {
     try {
-      const { error } = await supabaseClient.auth.signInWithOtp({ email });
+      const { error } = await supabase.auth.signInWithOtp({ email });
       if (error) throw error;
       return { success: true, message: 'Check your email for the login link' };
     } catch (err: any) {
@@ -18,7 +18,7 @@ export const authService = {
 
   register: async (email: string, password: string) => {
     try {
-      const { error } = await supabaseClient.auth.signUp({ 
+      const { error } = await supabase.auth.signUp({ 
         email, 
         password, 
         options: { emailRedirectTo: `${window.location.origin}/dashboard` } 
@@ -33,7 +33,7 @@ export const authService = {
 
   logout: async () => {
     try {
-      const { error } = await supabaseClient.auth.signOut();
+      const { error } = await supabase.auth.signOut();
       if (error) throw error;
       return { success: true };
     } catch (err: any) {
@@ -90,19 +90,19 @@ export const paymentService = {
 export const contactService = {
   submitContactForm: async (values: ContactFormValues) => {
     try {
-      const response = await fetch('/api/submit-contact-form', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
+      // Use Supabase to insert contact message
+      const { data, error } = await supabase
+        .from('contact_messages')
+        .insert({
+          name: values.name,
+          email: values.email,
+          subject: values.subject,
+          message: values.message,
+          user_id: values.user_id || null
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit contact form');
-      }
-
-      const data = await response.json();
-      return data.success;
+      if (error) throw error;
+      return true;
     } catch (error: any) {
       console.error('Error submitting contact form:', error.message);
       throw error;
@@ -113,7 +113,7 @@ export const contactService = {
 export const examService = {
   getAllExams: async () => {
     try {
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('exams')
         .select('*')
         .eq('is_active', true);
@@ -128,7 +128,7 @@ export const examService = {
 
   getExamById: async (examId: string) => {
     try {
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('exams')
         .select('*')
         .eq('id', examId)
@@ -146,7 +146,7 @@ export const examService = {
     try {
       if (!userId) throw new Error("User ID is required");
       
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('payments')
         .select(`
           *,
@@ -170,4 +170,91 @@ export const examService = {
       return [];
     }
   },
+  
+  // Add a method to get exam questions
+  getExamQuestions: async (examId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('exam_id', examId);
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error fetching exam questions:', error);
+      throw error;
+    }
+  },
+  
+  // Add a method to submit exam answers
+  submitExamAnswers: async (userExamId: string, answers: any, score: number) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_exams')
+        .update({
+          answers: answers,
+          score: score,
+          end_time: new Date().toISOString(),
+          status: 'completed'
+        })
+        .eq('id', userExamId);
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error submitting exam answers:', error);
+      throw error;
+    }
+  },
+  
+  // Add a method to start a new exam
+  startExam: async (userId: string, examId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_exams')
+        .insert({
+          user_id: userId,
+          exam_id: examId,
+          start_time: new Date().toISOString(),
+          status: 'in-progress'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error starting exam:', error);
+      throw error;
+    }
+  },
+  
+  // Add a method to get exam result
+  getExamResult: async (resultId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_exams')
+        .select(`
+          *,
+          exam:exam_id (
+            id,
+            title,
+            description,
+            category,
+            type,
+            duration,
+            total_questions
+          )
+        `)
+        .eq('id', resultId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error fetching exam result:', error);
+      throw error;
+    }
+  }
 };
