@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { ExamRow, QuestionRow, UserExamRow, PaymentRow } from '@/types/supabase';
+import type { Json } from '@/integrations/supabase/types';
 
 // Create axios instance for any external APIs we might still need
 const api = axios.create({
@@ -83,7 +83,7 @@ export const examService = {
       
       if (error) throw error;
       
-      return data as ExamRow[];
+      return data;
     } catch (error: any) {
       console.error('Get all exams failed:', error);
       toast.error('Failed to load exams');
@@ -101,7 +101,7 @@ export const examService = {
       
       if (error) throw error;
       
-      return data as ExamRow;
+      return data;
     } catch (error: any) {
       console.error('Get exam by ID failed:', error);
       toast.error('Failed to load exam details');
@@ -118,7 +118,7 @@ export const examService = {
       
       if (error) throw error;
       
-      return data as QuestionRow[];
+      return data;
     } catch (error: any) {
       console.error('Get exam questions failed:', error);
       toast.error('Failed to load exam questions');
@@ -126,7 +126,7 @@ export const examService = {
     }
   },
   
-  createExam: async (examData: Omit<ExamRow, 'id' | 'created_at'>) => {
+  createExam: async (examData: any) => {
     try {
       const { data, error } = await supabase
         .from('exams')
@@ -135,7 +135,7 @@ export const examService = {
       
       if (error) throw error;
       
-      return data[0] as ExamRow;
+      return data[0];
     } catch (error: any) {
       console.error('Create exam failed:', error);
       toast.error('Failed to create exam');
@@ -143,7 +143,7 @@ export const examService = {
     }
   },
   
-  updateExam: async (examId: string, examData: Partial<ExamRow>) => {
+  updateExam: async (examId: string, examData: any) => {
     try {
       const { data, error } = await supabase
         .from('exams')
@@ -153,7 +153,7 @@ export const examService = {
       
       if (error) throw error;
       
-      return data[0] as ExamRow;
+      return data[0];
     } catch (error: any) {
       console.error('Update exam failed:', error);
       toast.error('Failed to update exam');
@@ -187,7 +187,7 @@ export const examService = {
     }
   },
   
-  addQuestions: async (examId: string, questions: Omit<QuestionRow, 'id' | 'exam_id'>[]) => {
+  addQuestions: async (examId: string, questions: any[]) => {
     try {
       const questionsWithExamId = questions.map(q => ({
         ...q,
@@ -201,7 +201,7 @@ export const examService = {
       
       if (error) throw error;
       
-      return data as QuestionRow[];
+      return data;
     } catch (error: any) {
       console.error('Add questions failed:', error);
       toast.error('Failed to add questions');
@@ -220,7 +220,7 @@ export const userExamService = {
       
       if (error) throw error;
       
-      return data as UserExamRow[];
+      return data;
     } catch (error: any) {
       console.error('Get user exams failed:', error);
       toast.error('Failed to load your exam results');
@@ -238,7 +238,7 @@ export const userExamService = {
       
       if (error) throw error;
       
-      return data as UserExamRow;
+      return data;
     } catch (error: any) {
       console.error('Get user exam by ID failed:', error);
       toast.error('Failed to load exam result');
@@ -264,7 +264,7 @@ export const userExamService = {
       
       if (error) throw error;
       
-      return data[0] as UserExamRow;
+      return data[0];
     } catch (error: any) {
       console.error('Start exam failed:', error);
       toast.error('Failed to start exam');
@@ -287,7 +287,7 @@ export const userExamService = {
       
       if (examError) throw examError;
       
-      return examData[0] as UserExamRow;
+      return examData[0];
     } catch (error: any) {
       console.error('Submit exam failed:', error);
       toast.error('Failed to submit exam');

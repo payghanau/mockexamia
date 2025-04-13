@@ -200,7 +200,8 @@ export type UserExamRow = Database['public']['Tables']['user_exams']['Row'];
 export type PaymentRow = Database['public']['Tables']['payments']['Row'];
 export type ContactMessageRow = Database['public']['Tables']['contact_messages']['Row'];
 
-export type Tables<
+// Fix the Tables generic type to not duplicate the identifier
+export type TablesType<
   PublicTableNameOrOptions extends
     | keyof Database["public"]["Tables"]
     | { schema: keyof Database },
@@ -263,7 +264,8 @@ export type TablesUpdate<
       : never
     : never
 
-export type Enums<
+// Remove the duplicate Enums type and fix the issue with EnumName indexing
+export type EnumsType<
   PublicEnumNameOrOptions extends
     | keyof Database["public"]["Enums"]
     | { schema: keyof Database },
