@@ -89,7 +89,6 @@ export const paymentService = {
 export const contactService = {
   submitContactForm: async (values: ContactFormValues) => {
     try {
-      // Use Supabase to insert contact message
       const { data, error } = await supabase
         .from('contact_messages')
         .insert({
@@ -243,3 +242,5 @@ export const examService = {
     }
   }
 };
+
+export const getUserPurchases = examService.getUserPurchases;
