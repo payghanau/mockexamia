@@ -1,8 +1,17 @@
-
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  BookOpen,
+  LayoutDashboard,
+  Mail,
+  User,
+  LogOut,
+  Menu,
+  X
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -11,161 +20,173 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import {
-  Avatar, AvatarImage, AvatarFallback
-} from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { LogOut, Menu, Layout, User, BookOpen, Phone, LogIn, UserPlus } from "lucide-react"
-import { ModeToggle } from "@/components/ui/mode-toggle"
-import { cn } from "@/lib/utils";
 
+// Content of the component
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const isLoginPage = location.pathname === '/login';
-  const isRegisterPage = location.pathname === '/register';
-
-  const handleProfileClick = () => {
-    navigate('/profile');
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const routes = [
+    { title: "", path: "/", icon: Home },
+    { title: "Mock Tests", path: "/mock-tests", icon: BookOpen },
+    { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard, auth: true },
+    { title: "Contact", path: "/contact", icon: Mail },
+  ];
+
+  const profileRoutes = [
+    { title: "Profile", path: "/user-profile", icon: User },
+    { title: "Logout", path: "#", icon: LogOut, action: handleLogout },
+  ];
 
   return (
-    <div className="bg-white dark:bg-gray-900 sticky top-0 z-50 border-b dark:border-gray-800">
-      <div className="container py-4 px-4 mx-auto flex items-center justify-between">
-        <Link to="/" className="font-bold text-xl text-gray-800 dark:text-white flex items-center">
-          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-work-sans">myturnindia</span>
-        </Link>
-
-        <div className="hidden md:flex items-center space-x-6">
-          <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors font-work-sans font-semibold">
-            Mock Tests
-          </Link>
-          <Link to="/contact" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors font-work-sans font-semibold">
-            Contact
-          </Link>
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <ModeToggle />
-          <div className="md:hidden">
-            <Sheet>
+    <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0">
+              <img
+                className="h-8 w-auto"
+                src="/logo.png"
+                alt="myturnindia Logo"
+              />
+            </Link>
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-4">
+                {routes.map((route) => (
+                  <Link
+                    key={route.path}
+                    to={route.path}
+                    className={`hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 ${location.pathname === route.path ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white' : ''}`}
+                  >
+                    {route.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-4">
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              ) : (
+                <div className="relative">
+                  <Link
+                    to="/user-profile"
+                    className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  >
+                    <span className="mr-2">
+                      {user?.user_metadata?.name || user?.email?.split('@')[0]}
+                    </span>
+                    <User className="h-5 w-5" />
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="-mr-2 flex md:hidden">
+            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="px-2 dark:text-gray-300">
-                  <Menu className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="p-2">
+                  {isMenuOpen ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Menu className="h-6 w-6" />
+                  )}
+                  <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-72 dark:bg-gray-900 dark:border-gray-800">
-                <SheetHeader>
-                  <SheetTitle className="text-left text-gray-900 dark:text-white font-work-sans">Menu</SheetTitle>
-                  <SheetDescription className="text-left text-gray-600 dark:text-gray-400 font-work-sans">
-                    Navigate through myturnindia
+              <SheetContent side="right" className="w-full sm:w-80">
+                <SheetHeader className="text-left">
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription>
+                    Navigate through the app
                   </SheetDescription>
                 </SheetHeader>
-                <div className="grid gap-4 py-6">
-                  <Link to="/mock-tests" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Mock Tests
-                  </Link>
-                  <Link to="/contact" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
-                    <Phone className="mr-2 h-4 w-4" />
-                    Contact
-                  </Link>
-                  
-                  <div className="border-t dark:border-gray-800 pt-4 mt-2"></div>
-                  
-                  {isAuthenticated ? (
-                    <>
-                      <Link to="/dashboard" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
-                        <Layout className="mr-2 h-4 w-4" />
-                        Dashboard
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <div className="py-4">
+                    {routes.map((route) => (
+                      <Link
+                        key={route.path}
+                        to={route.path}
+                        className={`block px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 ${location.pathname === route.path ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
+                        onClick={closeMenu}
+                      >
+                        {route.title}
                       </Link>
-                      <Link to="/profile" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
-                        <User className="mr-2 h-4 w-4" />
-                        My Profile
-                      </Link>
-                      <Button variant="ghost" className="justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-0 h-auto font-work-sans" onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Log out
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Link to="/login" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans", isLoginPage ? 'hidden' : '')}>
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Login
-                      </Link>
-                      <Link to="/register" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans", isRegisterPage ? 'hidden' : '')}>
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Register
-                      </Link>
-                    </>
-                  )}
+                    ))}
+                  </div>
+                  <div className="py-4">
+                    {!isAuthenticated ? (
+                      <>
+                        <Link
+                          to="/login"
+                          className="block px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                          onClick={closeMenu}
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="block px-4 py-2 text-sm font-medium bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800 rounded-md"
+                          onClick={closeMenu}
+                        >
+                          Sign Up
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/user-profile"
+                          className="block px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                          onClick={closeMenu}
+                        >
+                          Profile
+                        </Link>
+                        <Button variant="destructive" size="sm" className="w-full justify-start rounded-none py-2 px-4" onClick={handleLogout}>
+                          Logout
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
-
-          {isAuthenticated ? (
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/dashboard')} 
-                className="hidden md:flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white gap-2 px-3 py-2 font-work-sans"
-              >
-                <Layout className="h-4 w-4" />
-                <span>Dashboard</span>
-              </Button>
-              
-              <Button
-                variant="ghost"
-                className="relative h-10 w-10 rounded-full p-0"
-                onClick={handleProfileClick}
-              >
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="/placeholder.svg" alt="Profile" />
-                  <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
-                    {user?.email?.charAt(0)?.toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-              
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleLogout}
-                className="hidden md:flex text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 font-work-sans"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          ) : (
-            <>
-              {!isLoginPage && (
-                <Link to="/login">
-                  <Button variant="outline" size="sm" className="dark:text-gray-300 dark:border-gray-700 font-work-sans">
-                    Log In
-                  </Button>
-                </Link>
-              )}
-              {!isRegisterPage && (
-                <Link to="/register">
-                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-work-sans font-semibold">
-                    Sign Up
-                  </Button>
-                </Link>
-              )}
-            </>
-          )}
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 
