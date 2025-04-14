@@ -19,7 +19,6 @@ import PaymentPage from "./pages/PaymentPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import NismExams from "./pages/NismExams";
 import GateExams from "./pages/GateExams";
-import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import MockTests from "./pages/MockTests";
 import UserProfile from "./pages/UserProfile";
@@ -30,10 +29,10 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light">
+      <ThemeProvider defaultTheme="dark">
         <AuthProvider>
           <TooltipProvider>
-            <div className="min-h-screen flex flex-col bg-gray-50">
+            <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
               <BackgroundAnimation variant="minimal" />
               <Toaster />
               <Sonner />
@@ -46,7 +45,6 @@ const App = () => {
                 <Route path="/exams/gate" element={<GateExams />} />
                 <Route path="/exams/gate/section-wise" element={<Navigate to="/exams/gate" replace />} />
                 <Route path="/exams/gate/full-length" element={<Navigate to="/exams/gate" replace />} />
-                <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/mock-tests" element={<MockTests />} />
                 <Route path="/faq" element={<Navigate to="/contact" replace />} />
@@ -97,6 +95,7 @@ const App = () => {
                 {/* Legacy URL redirects */}
                 <Route path="/nism-exams" element={<Navigate to="/exams/nism" replace />} />
                 <Route path="/gate-exams" element={<Navigate to="/exams/gate" replace />} />
+                <Route path="/pricing" element={<Navigate to="/mock-tests" replace />} />
                 
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />

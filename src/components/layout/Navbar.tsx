@@ -15,7 +15,7 @@ import {
   Avatar, AvatarImage, AvatarFallback
 } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { LogOut, Menu, Layout, User, Home, BookOpen, CreditCard, Phone, LogIn, UserPlus } from "lucide-react"
+import { LogOut, Menu, Layout, User, BookOpen, Phone, LogIn, UserPlus } from "lucide-react"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import { cn } from "@/lib/utils";
 
@@ -44,14 +44,8 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
-            Home
-          </Link>
           <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
             Mock Tests
-          </Link>
-          <Link to="/pricing" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
-            Pricing
           </Link>
           <Link to="/contact" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
             Contact
@@ -76,16 +70,8 @@ const Navbar = () => {
                 </SheetHeader>
                 <div className="grid gap-4 py-6">
                   <Link to="/" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
-                    <Home className="mr-2 h-4 w-4" />
-                    Home
-                  </Link>
-                  <Link to="/mock-tests" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
                     <BookOpen className="mr-2 h-4 w-4" />
                     Mock Tests
-                  </Link>
-                  <Link to="/pricing" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Pricing
                   </Link>
                   <Link to="/contact" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
                     <Phone className="mr-2 h-4 w-4" />

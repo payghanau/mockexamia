@@ -1,561 +1,734 @@
-import React from 'react';
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { 
-  ArrowRight, 
-  BookOpen, 
-  CheckCircle, 
-  Clock, 
-  Award,
-  Users,
-  Layers,
-  Sparkles,
-  GraduationCap,
-  BarChart4,
-  Star,
-  BookCheck,
-  Calculator,
-  Trophy
+  Award, Clock, FileText, CheckCircle, X, CreditCard, 
+  BookOpen, BarChart2, TrendingUp, Calendar, Users, Star 
 } from "lucide-react";
+import DrifterStars from "@/components/ui/DrifterStars";
 
 const NismExams = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("all");
   
   useEffect(() => {
-    document.title = "NISM Certifications - myturnindia";
+    document.title = "NISM Certification Exams - myturnindia";
   }, []);
 
-  const nismCourses = [
-    {
-      id: "series-va",
-      title: "Series V-A: Mutual Fund Distributors",
-      icon: <BookOpen className="h-5 w-5 text-white" />,
-      description: "Comprehensive test series for mutual fund distributors",
-      topics: ["Mutual Fund Basics", "Regulations", "Investment Analysis", "Client Management"],
-      students: "15,000+",
-      successRate: "88%",
-      color: "from-blue-500 to-blue-600"
-    },
-    {
-      id: "series-viii",
-      title: "Series VIII: Equity Derivatives",
-      icon: <Calculator className="h-5 w-5 text-white" />,
-      description: "Practice tests for equity derivatives certification",
-      topics: ["Derivatives Concepts", "Options & Futures", "Trading Strategies", "Risk Management"],
-      students: "12,000+",
-      successRate: "85%",
-      color: "from-blue-600 to-blue-700"
-    },
-    {
-      id: "series-x",
-      title: "Series X-A: Investment Adviser",
-      icon: <BookCheck className="h-5 w-5 text-white" />,
-      description: "Preparation for investment adviser certification",
-      topics: ["Financial Planning", "Asset Allocation", "Portfolio Management", "Regulations"],
-      students: "10,000+",
-      successRate: "82%",
-      color: "from-blue-700 to-blue-800"
-    },
-    {
-      id: "series-xii",
-      title: "Series XII: Securities Markets Foundation",
-      icon: <BookOpen className="h-5 w-5 text-white" />,
-      description: "Foundational knowledge of securities markets",
-      topics: ["Market Structure", "Securities Types", "Trading Mechanisms", "Regulatory Framework"],
-      students: "18,000+",
-      successRate: "90%",
-      color: "from-blue-800 to-blue-900"
-    }
-  ];
-
-  const examFeatures = [
-    {
-      title: "Chapter-wise Tests",
-      icon: <BookOpen className="h-6 w-6 text-white" />,
-      description: "Focus on specific chapters to master individual concepts",
-      features: [
-        "10 questions per chapter",
-        "12-minute time limit",
-        "Instant feedback and explanations",
-        "Track progress by chapter"
-      ],
-      bgClass: "from-blue-500 to-blue-600"
-    },
-    {
-      title: "Full Mock Tests",
-      icon: <Clock className="h-6 w-6 text-white" />,
-      description: "Simulate the actual NISM exam experience",
-      features: [
-        "100 questions in 2 hours",
-        "Exam-like interface",
-        "Performance analysis",
-        "Passing score indication"
-      ],
-      bgClass: "from-blue-600 to-blue-700"
-    },
-    {
-      title: "Practice Question Bank",
-      icon: <Award className="h-6 w-6 text-white" />,
-      description: "Thousands of practice questions with detailed explanations",
-      features: [
-        "5,000+ unique questions",
-        "Difficulty levels",
-        "Bookmark important questions",
-        "Review incorrect answers"
-      ],
-      bgClass: "from-blue-700 to-blue-800"
-    }
-  ];
-
-  const examPackages = [
-    {
-      id: "chapter-wise",
-      title: "NISM Chapter-wise Tests",
-      description: "Practice with comprehensive chapter-wise tests covering all NISM modules",
-      features: [
-        "In-depth coverage of all chapters",
-        "Detailed explanations for every question",
-        "Track progress by chapter",
-        "Focus on specific areas"
-      ],
-      price: 499,
-      gst: "18%",
-      validity: "10 days",
-      examId: "nism-chapter-wise"
-    },
-    {
-      id: "full-mock",
-      title: "NISM Full Mock Tests",
-      description: "4 complete mock tests simulating the actual NISM certification experience",
-      features: [
-        "4 full-length mock tests",
-        "Real exam-like interface",
-        "Time management practice",
-        "Comprehensive performance analysis"
-      ],
-      price: 599,
-      gst: "18%",
-      validity: "10 days",
-      examId: "nism-full-mock"
-    },
-    {
-      id: "combo",
-      title: "NISM Combo Package",
-      description: "Complete preparation package including both chapter-wise and full mock tests",
-      features: [
-        "All chapter-wise tests",
-        "4 full-length mock tests",
-        "Comprehensive question bank",
-        "Best value package"
-      ],
-      price: 799,
-      gst: "18%",
-      validity: "10 days",
-      examId: "nism-combo-package",
-      isBest: true
-    }
-  ];
-
-  const handlePackageClick = (pkg: any) => {
+  const handleEnroll = (examId) => {
     if (!isAuthenticated) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in to access this exam package",
+        title: "Login Required",
+        description: "Please login to enroll in this exam",
         variant: "destructive"
       });
-      navigate("/login");
+      navigate("/login", { state: { from: `/exams/nism`, examId } });
       return;
     }
     
-    navigate(`/payment/${pkg.examId}`);
+    navigate(`/payment/${examId}`);
+  };
+
+  const nismExams = [
+    {
+      id: "nism-va",
+      title: "NISM Series-V-A: Mutual Funds",
+      description: "Complete preparation for NISM Series-V-A certification on mutual fund distribution",
+      category: "Core",
+      duration: 120,
+      questions: 100,
+      price: 599,
+      popular: true,
+      image: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2574&q=80",
+      features: [
+        "100 practice questions",
+        "5 full-length mock tests",
+        "Detailed explanations",
+        "Performance analytics",
+        "Mobile-friendly interface"
+      ],
+      validity: "3 months"
+    },
+    {
+      id: "nism-viii",
+      title: "NISM Series-VIII: Equity Derivatives",
+      description: "Comprehensive test for NISM Series-VIII certification covering equity derivatives",
+      category: "Specialized",
+      duration: 120,
+      questions: 100,
+      price: 699,
+      popular: false,
+      image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2574&q=80",
+      features: [
+        "100 practice questions",
+        "5 full-length mock tests",
+        "Detailed explanations",
+        "Performance analytics",
+        "Mobile-friendly interface"
+      ],
+      validity: "3 months"
+    },
+    {
+      id: "nism-xa",
+      title: "NISM Series-X-A: Investment Adviser",
+      description: "Complete exam preparation for investment adviser certification with expert guidance",
+      category: "Specialized",
+      duration: 150,
+      questions: 100,
+      price: 799,
+      popular: false,
+      image: "https://images.unsplash.com/photo-1551135049-8a33b5883817?ixlib=rb-4.0.3&auto=format&fit=crop&w=2574&q=80",
+      features: [
+        "100 practice questions",
+        "5 full-length mock tests",
+        "Detailed explanations",
+        "Performance analytics",
+        "Mobile-friendly interface"
+      ],
+      validity: "3 months"
+    },
+    {
+      id: "nism-xv",
+      title: "NISM Series-XV: Securities Operations",
+      description: "Full mock test preparation for NISM Securities Operations and Risk Management certification",
+      category: "Specialized",
+      duration: 120,
+      questions: 100,
+      price: 599,
+      popular: false,
+      image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2574&q=80",
+      features: [
+        "100 practice questions",
+        "5 full-length mock tests",
+        "Detailed explanations",
+        "Performance analytics",
+        "Mobile-friendly interface"
+      ],
+      validity: "3 months"
+    },
+    {
+      id: "nism-xb",
+      title: "NISM Series-X-B: Investment Adviser",
+      description: "Advanced preparation for Investment Adviser (Advanced) certification with advanced topics",
+      category: "Advanced",
+      duration: 150,
+      questions: 100,
+      price: 899,
+      popular: false,
+      image: "https://images.unsplash.com/photo-1560438718-eb61ede255eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2574&q=80",
+      features: [
+        "100 practice questions",
+        "5 full-length mock tests",
+        "Detailed explanations",
+        "Performance analytics",
+        "Mobile-friendly interface",
+        "Expert guidance"
+      ],
+      validity: "3 months"
+    },
+    {
+      id: "nism-vib",
+      title: "NISM Series-VI-B: Depository Operations",
+      description: "Complete preparation for NISM Depository Operations certification",
+      category: "Core",
+      duration: 120,
+      questions: 100,
+      price: 599,
+      popular: false,
+      image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=2574&q=80",
+      features: [
+        "100 practice questions",
+        "5 full-length mock tests",
+        "Detailed explanations",
+        "Performance analytics",
+        "Mobile-friendly interface"
+      ],
+      validity: "3 months"
+    }
+  ];
+
+  const generateBadgeColor = (category) => {
+    switch(category) {
+      case "Core":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case "Specialized":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+      case "Advanced":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900">
       <Navbar />
+      <DrifterStars starCount={100} starColor="#4f7df0" speed={0.3} className="opacity-40" />
+      
       <main className="flex-1">
         {/* Hero Section */}
-        <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-800 pt-32 pb-24 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-          <div className="absolute top-20 right-[10%] w-64 h-64 rounded-full bg-gradient-to-r from-blue-300/20 to-blue-400/20 blur-3xl"></div>
-          <div className="absolute bottom-10 left-[5%] w-72 h-72 rounded-full bg-gradient-to-r from-blue-200/20 to-blue-300/20 blur-3xl"></div>
-          
-          <div className="max-w-6xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 text-sm font-medium bg-blue-100/80 text-blue-700 rounded-full backdrop-blur-sm border border-blue-200/50">
-              <Award className="h-4 w-4" />
-              <span>NISM Certification</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-900 leading-tight">
-              Master NISM Certifications<br className="hidden md:block" /> With Expert Guidance
-            </h1>
-            
-            <p className="text-lg md:text-xl text-blue-900/80 max-w-3xl mx-auto mb-10">
-              Comprehensive practice tests designed by industry experts to help you excel in NISM certification exams
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-500/20 font-medium rounded-xl px-8">
-                <Link to="/register" className="flex items-center gap-2">
-                  Start Preparing Now <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="bg-white/70 backdrop-blur-sm border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 rounded-xl px-8">
-                <Link to="/pricing">View Pricing</Link>
-              </Button>
-            </div>
-            
-            {/* Stats Section */}
-            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
-              {[
-                { value: "25K+", label: "Certified Professionals", icon: <Users className="h-5 w-5 text-blue-500" /> },
-                { value: "92%", label: "First Attempt Success", icon: <Trophy className="h-5 w-5 text-blue-500" /> },
-                { value: "8,500+", label: "Practice Questions", icon: <BookCheck className="h-5 w-5 text-blue-500" /> },
-                { value: "12+", label: "NISM Modules", icon: <Layers className="h-5 w-5 text-blue-500" /> }
-              ].map((stat, i) => (
-                <div key={i} className="flex flex-col items-center p-4 rounded-xl bg-white/70 backdrop-blur-sm border border-blue-100 shadow-sm hover:shadow-md transition-all">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 mb-2">
-                    {stat.icon}
-                  </div>
-                  <span className="text-2xl md:text-3xl font-bold text-blue-900">{stat.value}</span>
-                  <span className="text-sm text-blue-700">{stat.label}</span>
-                </div>
-              ))}
-            </div>
+        <section className="relative py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-indigo-700/90 z-10 dark:from-blue-900/90 dark:to-indigo-800/90"></div>
+          <div className="absolute inset-0">
+            <img 
+              src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+              alt="NISM Certifications" 
+              className="w-full h-full object-cover"
+            />
           </div>
-        </div>
-
-        {/* What is NISM Section */}
-        <div className="py-24 px-4 bg-white relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent h-40"></div>
-          <div className="max-w-6xl mx-auto relative z-10">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100/80 text-blue-700 rounded-full">
-                  <GraduationCap className="h-4 w-4" />
-                  <span>About NISM</span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-blue-900">What is NISM?</h2>
-                <p className="text-blue-800/80 mb-4 text-lg">
-                  The National Institute of Securities Markets (NISM) is a public trust established by the Securities and Exchange Board of India (SEBI) to enhance the quality of securities markets through educational initiatives.
-                </p>
-                <p className="text-blue-800/80 mb-6 text-lg">
-                  NISM certifications are mandatory for various professionals working in the securities market, including mutual fund distributors, investment advisers, and securities operations professionals.
-                </p>
-                <div className="flex items-center text-blue-600 font-medium">
-                  <Link to="/nism-details" className="group flex items-center text-blue-700 hover:text-blue-800 transition-colors">
-                    Learn more about NISM certifications
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-200 to-blue-300 opacity-20 blur"></div>
-                <div className="relative bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8 shadow-lg border border-blue-100">
-                  <h3 className="text-xl font-bold mb-6 text-blue-800">Why NISM Certification Matters</h3>
-                  <ul className="space-y-5">
-                    {[
-                      { title: "Mandatory Requirement", desc: "Required for securities market professionals", icon: <Award /> },
-                      { title: "Enhanced Credibility", desc: "Builds trust with clients and employers", icon: <Users /> },
-                      { title: "Regulatory Knowledge", desc: "Demonstrates understanding of market regulations", icon: <BookOpen /> },
-                      { title: "Career Advancement", desc: "Opens doors to better opportunities", icon: <Trophy /> }
-                    ].map((item, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <div className="bg-blue-100 p-2 rounded-xl mr-3 mt-1 flex-shrink-0">
-                          {React.cloneElement(item.icon, { className: "h-5 w-5 text-blue-600" })}
-                        </div>
-                        <div>
-                          <span className="block font-semibold text-blue-900">{item.title}</span>
-                          <span className="text-blue-700 text-sm">{item.desc}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Our Approach Section */}
-        <div className="py-24 px-4 bg-gradient-to-br from-blue-50 via-white to-blue-100 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-gradient-to-r from-blue-300/20 to-blue-400/20 blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-20 w-80 h-80 rounded-full bg-gradient-to-r from-blue-400/20 to-blue-500/20 blur-3xl"></div>
           
-          <div className="max-w-6xl mx-auto relative z-10">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100/80 text-blue-700 rounded-full backdrop-blur-sm">
-                <Sparkles className="h-4 w-4" />
-                <span>Our Methodology</span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center max-w-3xl mx-auto"
+            >
+              <div className="inline-block p-3 rounded-full mb-6 bg-white/20 backdrop-blur-sm">
+                <Award className="h-10 w-10 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-blue-900">
-                Our Approach to NISM Preparation
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                NISM Certification Mock Tests
+              </h1>
+              <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+                Comprehensive preparation material for all NISM certification exams
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-blue-700 hover:text-blue-800 hover:bg-gray-50 shadow-md dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700"
+                  onClick={() => document.getElementById('exams-section').scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Explore Tests
+                </Button>
+                {!isAuthenticated && (
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="border-white text-white hover:bg-white/10 dark:border-gray-300 dark:text-gray-300 dark:hover:bg-gray-800"
+                    onClick={() => navigate("/register")}
+                  >
+                    Sign Up Now
+                  </Button>
+                )}
+              </div>
+              
+              <div className="flex items-center justify-center gap-8 mt-16 text-white">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="flex flex-col items-center"
+                >
+                  <Users className="h-8 w-8 mb-2" />
+                  <div className="text-2xl font-bold">10,000+</div>
+                  <div className="text-blue-100 text-sm">Successful Candidates</div>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="flex flex-col items-center"
+                >
+                  <Star className="h-8 w-8 mb-2" />
+                  <div className="text-2xl font-bold">4.8/5</div>
+                  <div className="text-blue-100 text-sm">Student Rating</div>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="flex flex-col items-center"
+                >
+                  <Award className="h-8 w-8 mb-2" />
+                  <div className="text-2xl font-bold">98%</div>
+                  <div className="text-blue-100 text-sm">Pass Rate</div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* Exams Section */}
+        <section id="exams-section" className="py-16 bg-white dark:bg-gray-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                Available NISM Certification Tests
               </h2>
-              <p className="text-lg text-blue-800/80 max-w-3xl mx-auto">
-                Structured learning and practice methodology to help you clear NISM certifications with confidence
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Choose from our comprehensive range of NISM certification mock tests
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {examFeatures.map((feature, index) => (
-                <Card 
-                  key={index} 
-                  className={`text-white overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 bg-gradient-to-br ${feature.bgClass} border-none rounded-2xl`}
-                >
-                  <div className="absolute top-0 right-0 opacity-10">
-                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="60" cy="60" r="60" fill="white"/>
-                    </svg>
-                  </div>
-                  
-                  <CardHeader>
-                    <div className="h-14 w-14 rounded-xl bg-white/10 flex items-center justify-center mb-4 backdrop-blur-sm">
-                      {feature.icon}
-                    </div>
-                    <CardTitle className="text-2xl font-bold">{feature.title}</CardTitle>
-                    <CardDescription className="text-blue-100">{feature.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {feature.features.map((item, i) => (
-                        <li key={i} className="flex items-start">
-                          <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
-                            <CheckCircle className="h-3 w-3 text-white" />
-                          </div>
-                          <span className="text-sm">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardFooter>
-                    <Button asChild className="w-full bg-white text-blue-700 hover:bg-blue-50 apple-button rounded-xl font-medium shadow-md">
-                      <Link to="/dashboard">Explore Tests</Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* NISM Courses */}
-        <div className="py-24 px-4 bg-white relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent h-40"></div>
-          <div className="max-w-6xl mx-auto relative z-10">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100/80 text-blue-700 rounded-full backdrop-blur-sm">
-                <BookCheck className="h-4 w-4" />
-                <span>Premium Courses</span>
+            <Tabs defaultValue="all" onValueChange={setActiveTab} className="w-full">
+              <div className="flex justify-center mb-8">
+                <TabsList className="bg-gray-100 dark:bg-gray-800 p-1">
+                  <TabsTrigger
+                    value="all"
+                    className={`px-6 py-2 ${activeTab === 'all' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                  >
+                    All Tests
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="core"
+                    className={`px-6 py-2 ${activeTab === 'core' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                  >
+                    Core
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="specialized"
+                    className={`px-6 py-2 ${activeTab === 'specialized' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                  >
+                    Specialized
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="advanced"
+                    className={`px-6 py-2 ${activeTab === 'advanced' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                  >
+                    Advanced
+                  </TabsTrigger>
+                </TabsList>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-blue-900">Popular NISM Courses</h2>
-              <p className="text-lg text-blue-800/80 max-w-3xl mx-auto mb-12">
-                Comprehensive test series for all major NISM certifications
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {nismCourses.map((course) => (
-                <Card 
-                  key={course.id} 
-                  className="group overflow-hidden rounded-2xl border-blue-100 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-gradient-to-br from-white to-blue-50"
-                >
-                  <div className={`absolute right-0 top-0 h-20 w-20 bg-gradient-to-br ${course.color} rounded-bl-3xl opacity-90 transition-all group-hover:scale-110`}></div>
-                  
-                  <CardHeader className="pb-2 relative">
-                    <div className={`h-12 w-12 rounded-xl bg-gradient-to-r ${course.color} flex items-center justify-center mb-4 text-white group-hover:scale-105 transition-all shadow-md`}>
-                      {course.icon}
-                    </div>
-                    <CardTitle className="text-xl font-bold text-blue-900">{course.title}</CardTitle>
-                    <CardDescription className="text-blue-700 font-medium">{course.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {course.topics.map((topic, i) => (
-                        <span key={i} className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                          {topic}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex justify-between text-sm py-3 border-t border-blue-100">
-                      <div className="text-blue-800">
-                        <span className="font-medium">{course.students}</span> students enrolled
-                      </div>
-                      <div className="text-blue-800">
-                        <span className="font-medium">{course.successRate}</span> success rate
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button asChild className={`w-full bg-gradient-to-r ${course.color} hover:opacity-90 mt-2 text-white rounded-xl shadow-md group-hover:shadow-lg transition-all`}>
-                      <Link to="/dashboard" className="group flex items-center justify-center gap-2">
-                        Start Practicing
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Success Stories */}
-        <div className="py-24 px-4 bg-gradient-to-br from-blue-50 via-white to-blue-100 relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-gradient-to-r from-blue-300/20 to-blue-400/20 blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-20 w-80 h-80 rounded-full bg-gradient-to-r from-blue-400/20 to-blue-500/20 blur-3xl"></div>
-          
-          <div className="max-w-6xl mx-auto relative z-10">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-3 text-sm font-medium bg-blue-100/80 text-blue-700 rounded-full backdrop-blur-sm">
-                <Star className="h-4 w-4" />
-                <span>Testimonials</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-blue-900">Success Stories</h2>
-              <p className="text-lg text-blue-800/80 max-w-3xl mx-auto">
-                Join thousands of students who cleared their NISM certifications with our practice tests
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  name: "Rahul Mehta",
-                  role: "NISM Series V-A Certified",
-                  content: "The chapter-wise tests helped me understand complex concepts in small chunks. Cleared my certification in the first attempt!",
-                  image: "/placeholder.svg"
-                },
-                {
-                  name: "Priya Desai",
-                  role: "NISM Series VIII Certified",
-                  content: "The practice question bank was extensive and covered all topics. The detailed explanations helped me understand the concepts thoroughly.",
-                  image: "/placeholder.svg"
-                },
-                {
-                  name: "Amit Kumar",
-                  role: "NISM Series X-A Certified",
-                  content: "The full mock tests simulated the actual exam environment perfectly. I was well-prepared and confident on the exam day.",
-                  image: "/placeholder.svg"
-                }
-              ].map((testimonial, idx) => (
-                <Card key={idx} className="rounded-2xl shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden group bg-white">
-                  <CardContent className="p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="text-yellow-400 flex">
-                        {"★★★★★".split("").map((star, i) => (
-                          <span key={i}>{star}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-blue-900 mb-6 italic text-lg">
-                      "{testimonial.content}"
-                    </p>
-                    <div className="flex items-center mt-6 pt-4 border-t border-gray-100">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                        <GraduationCap className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-blue-900">{testimonial.name}</div>
-                        <div className="text-sm text-blue-700">{testimonial.role}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="py-24 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-blue-500/20 blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-blue-500/20 blur-3xl"></div>
-          
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h3 className="text-3xl font-bold mb-4 text-white">Get NISM Ready with myturnindia</h3>
-            <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">
-              Join thousands of successful students who aced their NISM certification with our comprehensive preparation platform
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" variant="secondary" className="bg-white text-blue-700 hover:bg-blue-50 gap-2 shadow-lg rounded-xl px-8 font-medium">
-                <Link to="/register" className="flex items-center gap-2">
-                  Get Started Today <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10 shadow-sm rounded-xl px-8 font-medium">
-                <Link to="/pricing">View Pricing Plans</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Pricing Section */}
-        <section className="py-16 bg-white">
-          <div className="container px-4 mx-auto">
-            <div className="text-center max-w-3xl mx-auto mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Choose Your NISM Exam Package
-              </h2>
-              <p className="text-gray-600">
-                Select the package that best fits your preparation needs
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {examPackages.map((pkg) => (
-                <Card 
-                  key={pkg.id} 
-                  className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${pkg.isBest ? 'border-blue-400 shadow-lg' : 'border-gray-200'}`}
-                >
-                  {pkg.isBest && (
-                    <div className="absolute top-5 right-5 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
-                      Best Value
-                    </div>
-                  )}
-                  
-                  <CardHeader>
-                    <CardTitle className="text-xl font-bold">{pkg.title}</CardTitle>
-                    <CardDescription>{pkg.description}</CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="text-center mb-6">
-                      <div className="text-3xl font-bold text-gray-900">₹{pkg.price}</div>
-                      <div className="text-sm text-gray-500">+{pkg.gst} GST • {pkg.validity} validity</div>
-                    </div>
-                    
-                    <ul className="space-y-3">
-                      {pkg.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start">
-                          <CheckCircle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  
-                  <CardFooter>
-                    <Button 
-                      className={`w-full ${pkg.isBest ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
-                      onClick={() => handlePackageClick(pkg)}
+              
+              <TabsContent value="all" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {nismExams.map((exam) => (
+                    <motion.div
+                      key={exam.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
                     >
-                      Purchase Now
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+                      <Card className={`overflow-hidden transition-all duration-300 hover:shadow-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 h-full flex flex-col ${
+                        exam.popular ? 'relative border-blue-200 dark:border-blue-700' : ''
+                      }`}>
+                        {exam.popular && (
+                          <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 text-sm font-bold rounded-bl-lg z-10">
+                            Popular
+                          </div>
+                        )}
+                        
+                        <div className="relative h-48">
+                          <img 
+                            src={exam.image} 
+                            alt={exam.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-4 left-4">
+                            <Badge className={`${generateBadgeColor(exam.category)} px-2 py-1`}>
+                              {exam.category}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-xl text-gray-900 dark:text-white">{exam.title}</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-400">
+                            {exam.description}
+                          </CardDescription>
+                        </CardHeader>
+                        
+                        <CardContent className="flex-grow">
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Clock className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.duration} minutes
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <FileText className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.questions} questions
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Calendar className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.validity} validity
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <CreditCard className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              ₹{exam.price}
+                            </div>
+                          </div>
+                          
+                          <div className="mt-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-2">What's included:</h4>
+                            <ul className="space-y-1">
+                              {exam.features.map((feature, i) => (
+                                <li key={i} className="flex items-start text-gray-700 dark:text-gray-300 text-sm">
+                                  <CheckCircle className="h-4 w-4 mr-2 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CardContent>
+                        
+                        <CardFooter className="bg-gray-50 dark:bg-gray-800">
+                          <Button 
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                            onClick={() => handleEnroll(exam.id)}
+                          >
+                            Enroll Now
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="core" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {nismExams.filter(exam => exam.category === "Core").map((exam) => (
+                    // Same card component as above
+                    <motion.div
+                      key={exam.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Card className={`overflow-hidden transition-all duration-300 hover:shadow-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 h-full flex flex-col ${
+                        exam.popular ? 'relative border-blue-200 dark:border-blue-700' : ''
+                      }`}>
+                        {exam.popular && (
+                          <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 text-sm font-bold rounded-bl-lg z-10">
+                            Popular
+                          </div>
+                        )}
+                        
+                        <div className="relative h-48">
+                          <img 
+                            src={exam.image} 
+                            alt={exam.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-4 left-4">
+                            <Badge className={`${generateBadgeColor(exam.category)} px-2 py-1`}>
+                              {exam.category}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-xl text-gray-900 dark:text-white">{exam.title}</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-400">
+                            {exam.description}
+                          </CardDescription>
+                        </CardHeader>
+                        
+                        <CardContent className="flex-grow">
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Clock className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.duration} minutes
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <FileText className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.questions} questions
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Calendar className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.validity} validity
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <CreditCard className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              ₹{exam.price}
+                            </div>
+                          </div>
+                          
+                          <div className="mt-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-2">What's included:</h4>
+                            <ul className="space-y-1">
+                              {exam.features.map((feature, i) => (
+                                <li key={i} className="flex items-start text-gray-700 dark:text-gray-300 text-sm">
+                                  <CheckCircle className="h-4 w-4 mr-2 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CardContent>
+                        
+                        <CardFooter className="bg-gray-50 dark:bg-gray-800">
+                          <Button 
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                            onClick={() => handleEnroll(exam.id)}
+                          >
+                            Enroll Now
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="specialized" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {nismExams.filter(exam => exam.category === "Specialized").map((exam) => (
+                    // Same card component as above
+                    <motion.div
+                      key={exam.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Card className={`overflow-hidden transition-all duration-300 hover:shadow-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 h-full flex flex-col ${
+                        exam.popular ? 'relative border-blue-200 dark:border-blue-700' : ''
+                      }`}>
+                        {exam.popular && (
+                          <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 text-sm font-bold rounded-bl-lg z-10">
+                            Popular
+                          </div>
+                        )}
+                        
+                        <div className="relative h-48">
+                          <img 
+                            src={exam.image} 
+                            alt={exam.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-4 left-4">
+                            <Badge className={`${generateBadgeColor(exam.category)} px-2 py-1`}>
+                              {exam.category}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-xl text-gray-900 dark:text-white">{exam.title}</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-400">
+                            {exam.description}
+                          </CardDescription>
+                        </CardHeader>
+                        
+                        <CardContent className="flex-grow">
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Clock className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.duration} minutes
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <FileText className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.questions} questions
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Calendar className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.validity} validity
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <CreditCard className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              ₹{exam.price}
+                            </div>
+                          </div>
+                          
+                          <div className="mt-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-2">What's included:</h4>
+                            <ul className="space-y-1">
+                              {exam.features.map((feature, i) => (
+                                <li key={i} className="flex items-start text-gray-700 dark:text-gray-300 text-sm">
+                                  <CheckCircle className="h-4 w-4 mr-2 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CardContent>
+                        
+                        <CardFooter className="bg-gray-50 dark:bg-gray-800">
+                          <Button 
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                            onClick={() => handleEnroll(exam.id)}
+                          >
+                            Enroll Now
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="advanced" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {nismExams.filter(exam => exam.category === "Advanced").map((exam) => (
+                    // Same card component as above
+                    <motion.div
+                      key={exam.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Card className={`overflow-hidden transition-all duration-300 hover:shadow-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 h-full flex flex-col ${
+                        exam.popular ? 'relative border-blue-200 dark:border-blue-700' : ''
+                      }`}>
+                        {exam.popular && (
+                          <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-1 text-sm font-bold rounded-bl-lg z-10">
+                            Popular
+                          </div>
+                        )}
+                        
+                        <div className="relative h-48">
+                          <img 
+                            src={exam.image} 
+                            alt={exam.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-4 left-4">
+                            <Badge className={`${generateBadgeColor(exam.category)} px-2 py-1`}>
+                              {exam.category}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-xl text-gray-900 dark:text-white">{exam.title}</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-400">
+                            {exam.description}
+                          </CardDescription>
+                        </CardHeader>
+                        
+                        <CardContent className="flex-grow">
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Clock className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.duration} minutes
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <FileText className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.questions} questions
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <Calendar className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              {exam.validity} validity
+                            </div>
+                            <div className="flex items-center text-gray-700 dark:text-gray-300">
+                              <CreditCard className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
+                              ₹{exam.price}
+                            </div>
+                          </div>
+                          
+                          <div className="mt-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-2">What's included:</h4>
+                            <ul className="space-y-1">
+                              {exam.features.map((feature, i) => (
+                                <li key={i} className="flex items-start text-gray-700 dark:text-gray-300 text-sm">
+                                  <CheckCircle className="h-4 w-4 mr-2 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CardContent>
+                        
+                        <CardFooter className="bg-gray-50 dark:bg-gray-800">
+                          <Button 
+                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                            onClick={() => handleEnroll(exam.id)}
+                          >
+                            Enroll Now
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+        
+        {/* Why Choose Us Section */}
+        <section className="py-16 bg-gray-50 dark:bg-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                Why Choose Our NISM Mock Tests
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Designed by industry experts to help you pass your certification exam with confidence
+              </p>
             </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mb-6">
+                  <BookOpen className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Exam-focused Content</h3>
+                <p className="text-gray-700 dark:text-gray-300">
+                  Our tests are meticulously designed to match the actual NISM exam pattern, covering all the important topics and concepts.
+                </p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mb-6">
+                  <BarChart2 className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Detailed Analytics</h3>
+                <p className="text-gray-700 dark:text-gray-300">
+                  Get comprehensive performance insights that highlight your strengths and areas for improvement, helping you focus your study efforts.
+                </p>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mb-6">
+                  <TrendingUp className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Performance Tracking</h3>
+                <p className="text-gray-700 dark:text-gray-300">
+                  Monitor your progress over time with our intuitive performance tracking tools, and see your improvement as you practice.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
+        <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-800 dark:to-indigo-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Ready to Ace Your NISM Certification?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Join thousands of successful candidates who passed their NISM exams with our comprehensive mock tests
+            </p>
+            
+            <Button 
+              size="lg" 
+              className="bg-white text-blue-700 hover:text-blue-800 hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all duration-300"
+              onClick={() => document.getElementById('exams-section').scrollIntoView({ behavior: 'smooth' })}
+            >
+              Get Started Today
+            </Button>
           </div>
         </section>
       </main>

@@ -1,488 +1,650 @@
 
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
-import { examService } from "@/services/api";
-import { 
-  Loader2, Calendar, AlertCircle, CheckCircle, 
-  ShoppingBag, BookOpen, User, FileText, 
-  ExternalLink, Award, Clock, BookMarked,
-  CheckCheck, BarChart4, BadgeCheck, Medal
-} from "lucide-react";
+import { getUserPurchases } from "@/services/api";
+import { LoaderCircle, BookCheck, BadgeCheck, Award, TrendingUp, Clock, CreditCard, UserCog, Activity, BookOpen, CalendarDays, BookmarkCheck, CheckCircle2, Star } from "lucide-react";
+import DrifterStars from "@/components/ui/DrifterStars";
+import { motion } from "framer-motion";
+import { gradientShift } from "@/lib/animations";
 
 const UserProfile = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
-  
+  const [purchases, setPurchases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
+
   useEffect(() => {
     document.title = "My Profile - myturnindia";
-    
-    if (!isAuthenticated) {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const userPurchases = await getUserPurchases();
+      setPurchases(userPurchases);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
       toast({
-        title: "Authentication Required",
-        description: "Please log in to view your profile",
+        title: "Error",
+        description: "Failed to load profile data. Please try again.",
         variant: "destructive",
       });
-      navigate("/login");
+    } finally {
+      setLoading(false);
     }
-  }, [isAuthenticated, navigate, toast]);
-  
-  // Fetch user's purchases
-  const { data: purchases, isLoading: isLoadingPurchases } = useQuery({
-    queryKey: ['user-purchases', user?.id],
-    queryFn: () => examService.getUserPurchases(user?.id),
-    enabled: !!user?.id,
-  });
-  
-  // Fetch available exams for recommendations
-  const { data: availableExams, isLoading: isLoadingExams } = useQuery({
-    queryKey: ['available-exams'],
-    queryFn: () => examService.getAllExams(),
-  });
-  
-  const getRecommendedExams = () => {
-    if (!availableExams || !purchases) return [];
-    
-    // Filter out exams that the user has already purchased
-    const purchasedExamIds = purchases.map(p => p.exam_id);
-    return availableExams
-      .filter(exam => !purchasedExamIds.includes(exam.id))
-      .sort(() => 0.5 - Math.random()) // Randomize
-      .slice(0, 3); // Get top 3
   };
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Calculate statistics
+  const completedExams = purchases.filter(purchase => purchase.status === 'completed').length;
+  const totalExams = purchases.length;
+  const completionRate = totalExams > 0 ? Math.round((completedExams / totalExams) * 100) : 0;
   
-  if (!isAuthenticated) {
-    return null; // Already redirecting in useEffect
-  }
-  
-  const hasPurchases = purchases && purchases.length > 0;
-  const recommendedExams = getRecommendedExams();
-  
-  // User stats
-  const totalAttempts = hasPurchases ? purchases.length : 0;
-  // For completed exams, we'll use the payment status as a proxy since we don't have score directly
-  const completedExams = hasPurchases ? purchases.filter(p => p.status === 'success').length : 0;
-  // Since we don't have score in payments, we'll just show a placeholder
-  const averageScore = completedExams > 0 ? '75.0' : 'N/A';
-  
+  // Group exams by category
+  const examsByCategory = purchases.reduce((acc, purchase) => {
+    const category = purchase.exam?.category || 'Other';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(purchase);
+    return acc;
+  }, {});
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900">
       <Navbar />
-      <main className="flex-1 px-4 py-8 md:py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Sidebar */}
-            <div className="lg:col-span-3">
-              <Card className="sticky top-20 overflow-hidden border-0 shadow-md">
-                <div className="h-20 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
-                <CardHeader className="pb-3 relative">
-                  <div className="absolute -top-14 left-1/2 transform -translate-x-1/2">
-                    <div className="h-24 w-24 rounded-full bg-white p-1 shadow-md flex items-center justify-center text-blue-700 text-3xl font-bold overflow-hidden">
-                      {user?.email?.[0].toUpperCase() || <User className="h-12 w-12" />}
-                    </div>
-                  </div>
-                  <div className="mt-10 text-center">
-                    <CardTitle className="text-xl">{user?.email?.split('@')[0] || "User"}</CardTitle>
-                    <CardDescription className="text-sm">{user?.email}</CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-2 text-center py-3 border-y">
-                    <div>
-                      <div className="text-2xl font-bold text-blue-600">{totalAttempts}</div>
-                      <div className="text-xs text-gray-500">Enrolled</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-blue-600">{completedExams}</div>
-                      <div className="text-xs text-gray-500">Completed</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-blue-600">{averageScore}</div>
-                      <div className="text-xs text-gray-500">Avg Score</div>
-                    </div>
+      <DrifterStars starCount={100} starColor="#4f7df0" speed={0.3} className="opacity-40" />
+      
+      <main className="flex-1 relative z-10 profile-container">
+        {loading ? (
+          <div className="flex items-center justify-center h-96">
+            <LoaderCircle className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
+          </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+            {/* Premium gradient header */}
+            <div className="relative w-full rounded-xl overflow-hidden mb-8">
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-800 dark:to-indigo-900"
+                animate={gradientShift.animate}
+                initial={gradientShift.initial}
+              ></motion.div>
+              <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-6">
+                <Avatar className="h-24 w-24 ring-4 ring-white/50 shadow-xl">
+                  <AvatarImage src="/placeholder.svg" alt={user?.email || "User"} />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-2xl">
+                    {user?.email?.charAt(0)?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="text-center md:text-left md:flex-1">
+                  <div className="mb-4">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
+                      {user?.email?.split('@')[0] || "User"}
+                    </h1>
+                    <p className="text-blue-100 text-lg">{user?.email}</p>
                   </div>
                   
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-center text-sm">
-                      <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-500">Joined</span>
-                      <span className="ml-auto font-medium">Apr 2023</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <Award className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-500">Status</span>
-                      <span className="ml-auto font-medium text-blue-600">Active</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <BookMarked className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-500">Last activity</span>
-                      <span className="ml-auto font-medium">Today</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="bg-gray-50">
-                  <Button variant="outline" className="w-full" onClick={() => navigate("/dashboard")}>
-                    View All Exams
-                  </Button>
-                </CardFooter>
-              </Card>
-              
-              {/* Stats Card */}
-              <Card className="mt-6 shadow-md border-0">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center">
-                    <BarChart4 className="h-4 w-4 mr-2" />
-                    Your Stats
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pb-6">
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between items-center mb-1.5">
-                        <div className="text-sm text-gray-500">Completion Rate</div>
-                        <div className="text-sm font-medium">{totalAttempts > 0 ? Math.round((completedExams / totalAttempts) * 100) : 0}%</div>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${totalAttempts > 0 ? Math.round((completedExams / totalAttempts) * 100) : 0}%` }}></div>
+                  <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center">
+                      <BookCheck className="h-5 w-5 text-blue-100 mr-2" />
+                      <div>
+                        <div className="text-sm text-blue-100">Enrolled Courses</div>
+                        <div className="text-xl font-bold text-white">{totalExams}</div>
                       </div>
                     </div>
                     
-                    <div>
-                      <div className="flex justify-between items-center mb-1.5">
-                        <div className="text-sm text-gray-500">Accuracy</div>
-                        <div className="text-sm font-medium">{averageScore !== 'N/A' ? `${Math.min(parseFloat(averageScore), 100)}%` : '0%'}</div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center">
+                      <BadgeCheck className="h-5 w-5 text-blue-100 mr-2" />
+                      <div>
+                        <div className="text-sm text-blue-100">Completed</div>
+                        <div className="text-xl font-bold text-white">{completedExams}</div>
                       </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
-                        <div className="bg-green-500 h-2 rounded-full" style={{ width: `${averageScore !== 'N/A' ? Math.min(parseFloat(averageScore), 100) : 0}%` }}></div>
+                    </div>
+                    
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center">
+                      <Award className="h-5 w-5 text-blue-100 mr-2" />
+                      <div>
+                        <div className="text-sm text-blue-100">Completion Rate</div>
+                        <div className="text-xl font-bold text-white">{completionRate}%</div>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                
+                <div className="flex flex-col gap-2 mt-4 md:mt-0">
+                  <Button
+                    variant="secondary"
+                    className="bg-white/10 hover:bg-white/20 text-white border-none"
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    <TrendingUp className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="bg-white/10 hover:bg-white/20 text-white border-none"
+                    onClick={handleLogout}
+                  >
+                    <UserCog className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              </div>
             </div>
             
-            {/* Main Content */}
-            <div className="lg:col-span-9">
-              <Tabs defaultValue="purchases" className="w-full">
-                <TabsList className="mb-8 bg-white shadow-sm border border-gray-200 p-1 rounded-lg w-full">
-                  <TabsTrigger 
-                    value="purchases" 
-                    className="flex-1 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-none rounded-md"
-                  >
-                    <ShoppingBag className="h-4 w-4 mr-2" />
-                    My Purchases
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="recommendations" 
-                    className="flex-1 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-none rounded-md"
-                  >
-                    <Award className="h-4 w-4 mr-2" />
-                    Recommendations
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="achievements" 
-                    className="flex-1 py-3 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-none rounded-md"
-                  >
-                    <Medal className="h-4 w-4 mr-2" />
-                    Achievements
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="purchases" className="mt-0">
-                  <Card className="shadow-md border-0">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-xl flex items-center">
-                        <ShoppingBag className="h-5 w-5 mr-2 text-blue-600" />
-                        My Purchases
+            <Tabs defaultValue="overview" onValueChange={setActiveTab} className="w-full">
+              <TabsList className="bg-gray-100 dark:bg-gray-800 w-full justify-start mb-8 p-1 rounded-lg">
+                <TabsTrigger
+                  value="overview"
+                  className={`px-4 py-2 ${activeTab === 'overview' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger
+                  value="purchases"
+                  className={`px-4 py-2 ${activeTab === 'purchases' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                >
+                  My Purchases
+                </TabsTrigger>
+                <TabsTrigger
+                  value="performance"
+                  className={`px-4 py-2 ${activeTab === 'performance' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                >
+                  Performance
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border-gray-100 dark:border-gray-700 shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl flex items-center text-gray-900 dark:text-white">
+                        <Activity className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        Activity Summary
                       </CardTitle>
-                      <CardDescription>
-                        View all exam packages you've purchased on myturnindia
-                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {isLoadingPurchases ? (
-                        <div className="flex justify-center py-8">
-                          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <BookOpen className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
+                            <span className="text-gray-700 dark:text-gray-300">Total Enrolled</span>
+                          </div>
+                          <span className="font-semibold text-gray-900 dark:text-white">{totalExams}</span>
                         </div>
-                      ) : hasPurchases ? (
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <BookmarkCheck className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
+                            <span className="text-gray-700 dark:text-gray-300">Completed</span>
+                          </div>
+                          <span className="font-semibold text-gray-900 dark:text-white">{completedExams}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <Clock className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
+                            <span className="text-gray-700 dark:text-gray-300">In Progress</span>
+                          </div>
+                          <span className="font-semibold text-gray-900 dark:text-white">{totalExams - completedExams}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <CheckCircle2 className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
+                            <span className="text-gray-700 dark:text-gray-300">Completion Rate</span>
+                          </div>
+                          <span className="font-semibold text-gray-900 dark:text-white">{completionRate}%</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border-gray-100 dark:border-gray-700 shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl flex items-center text-gray-900 dark:text-white">
+                        <CalendarDays className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        Recent Activity
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {purchases.length > 0 ? (
                         <div className="space-y-4">
-                          {purchases.map((purchase, index) => (
-                            <Card key={index} className="overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                              <CardHeader className="bg-blue-50 py-4">
-                                <div className="flex justify-between items-center">
-                                  <div>
-                                    <CardTitle className="text-lg">{purchase.exam?.title || "Exam Package"}</CardTitle>
-                                    <CardDescription className="flex items-center text-sm">
-                                      <BookOpen className="h-3 w-3 mr-1 text-gray-500" />
-                                      {purchase.exam?.category || "Unknown"} - {purchase.exam?.type || "Mock Test"}
-                                    </CardDescription>
+                          {purchases.slice(0, 3).map((purchase, index) => (
+                            <div key={index} className="border-b dark:border-gray-700 pb-3 last:border-0 last:pb-0">
+                              <div className="font-medium text-gray-900 dark:text-white mb-1">
+                                {purchase.exam?.title || "Unknown Exam"}
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  {formatDate(purchase.created_at)}
+                                </span>
+                                <span className={`${purchase.status === 'completed' ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                                  {purchase.status === 'completed' ? 'Completed' : 'In Progress'}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-600 dark:text-gray-400 text-center py-6">
+                          No recent activity found.
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-100 dark:border-blue-900/30 shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xl flex items-center text-gray-900 dark:text-white">
+                        <Star className="mr-2 h-5 w-5 text-orange-500 dark:text-orange-400" />
+                        Recommendations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-100 dark:border-blue-900/30">
+                          <h4 className="font-medium text-gray-900 dark:text-white mb-1">NISM Series-VIII: Equity Derivatives</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Perfect for finance professionals</p>
+                          <Button variant="outline" size="sm" className="w-full border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-400" onClick={() => navigate('/exams/nism')}>
+                            View Details
+                          </Button>
+                        </div>
+                        
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-100 dark:border-blue-900/30">
+                          <h4 className="font-medium text-gray-900 dark:text-white mb-1">GATE Computer Science</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Comprehensive preparation suite</p>
+                          <Button variant="outline" size="sm" className="w-full border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-400" onClick={() => navigate('/exams/gate')}>
+                            View Details
+                          </Button>
+                        </div>
+                        
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-4">
+                          <h4 className="font-medium mb-1">Unlock Premium Access</h4>
+                          <p className="text-sm text-blue-100 mb-2">Get access to all mock tests and features</p>
+                          <Button size="sm" className="w-full bg-white text-blue-700 hover:bg-gray-100">
+                            Explore
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Achievement Section */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <Award className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    Your Achievements
+                  </h3>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {completedExams > 0 ? (
+                      <>
+                        <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 rounded-xl border border-orange-100 dark:border-orange-900/30 p-4 flex flex-col items-center text-center">
+                          <div className="bg-orange-100 dark:bg-orange-900/50 rounded-full p-3 mb-3">
+                            <Award className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                          </div>
+                          <h4 className="font-medium text-gray-900 dark:text-white mb-1">First Completion</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Completed your first exam</p>
+                        </div>
+                        
+                        {completedExams >= 5 && (
+                          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30 p-4 flex flex-col items-center text-center">
+                            <div className="bg-blue-100 dark:bg-blue-900/50 rounded-full p-3 mb-3">
+                              <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">Dedicated Learner</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Completed 5+ mock tests</p>
+                          </div>
+                        )}
+                        
+                        {completionRate >= 80 && (
+                          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-100 dark:border-green-900/30 p-4 flex flex-col items-center text-center">
+                            <div className="bg-green-100 dark:bg-green-900/50 rounded-full p-3 mb-3">
+                              <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+                            </div>
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">Completion Master</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">80%+ completion rate</p>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="col-span-full text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <Award className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-2">No Achievements Yet</h4>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4">Complete mock tests to earn achievements</p>
+                        <Button 
+                          variant="outline"
+                          onClick={() => navigate('/mock-tests')}
+                          className="mx-auto"
+                        >
+                          Explore Mock Tests
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Category breakdown */}
+                {Object.keys(examsByCategory).length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                      <BookOpen className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      Your Exam Categories
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {Object.entries(examsByCategory).map(([category, exams], index) => (
+                        <Card key={index} className="border-gray-100 dark:border-gray-700 shadow-sm">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg flex items-center text-gray-900 dark:text-white">
+                              {category === 'NISM' ? 
+                                <Award className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" /> : 
+                                <BookOpen className="mr-2 h-5 w-5 text-purple-600 dark:text-purple-400" />
+                              }
+                              {category} Exams
+                            </CardTitle>
+                            <CardDescription>
+                              You have {exams.length} {category.toLowerCase()} {exams.length === 1 ? 'exam' : 'exams'}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {exams.slice(0, 3).map((purchase, i) => (
+                                <div key={i} className="flex justify-between items-center">
+                                  <div className="flex-1">
+                                    <div className="font-medium text-gray-900 dark:text-white text-sm">
+                                      {purchase.exam?.title || "Unknown Exam"}
+                                    </div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                                      {purchase.status === 'completed' ? 'Completed' : 'In Progress'} • {formatDate(purchase.created_at)}
+                                    </div>
                                   </div>
-                                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center">
-                                    <CheckCircle className="h-4 w-4 mr-1" />
-                                    Active
-                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    className="text-blue-600 dark:text-blue-400"
+                                    onClick={() => navigate(`/exam/${purchase.exam_id}`)}
+                                  >
+                                    View
+                                  </Button>
                                 </div>
-                              </CardHeader>
-                              <CardContent className="py-4">
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                  <div>
-                                    <div className="text-sm text-gray-500">Purchase Date</div>
-                                    <div className="font-medium flex items-center mt-1">
-                                      <Calendar className="h-4 w-4 text-blue-600 mr-1" />
-                                      {new Date(purchase.created_at).toLocaleDateString()}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">Valid Until</div>
-                                    <div className="font-medium flex items-center mt-1">
-                                      <Calendar className="h-4 w-4 text-blue-600 mr-1" />
-                                      {new Date(new Date(purchase.created_at).getTime() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">Amount Paid</div>
-                                    <div className="font-medium mt-1">
-                                      ₹{purchase.amount}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm text-gray-500">Completion</div>
-                                    <div className="font-medium flex items-center mt-1">
-                                      <Clock className="h-4 w-4 text-blue-600 mr-1" />
-                                      {purchase.status === 'success' ? (
-                                        <span className="text-green-600 flex items-center">
-                                          <CheckCheck className="h-4 w-4 mr-1" /> Completed
-                                        </span>
-                                      ) : (
-                                        <span>In Progress</span>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                {purchase.status === 'success' && (
-                                  <div className="mt-4 pt-4 border-t">
-                                    <div className="flex items-center justify-between mb-2">
-                                      <span className="text-sm text-gray-500">Estimated Score</span>
-                                      <span className="font-medium">{Math.floor(Math.random() * 20) + 80}/{purchase.exam?.total_questions || 100} ({Math.floor(Math.random() * 20) + 80}%)</span>
-                                    </div>
-                                    <div className="w-full bg-gray-100 rounded-full h-2">
-                                      <div 
-                                        className="h-2 rounded-full bg-green-500" 
-                                        style={{ width: `${Math.floor(Math.random() * 20) + 80}%` }}
-                                      ></div>
-                                    </div>
-                                  </div>
-                                )}
-                              </CardContent>
-                              <CardFooter className="border-t bg-gray-50 py-3 flex justify-between">
+                              ))}
+                              
+                              {exams.length > 3 && (
                                 <Button 
                                   variant="outline" 
-                                  size="sm"
-                                  onClick={() => navigate(`/results/${purchase.id}`)}
-                                  disabled={purchase.status !== 'success'}
+                                  size="sm" 
+                                  className="w-full mt-2"
+                                  onClick={() => setActiveTab("purchases")}
                                 >
-                                  {purchase.status === 'success' ? 'View Results' : 'Not Completed'}
+                                  See All {exams.length} Exams
                                 </Button>
-                                <Button 
-                                  size="sm"
-                                  onClick={() => navigate(`/exam/${purchase.exam_id}`)}
-                                >
-                                  {purchase.status === 'success' ? 'Retake Test' : 'Take Test'}
-                                </Button>
-                              </CardFooter>
-                            </Card>
-                          ))}
-                        </div>
-                      ) : (
-                        <Alert>
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertTitle>No purchases found</AlertTitle>
-                          <AlertDescription>
-                            You haven't purchased any exam packages yet. Check out our recommendations!
-                          </AlertDescription>
-                        </Alert>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                
-                <TabsContent value="recommendations" className="mt-0">
-                  <Card className="shadow-md border-0">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-xl flex items-center">
-                        <Award className="h-5 w-5 mr-2 text-blue-600" />
-                        Recommended for You
-                      </CardTitle>
-                      <CardDescription>
-                        Personalized recommendations based on your profile and interests
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {isLoadingExams ? (
-                        <div className="flex justify-center py-8">
-                          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          {recommendedExams.map((exam, index) => (
-                            <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow border border-gray-100">
-                              <div className={`h-2 bg-gradient-to-r ${exam.category === 'NISM' ? 'from-blue-600 to-blue-800' : 'from-indigo-600 to-indigo-800'}`}></div>
-                              <CardHeader className="pb-2">
-                                <CardTitle className="text-lg">{exam.title}</CardTitle>
-                                <CardDescription className="flex items-center">
-                                  <BookOpen className="h-4 w-4 mr-1" />
-                                  {exam.category} - {exam.type}
-                                </CardDescription>
-                              </CardHeader>
-                              <CardContent className="pb-3">
-                                <div className="text-sm text-gray-500 line-clamp-2 mb-3">
-                                  {exam.description || `Comprehensive ${exam.category} exam covering all essential topics for successful certification.`}
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
-                                  <div className="bg-gray-50 p-2 rounded flex flex-col">
-                                    <span className="text-gray-500">Questions</span>
-                                    <span className="font-medium">{exam.total_questions}</span>
-                                  </div>
-                                  <div className="bg-gray-50 p-2 rounded flex flex-col">
-                                    <span className="text-gray-500">Duration</span>
-                                    <span className="font-medium">{exam.duration} min</span>
-                                  </div>
-                                </div>
-                              </CardContent>
-                              <CardFooter className="bg-gray-50 pt-3 flex justify-between">
-                                <div className="text-lg font-bold text-blue-600">₹{exam.fee}</div>
-                                <Button 
-                                  onClick={() => navigate(`/payment/${exam.id}`)}
-                                >
-                                  Purchase
-                                </Button>
-                              </CardFooter>
-                            </Card>
-                          ))}
-                          
-                          {recommendedExams.length === 0 && (
-                            <div className="col-span-3 text-center py-12">
-                              <Award className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <h3 className="text-lg font-medium text-gray-800 mb-2">No recommendations yet</h3>
-                              <p className="text-gray-500 max-w-md mx-auto mb-4">
-                                We don't have any recommendations for you right now. Explore all our exams to find what suits you best.
-                              </p>
-                              <Button 
-                                variant="outline" 
-                                onClick={() => navigate("/dashboard")}
-                              >
-                                Browse All Exams
-                              </Button>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
-                    <CardFooter className="flex justify-center border-t py-4">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => navigate("/dashboard")}
-                        className="flex items-center"
-                      >
-                        View All Available Tests
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
-                
-                <TabsContent value="achievements" className="mt-0">
-                  <Card className="shadow-md border-0">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-xl flex items-center">
-                        <Medal className="h-5 w-5 mr-2 text-blue-600" />
-                        Your Achievements
-                      </CardTitle>
-                      <CardDescription>
-                        Track your progress and unlock achievements as you complete exams
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <Card className="border border-gray-100">
-                          <CardHeader className="pb-3">
-                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-2">
-                              <BadgeCheck className="h-6 w-6 text-blue-600" />
-                            </div>
-                            <CardTitle className="text-center text-base">First Exam</CardTitle>
-                            <CardDescription className="text-center text-xs">
-                              Complete your first exam
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="pb-4 pt-0 text-center">
-                            {completedExams > 0 ? (
-                              <div className="text-green-600 flex items-center justify-center">
-                                <CheckCircle className="h-4 w-4 mr-1" /> 
-                                Completed
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="purchases" className="mt-0">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <CreditCard className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      Purchase History
+                    </h3>
+                  </div>
+                  
+                  {purchases.length > 0 ? (
+                    <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                      {purchases.map((purchase, index) => (
+                        <div key={index} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div className="flex-1">
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg mb-1">
+                                {purchase.exam?.title || "Unknown Exam"}
+                              </h4>
+                              <div className="flex flex-wrap gap-4 text-sm">
+                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                  <Clock className="h-4 w-4 mr-1" />
+                                  {purchase.exam?.duration} mins
+                                </div>
+                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                  <CalendarDays className="h-4 w-4 mr-1" />
+                                  {formatDate(purchase.created_at)}
+                                </div>
+                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                  <CreditCard className="h-4 w-4 mr-1" />
+                                  ₹{purchase.amount}
+                                </div>
+                                <div className={`flex items-center ${purchase.status === 'completed' ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                                  {purchase.status === 'completed' ? 
+                                    <CheckCircle2 className="h-4 w-4 mr-1" /> : 
+                                    <Clock className="h-4 w-4 mr-1" />
+                                  }
+                                  {purchase.status === 'completed' ? 'Completed' : 'In Progress'}
+                                </div>
                               </div>
-                            ) : (
-                              <Button variant="outline" size="sm" onClick={() => navigate("/dashboard")}>
-                                Take an Exam
-                              </Button>
-                            )}
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              {purchase.status === 'completed' ? (
+                                <>
+                                  <Button variant="outline" onClick={() => navigate(`/results/${purchase.id}`)}>
+                                    View Results
+                                  </Button>
+                                </>
+                              ) : (
+                                <Button onClick={() => navigate(`/exam/${purchase.exam_id}`)}>
+                                  Continue
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center">
+                      <BookOpen className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                      <h4 className="font-medium text-gray-900 dark:text-white mb-2">No Purchases Yet</h4>
+                      <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                        You haven't purchased any mock tests yet. Explore our collection to find the perfect test for your needs.
+                      </p>
+                      <Button 
+                        onClick={() => navigate('/mock-tests')}
+                        className="mx-auto"
+                      >
+                        Explore Mock Tests
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="performance" className="mt-0">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+                  <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <TrendingUp className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      Performance Analytics
+                    </h3>
+                  </div>
+                  
+                  {completedExams > 0 ? (
+                    <div className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <Card className="border-gray-100 dark:border-gray-700 shadow-sm">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg text-gray-900 dark:text-white">
+                              Completion Rate
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-center">
+                              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                                {completionRate}%
+                              </div>
+                              <div className="ml-auto h-16 w-16 flex items-center justify-center">
+                                <div className="relative h-full w-full">
+                                  <svg className="w-full h-full" viewBox="0 0 36 36">
+                                    <circle 
+                                      cx="18" cy="18" r="16" 
+                                      fill="none" 
+                                      stroke="#e5e7eb" 
+                                      strokeWidth="3" 
+                                      className="dark:stroke-gray-700"
+                                    />
+                                    <circle 
+                                      cx="18" cy="18" r="16" 
+                                      fill="none" 
+                                      stroke="currentColor" 
+                                      strokeWidth="3" 
+                                      strokeDasharray={`${completionRate}, 100`}
+                                      strokeLinecap="round"
+                                      className="text-blue-500 dark:text-blue-400"
+                                      transform="rotate(-90 18 18)"
+                                    />
+                                  </svg>
+                                  <div className="absolute inset-0 flex items-center justify-center text-sm font-medium">
+                                    {completedExams}/{totalExams}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </CardContent>
                         </Card>
                         
-                        <Card className="border border-gray-100">
-                          <CardHeader className="pb-3">
-                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-2">
-                              <Award className="h-6 w-6 text-blue-600" />
-                            </div>
-                            <CardTitle className="text-center text-base">Perfect Score</CardTitle>
-                            <CardDescription className="text-center text-xs">
-                              Get 100% on any exam
-                            </CardDescription>
+                        <Card className="border-gray-100 dark:border-gray-700 shadow-sm">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg text-gray-900 dark:text-white">
+                              Exams Completed
+                            </CardTitle>
                           </CardHeader>
-                          <CardContent className="pb-4 pt-0 text-center">
-                            <div className="text-gray-500 flex items-center justify-center">
-                              <Clock className="h-4 w-4 mr-1" /> 
-                              In Progress
+                          <CardContent>
+                            <div className="flex items-center">
+                              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                                {completedExams}
+                              </div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                                out of {totalExams} enrolled
+                              </div>
+                              <div className="ml-auto">
+                                <CheckCircle2 className="h-12 w-12 text-green-200 dark:text-green-900" />
+                              </div>
                             </div>
                           </CardContent>
                         </Card>
                         
-                        <Card className="border border-gray-100">
-                          <CardHeader className="pb-3">
-                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-2">
-                              <FileText className="h-6 w-6 text-blue-600" />
-                            </div>
-                            <CardTitle className="text-center text-base">Exam Mastery</CardTitle>
-                            <CardDescription className="text-center text-xs">
-                              Complete 5 exams
-                            </CardDescription>
+                        <Card className="border-gray-100 dark:border-gray-700 shadow-sm">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg text-gray-900 dark:text-white">
+                              Pending Exams
+                            </CardTitle>
                           </CardHeader>
-                          <CardContent className="pb-4 pt-0 text-center">
-                            <div className="flex flex-col items-center">
-                              <div className="text-sm mb-1">{completedExams}/5 completed</div>
-                              <div className="w-full bg-gray-100 rounded-full h-2 mb-1">
-                                <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${(completedExams / 5) * 100}%` }}></div>
+                          <CardContent>
+                            <div className="flex items-center">
+                              <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                                {totalExams - completedExams}
+                              </div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                                remaining to complete
+                              </div>
+                              <div className="ml-auto">
+                                <Clock className="h-12 w-12 text-orange-200 dark:text-orange-900" />
                               </div>
                             </div>
                           </CardContent>
                         </Card>
                       </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-4">Completed Exams</h4>
+                        <div className="space-y-4">
+                          {purchases.filter(purchase => purchase.status === 'completed').map((purchase, index) => (
+                            <Link key={index} to={`/results/${purchase.id}`} className="block">
+                              <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <div className="mr-4">
+                                  {purchase.exam?.category === 'NISM' ? (
+                                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+                                      <Award className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                    </div>
+                                  ) : (
+                                    <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                                      <BookOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <h5 className="font-medium text-gray-900 dark:text-white">
+                                    {purchase.exam?.title || "Unknown Exam"}
+                                  </h5>
+                                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    Completed on {formatDate(purchase.created_at)}
+                                  </p>
+                                </div>
+                                <div className="ml-4">
+                                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    View Results →
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center">
+                      <TrendingUp className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                      <h4 className="font-medium text-gray-900 dark:text-white mb-2">No Performance Data Yet</h4>
+                      <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                        Complete some mock tests to see your performance analytics and track your progress.
+                      </p>
+                      <Button 
+                        onClick={() => navigate('/mock-tests')}
+                        className="mx-auto"
+                      >
+                        Take a Mock Test
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
-        </div>
+        )}
       </main>
       <Footer />
     </div>
