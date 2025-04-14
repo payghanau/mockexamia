@@ -19,6 +19,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'work-sans': ['Work Sans', 'sans-serif'],
+        'roboto': ['Roboto', 'sans-serif'],
+        'merriweather': ['Merriweather', 'serif'],
+      },
       colors: {
         primary: {
           DEFAULT: "#3B82F6",  // Consistent blue

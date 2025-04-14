@@ -40,14 +40,14 @@ const Navbar = () => {
     <div className="bg-white dark:bg-gray-900 sticky top-0 z-50 border-b dark:border-gray-800">
       <div className="container py-4 px-4 mx-auto flex items-center justify-between">
         <Link to="/" className="font-bold text-xl text-gray-800 dark:text-white flex items-center">
-          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">myturnindia</span>
+          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-work-sans">myturnindia</span>
         </Link>
 
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
+          <Link to="/mock-tests" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors font-work-sans font-semibold">
             Mock Tests
           </Link>
-          <Link to="/contact" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors">
+          <Link to="/contact" className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white transition-colors font-work-sans font-semibold">
             Contact
           </Link>
         </div>
@@ -63,17 +63,17 @@ const Navbar = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-72 dark:bg-gray-900 dark:border-gray-800">
                 <SheetHeader>
-                  <SheetTitle className="text-left text-gray-900 dark:text-white">Menu</SheetTitle>
-                  <SheetDescription className="text-left text-gray-600 dark:text-gray-400">
+                  <SheetTitle className="text-left text-gray-900 dark:text-white font-work-sans">Menu</SheetTitle>
+                  <SheetDescription className="text-left text-gray-600 dark:text-gray-400 font-work-sans">
                     Navigate through myturnindia
                   </SheetDescription>
                 </SheetHeader>
                 <div className="grid gap-4 py-6">
-                  <Link to="/" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                  <Link to="/mock-tests" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
                     <BookOpen className="mr-2 h-4 w-4" />
                     Mock Tests
                   </Link>
-                  <Link to="/contact" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                  <Link to="/contact" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
                     <Phone className="mr-2 h-4 w-4" />
                     Contact
                   </Link>
@@ -82,26 +82,26 @@ const Navbar = () => {
                   
                   {isAuthenticated ? (
                     <>
-                      <Link to="/dashboard" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                      <Link to="/dashboard" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
                         <Layout className="mr-2 h-4 w-4" />
                         Dashboard
                       </Link>
-                      <Link to="/profile" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2">
+                      <Link to="/profile" className="flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans">
                         <User className="mr-2 h-4 w-4" />
                         My Profile
                       </Link>
-                      <Button variant="ghost" className="justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-0 h-auto" onClick={handleLogout}>
+                      <Button variant="ghost" className="justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-0 h-auto font-work-sans" onClick={handleLogout}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Link to="/login" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2", isLoginPage ? 'hidden' : '')}>
+                      <Link to="/login" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans", isLoginPage ? 'hidden' : '')}>
                         <LogIn className="mr-2 h-4 w-4" />
                         Login
                       </Link>
-                      <Link to="/register" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2", isRegisterPage ? 'hidden' : '')}>
+                      <Link to="/register" className={cn("flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white py-2 font-work-sans", isRegisterPage ? 'hidden' : '')}>
                         <UserPlus className="mr-2 h-4 w-4" />
                         Register
                       </Link>
@@ -117,7 +117,7 @@ const Navbar = () => {
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/dashboard')} 
-                className="hidden md:flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white gap-2 px-3 py-2"
+                className="hidden md:flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white gap-2 px-3 py-2 font-work-sans"
               >
                 <Layout className="h-4 w-4" />
                 <span>Dashboard</span>
@@ -140,7 +140,7 @@ const Navbar = () => {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
-                className="hidden md:flex text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                className="hidden md:flex text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 font-work-sans"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -149,14 +149,14 @@ const Navbar = () => {
             <>
               {!isLoginPage && (
                 <Link to="/login">
-                  <Button variant="outline" size="sm" className="dark:text-gray-300 dark:border-gray-700">
+                  <Button variant="outline" size="sm" className="dark:text-gray-300 dark:border-gray-700 font-work-sans">
                     Log In
                   </Button>
                 </Link>
               )}
               {!isRegisterPage && (
                 <Link to="/register">
-                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-work-sans font-semibold">
                     Sign Up
                   </Button>
                 </Link>

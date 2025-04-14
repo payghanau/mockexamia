@@ -1,6 +1,7 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@200;400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,7 +10,7 @@
 @layer base {
   body {
     @apply bg-white text-gray-800 antialiased;
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
   
   .page-container {
@@ -33,6 +34,19 @@
   
   a.apple-link:hover:after {
     @apply scale-x-100 origin-bottom-left;
+  }
+
+  /* Font classes */
+  .font-work-sans {
+    font-family: 'Work Sans', sans-serif;
+  }
+  
+  .font-roboto {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .font-merriweather {
+    font-family: 'Merriweather', serif;
   }
 }
 

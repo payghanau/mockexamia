@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,24 +5,26 @@ import { useToast } from '@/components/ui/use-toast';
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
-  isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name?: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
-  googleAuth: (redirectUrl?: string) => Promise<void>;
+  loading: boolean;
+  error: string | null;
+  clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  session: null,
-  isLoading: true,
   isAuthenticated: false,
+  isAdmin: false,
   login: async () => {},
   register: async () => {},
   logout: async () => {},
-  googleAuth: async () => {},
+  loading: true,
+  error: null,
+  clearError: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -31,11 +32,11 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         setSession(currentSession);
@@ -55,11 +56,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
-      setIsLoading(false);
+      setLoading(false);
     });
 
     return () => {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
     } catch (error: any) {
       console.error('Login failed:', error);
+      setError('Invalid credentials');
       toast({
         variant: 'destructive',
         title: 'Login failed',
@@ -86,18 +87,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const register = async (email: string, password: string, name?: string) => {
+  const register = async (email: string, password: string, name: string) => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { name: name || '' },
+          data: { name },
         },
       });
       
@@ -109,6 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
     } catch (error: any) {
       console.error('Registration failed:', error);
+      setError('Could not create account');
       toast({
         variant: 'destructive',
         title: 'Registration failed',
@@ -116,13 +118,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const googleAuth = async (redirectUrl?: string) => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -134,6 +136,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
     } catch (error: any) {
       console.error('Google authentication failed:', error);
+      setError('Failed to authenticate with Google');
       toast({
         variant: 'destructive',
         title: 'Authentication failed',
@@ -141,7 +144,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       throw error;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -150,6 +153,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await supabase.auth.signOut();
     } catch (error) {
       console.error('Logout failed:', error);
+      setError('Failed to log out');
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -158,17 +162,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
+  // Determine if the current user is an admin
+  const isAdmin = user?.email?.endsWith('@admin.com') || user?.email === 'admin@myturnindia.com' || false;
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        session,
-        isLoading,
         isAuthenticated: !!user,
+        isAdmin,
         login,
         register,
         logout,
-        googleAuth,
+        loading,
+        error,
+        clearError,
       }}
     >
       {children}

@@ -296,8 +296,8 @@ const MockTests = () => {
       </div>
       
       <div className="p-5 flex-1 flex flex-col">
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">{exam.title}</h3>
-        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{exam.description}</p>
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 font-work-sans">{exam.title}</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 font-roboto">{exam.description}</p>
         
         <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mt-auto mb-3">
           <div className="flex items-center">
@@ -314,7 +314,7 @@ const MockTests = () => {
       <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         <div className="flex justify-between items-center">
           <div className="font-semibold text-lg text-gray-900 dark:text-white">₹{exam.price}</div>
-          <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+          <Button size="sm" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-work-sans font-semibold">
             Enroll Now
           </Button>
         </div>
@@ -345,7 +345,7 @@ const MockTests = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+                className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight font-work-sans"
               >
                 Expert-Crafted Mock Tests for Exam Success
               </motion.h1>
@@ -353,7 +353,7 @@ const MockTests = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xl text-blue-100 mb-8"
+                className="text-xl text-blue-100 mb-8 font-work-sans font-regular"
               >
                 Ace your NISM certifications and GATE exams with our comprehensive practice tests
               </motion.p>
@@ -366,7 +366,7 @@ const MockTests = () => {
               >
                 <Button 
                   size="lg" 
-                  className="bg-white text-blue-700 hover:text-blue-800 hover:bg-gray-50 shadow-md dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700"
+                  className="bg-white text-blue-700 hover:text-blue-800 hover:bg-gray-50 shadow-md dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700 font-work-sans font-semibold"
                   onClick={() => navigate("/dashboard")}
                 >
                   Go to Dashboard
@@ -375,7 +375,7 @@ const MockTests = () => {
                   <Button 
                     size="lg" 
                     variant="outline"
-                    className="border-white text-white hover:bg-white/10 dark:border-gray-300 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="border-white text-white hover:bg-white/10 dark:border-gray-300 dark:text-gray-300 dark:hover:bg-gray-800 font-work-sans font-semibold"
                     onClick={() => navigate("/register")}
                   >
                     Sign Up Now
@@ -392,8 +392,8 @@ const MockTests = () => {
                 className="flex flex-col items-center"
               >
                 <Users className="h-8 w-8 mb-2" />
-                <div className="text-2xl font-bold">15,000+</div>
-                <div className="text-blue-100 text-sm">Happy Students</div>
+                <div className="text-2xl font-bold font-work-sans">15,000+</div>
+                <div className="text-blue-100 text-sm font-work-sans">Happy Students</div>
               </motion.div>
               
               <motion.div 
@@ -403,8 +403,8 @@ const MockTests = () => {
                 className="flex flex-col items-center"
               >
                 <FileText className="h-8 w-8 mb-2" />
-                <div className="text-2xl font-bold">500+</div>
-                <div className="text-blue-100 text-sm">Mock Tests</div>
+                <div className="text-2xl font-bold font-work-sans">500+</div>
+                <div className="text-blue-100 text-sm font-work-sans">Mock Tests</div>
               </motion.div>
               
               <motion.div 
@@ -414,8 +414,8 @@ const MockTests = () => {
                 className="flex flex-col items-center"
               >
                 <CheckCircle className="h-8 w-8 mb-2" />
-                <div className="text-2xl font-bold">98%</div>
-                <div className="text-blue-100 text-sm">Success Rate</div>
+                <div className="text-2xl font-bold font-work-sans">98%</div>
+                <div className="text-blue-100 text-sm font-work-sans">Success Rate</div>
               </motion.div>
             </div>
           </div>
@@ -425,10 +425,10 @@ const MockTests = () => {
         <section className="py-16 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-work-sans">
                 Our Mock Test Catalog
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-work-sans">
                 Choose from our extensive range of meticulously designed mock tests
               </p>
             </div>
@@ -438,20 +438,20 @@ const MockTests = () => {
                 <TabsList className="bg-gray-100 dark:bg-gray-800 p-1">
                   <TabsTrigger
                     value="all"
-                    className={`px-6 py-2 ${activeTab === 'all' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                    className={`px-6 py-2 font-work-sans font-semibold ${activeTab === 'all' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
                   >
                     All Tests
                   </TabsTrigger>
                   <TabsTrigger
                     value="nism"
-                    className={`px-6 py-2 flex items-center space-x-2 ${activeTab === 'nism' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                    className={`px-6 py-2 flex items-center space-x-2 font-work-sans font-semibold ${activeTab === 'nism' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
                   >
                     <Award className="h-4 w-4" />
                     <span>NISM Certification</span>
                   </TabsTrigger>
                   <TabsTrigger
                     value="gate"
-                    className={`px-6 py-2 flex items-center space-x-2 ${activeTab === 'gate' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
+                    className={`px-6 py-2 flex items-center space-x-2 font-work-sans font-semibold ${activeTab === 'gate' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}
                   >
                     <GraduationCap className="h-4 w-4" />
                     <span>GATE Exams</span>
@@ -461,7 +461,7 @@ const MockTests = () => {
               
               <TabsContent value="all" className="mt-0">
                 <div className="mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center font-work-sans">
                     <Award className="mr-2 h-6 w-6 text-blue-600 dark:text-blue-400" />
                     NISM Certification Tests
                   </h3>
@@ -471,7 +471,7 @@ const MockTests = () => {
                 </div>
                 
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center mt-16">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center mt-16 font-work-sans">
                     <GraduationCap className="mr-2 h-6 w-6 text-purple-600 dark:text-purple-400" />
                     GATE Exam Tests
                   </h3>
@@ -486,15 +486,15 @@ const MockTests = () => {
                   <div className="max-w-4xl mx-auto">
                     <div className="flex flex-col md:flex-row md:items-center">
                       <div className="md:w-2/3 md:pr-8">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">NISM Certification Tests</h3>
-                        <p className="text-gray-700 dark:text-gray-300 mb-6">
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 font-work-sans">NISM Certification Tests</h3>
+                        <p className="text-gray-700 dark:text-gray-300 mb-6 font-work-sans">
                           Our NISM mock tests are designed by industry experts who understand the certification requirements inside out. Each test mirrors the actual exam pattern, helping you build confidence and mastery.
                         </p>
                         <div className="flex flex-wrap gap-4 mb-4">
-                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5">Series V-A</Badge>
-                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5">Series VIII</Badge>
-                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5">Series X-A</Badge>
-                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5">Series XV</Badge>
+                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5 font-work-sans">Series V-A</Badge>
+                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5 font-work-sans">Series VIII</Badge>
+                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5 font-work-sans">Series X-A</Badge>
+                          <Badge className="bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-3 py-1.5 font-work-sans">Series XV</Badge>
                         </div>
                       </div>
                       <div className="mt-6 md:mt-0 md:w-1/3 flex justify-center">
@@ -516,15 +516,15 @@ const MockTests = () => {
                   <div className="max-w-4xl mx-auto">
                     <div className="flex flex-col md:flex-row md:items-center">
                       <div className="md:w-2/3 md:pr-8">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">GATE Exam Tests</h3>
-                        <p className="text-gray-700 dark:text-gray-300 mb-6">
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 font-work-sans">GATE Exam Tests</h3>
+                        <p className="text-gray-700 dark:text-gray-300 mb-6 font-work-sans">
                           Prepare for GATE with our comprehensive test series covering all branches of engineering. Our tests are constructed with the latest exam pattern and feature detailed explanations to strengthen your understanding.
                         </p>
                         <div className="flex flex-wrap gap-4 mb-4">
-                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5">Computer Science</Badge>
-                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5">Electronics</Badge>
-                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5">Electrical</Badge>
-                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5">Mechanical</Badge>
+                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5 font-work-sans">Computer Science</Badge>
+                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5 font-work-sans">Electronics</Badge>
+                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5 font-work-sans">Electrical</Badge>
+                          <Badge className="bg-purple-200 text-purple-800 dark:bg-purple-900 dark:text-purple-300 px-3 py-1.5 font-work-sans">Mechanical</Badge>
                         </div>
                       </div>
                       <div className="mt-6 md:mt-0 md:w-1/3 flex justify-center">
@@ -548,9 +548,9 @@ const MockTests = () => {
         <section className="py-16 bg-white dark:bg-gray-900 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <Badge className="mb-4 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-4 py-1">Why Choose Us</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">The myturnindia Advantage</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
+              <Badge className="mb-4 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 px-4 py-1 font-work-sans">Why Choose Us</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-work-sans">The myturnindia Advantage</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 font-work-sans">
                 Our platform is designed to maximize your learning and ensure exam success
               </p>
             </div>
@@ -567,8 +567,8 @@ const MockTests = () => {
                   <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mb-6">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 font-work-sans">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 font-work-sans">
                     {feature.description}
                   </p>
                 </motion.div>
@@ -581,8 +581,8 @@ const MockTests = () => {
         <section className="py-16 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Success Stories</h2>
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-work-sans">Success Stories</h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-work-sans">
                 See how our platform has helped students achieve their goals
               </p>
             </div>
@@ -615,9 +615,9 @@ const MockTests = () => {
                         />
                       ))}
                     </div>
-                    <p className="text-gray-700 dark:text-gray-300 mb-4 italic">"{testimonials[testimonialIndex].content}"</p>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{testimonials[testimonialIndex].name}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{testimonials[testimonialIndex].role}</p>
+                    <p className="text-gray-700 dark:text-gray-300 mb-4 italic font-merriweather">"{testimonials[testimonialIndex].content}"</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white font-work-sans">{testimonials[testimonialIndex].name}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 font-work-sans">{testimonials[testimonialIndex].role}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -648,8 +648,8 @@ const MockTests = () => {
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Share Your Experience</h2>
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 font-work-sans">Share Your Experience</h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-work-sans">
                 Let us know how myturnindia helped you in your exam preparation
               </p>
             </div>
@@ -657,11 +657,11 @@ const MockTests = () => {
             <div className="max-w-3xl mx-auto">
               <Card className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border-gray-100 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-2xl">
+                  <CardTitle className="flex items-center text-2xl font-work-sans">
                     <Edit className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
                     Write a Review
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="font-work-sans">
                     Your feedback helps us improve and helps other students make informed decisions
                   </CardDescription>
                 </CardHeader>
@@ -670,12 +670,12 @@ const MockTests = () => {
                     placeholder="Share your experience with our mock tests..."
                     value={reviewText}
                     onChange={(e) => setReviewText(e.target.value)}
-                    className="min-h-32 resize-none"
+                    className="min-h-32 resize-none font-roboto"
                   />
                 </CardContent>
                 <CardFooter className="flex justify-end">
                   <Button 
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center font-work-sans font-semibold"
                     onClick={submitReview}
                     disabled={submitLoading}
                   >
@@ -687,13 +687,13 @@ const MockTests = () => {
               
               {/* User Reviews List */}
               <div className="mt-12">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center font-work-sans">
                   <MessageSquare className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
                   Student Reviews
                 </h3>
                 
                 {reviews.length === 0 ? (
-                  <div className="text-center text-gray-600 dark:text-gray-400 p-8 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="text-center text-gray-600 dark:text-gray-400 p-8 bg-gray-50 dark:bg-gray-800 rounded-lg font-work-sans">
                     No reviews yet. Be the first to share your experience!
                   </div>
                 ) : (
@@ -707,10 +707,10 @@ const MockTests = () => {
                                 {review.user_email?.charAt(0)?.toUpperCase() || "U"}
                               </div>
                               <div>
-                                <h4 className="font-medium text-gray-900 dark:text-white">
+                                <h4 className="font-medium text-gray-900 dark:text-white font-work-sans">
                                   {review.user_email?.split('@')[0] || "Anonymous"}
                                 </h4>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <p className="text-sm text-gray-500 dark:text-gray-400 font-work-sans">
                                   {new Date(review.created_at).toLocaleDateString()}
                                 </p>
                               </div>
@@ -719,14 +719,14 @@ const MockTests = () => {
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 font-work-sans"
                                 onClick={() => deleteReview(review.id)}
                               >
                                 Delete
                               </Button>
                             )}
                           </div>
-                          <p className="text-gray-700 dark:text-gray-300">{review.content}</p>
+                          <p className="text-gray-700 dark:text-gray-300 font-roboto">{review.content}</p>
                         </CardContent>
                       </Card>
                     ))}
@@ -746,18 +746,18 @@ const MockTests = () => {
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="max-w-3xl mx-auto"
             >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white leading-tight">
+              <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white leading-tight font-work-sans">
                 Ready to Ace Your Exam?
               </h2>
               
-              <p className="text-xl md:text-2xl mb-10 text-blue-100 leading-relaxed">
+              <p className="text-xl md:text-2xl mb-10 text-blue-100 leading-relaxed font-work-sans">
                 Start your preparation journey today with our expert-crafted mock tests
               </p>
               
               <div className="flex flex-wrap justify-center gap-5">
                 <Button 
                   size="lg" 
-                  className="bg-white text-indigo-700 hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 text-base px-8 py-6 h-auto rounded-xl dark:bg-gray-800 dark:text-indigo-400 dark:hover:bg-gray-700"
+                  className="bg-white text-indigo-700 hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 text-base px-8 py-6 h-auto rounded-xl dark:bg-gray-800 dark:text-indigo-400 dark:hover:bg-gray-700 font-work-sans font-semibold"
                   onClick={() => navigate("/dashboard")}
                 >
                   Go to Dashboard
@@ -766,7 +766,7 @@ const MockTests = () => {
                   <Button 
                     size="lg" 
                     variant="outline"
-                    className="border-2 border-white text-white hover:bg-white/10 text-base px-8 py-6 h-auto rounded-xl dark:border-gray-300 dark:text-gray-300"
+                    className="border-2 border-white text-white hover:bg-white/10 text-base px-8 py-6 h-auto rounded-xl dark:border-gray-300 dark:text-gray-300 font-work-sans font-semibold"
                     onClick={() => navigate("/register")}
                   >
                     Sign Up Now

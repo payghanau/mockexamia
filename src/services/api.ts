@@ -1,4 +1,3 @@
-
 import { supabase } from "@/lib/supabase";
 import { ContactFormValues } from "@/types";
 
@@ -144,34 +143,23 @@ export const examService = {
   
   getUserPurchases: async (userId: string) => {
     try {
-      if (!userId) throw new Error("User ID is required");
-      
       const { data, error } = await supabase
-        .from('payments')
+        .from('user_exams')
         .select(`
           *,
-          exam:exam_id (
-            id,
-            title,
-            description,
-            category,
-            type,
-            duration,
-            total_questions
-          )
+          exam:exams(*)
         `)
         .eq('user_id', userId)
-        .eq('status', 'success');
-
+        .order('created_at', { ascending: false });
+      
       if (error) throw error;
-      return data;
+      return data || [];
     } catch (error) {
       console.error('Error fetching user purchases:', error);
-      return [];
+      throw error;
     }
   },
   
-  // Add a method to get exam questions
   getExamQuestions: async (examId: string) => {
     try {
       const { data, error } = await supabase
@@ -187,7 +175,6 @@ export const examService = {
     }
   },
   
-  // Add a method to submit exam answers
   submitExamAnswers: async (userExamId: string, answers: any, score: number) => {
     try {
       const { data, error } = await supabase
@@ -208,7 +195,6 @@ export const examService = {
     }
   },
   
-  // Add a method to start a new exam
   startExam: async (userId: string, examId: string) => {
     try {
       const { data, error } = await supabase
@@ -230,14 +216,13 @@ export const examService = {
     }
   },
   
-  // Add a method to get exam result
   getExamResult: async (resultId: string) => {
     try {
       const { data, error } = await supabase
         .from('user_exams')
         .select(`
           *,
-          exam:exam_id (
+          exam:exams(
             id,
             title,
             description,
