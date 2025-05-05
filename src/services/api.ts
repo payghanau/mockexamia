@@ -1,7 +1,8 @@
+
 import { supabase } from "@/lib/supabase";
 import { ContactFormValues } from "@/types";
 
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT;
+const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT || '';
 
 export const authService = {
   login: async (email: string) => {
