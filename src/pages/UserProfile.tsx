@@ -1,659 +1,892 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  Calendar, 
+  BookOpen, 
+  Award, 
+  Clock, 
+  CheckCircle, 
+  AlertCircle, 
+  FileText, 
+  Edit, 
+  Save, 
+  X, 
+  Upload, 
+  Trash2, 
+  LogOut 
+} from 'lucide-react';
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
-import { examService } from "@/services/api";
-import {
-  User, BookOpen, Award, Clock, Calendar, FileText, GraduationCap, Settings, 
-  LogOut, BookCheck, Edit, BarChart3, Bookmark, ThumbsUp, History
-} from "lucide-react";
+// Mock data for user profile
+const mockUserData = {
+  id: "user123",
+  name: "John Doe",
+  email: "john.doe@example.com",
+  phone: "+91 9876543210",
+  avatar: "/avatars/user1.png",
+  joinedDate: "2023-01-15",
+  subscription: {
+    type: "Premium",
+    status: "active",
+    expiresAt: "2023-12-31",
+  },
+  progress: {
+    nism: {
+      completed: 8,
+      total: 12,
+      score: 76,
+    },
+    gate: {
+      completed: 5,
+      total: 15,
+      score: 68,
+    },
+  },
+  certificates: [
+    {
+      id: "cert001",
+      name: "NISM Series VIII - Equity Derivatives",
+      issueDate: "2023-03-20",
+      score: 82,
+      status: "verified",
+    },
+    {
+      id: "cert002",
+      name: "NISM Series VII - Securities Operations",
+      issueDate: "2023-02-10",
+      score: 78,
+      status: "verified",
+    },
+  ],
+  recentExams: [
+    {
+      id: "exam001",
+      name: "NISM Mutual Funds Mock Test 3",
+      date: "2023-05-15",
+      score: 85,
+      totalQuestions: 100,
+      correctAnswers: 85,
+    },
+    {
+      id: "exam002",
+      name: "GATE CSE Full Mock Test 2",
+      date: "2023-05-10",
+      score: 72,
+      totalQuestions: 65,
+      correctAnswers: 47,
+    },
+    {
+      id: "exam003",
+      name: "NISM Securities Operations Practice Test",
+      date: "2023-05-05",
+      score: 90,
+      totalQuestions: 50,
+      correctAnswers: 45,
+    },
+  ],
+  savedNotes: [
+    {
+      id: "note001",
+      title: "NISM Series VIII Important Points",
+      date: "2023-04-20",
+      content: "Key points about derivatives market regulations...",
+    },
+    {
+      id: "note002",
+      title: "GATE CSE Algorithms Revision",
+      date: "2023-04-15",
+      content: "Time complexity analysis of sorting algorithms...",
+    },
+  ],
+};
 
 const UserProfile = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("profile");
-  const [purchases, setPurchases] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+  
+  // State for user data
+  const [userData, setUserData] = useState(mockUserData);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUserData, setEditedUserData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // State for notes
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isEditingNote, setIsEditingNote] = useState(false);
+  const [noteContent, setNoteContent] = useState("");
+  
+  // Load user data
   useEffect(() => {
-    document.title = "My Profile - myturnindia";
-    
-    const fetchUserPurchases = async () => {
-      if (!isAuthenticated || !user) return;
+    // In a real app, we would fetch user data from an API
+    // For now, we'll use the mock data
+    if (user) {
+      // If we have real user data from auth context, update some fields
+      setUserData(prevData => ({
+        ...prevData,
+        name: user.user_metadata?.name || user.email?.split('@')[0] || prevData.name,
+        email: user.email || prevData.email,
+      }));
       
-      try {
-        setLoading(true);
-        const data = await examService.getUserPurchases(user.id);
-        setPurchases(data || []);
-      } catch (error) {
-        console.error("Error fetching purchases:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load your purchased exams",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserPurchases();
-  }, [user, isAuthenticated, toast]);
-
+      setEditedUserData({
+        name: user.user_metadata?.name || user.email?.split('@')[0] || mockUserData.name,
+        email: user.email || mockUserData.email,
+        phone: mockUserData.phone,
+      });
+    }
+  }, [user]);
+  
+  // Handle edit profile
+  const handleEditProfile = () => {
+    setIsEditing(true);
+  };
+  
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditedUserData({
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone,
+    });
+  };
+  
+  const handleSaveProfile = () => {
+    // In a real app, we would send the updated data to an API
+    setUserData(prevData => ({
+      ...prevData,
+      name: editedUserData.name,
+      email: editedUserData.email,
+      phone: editedUserData.phone,
+    }));
+    
+    setIsEditing(false);
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile information has been updated successfully.",
+    });
+  };
+  
+  // Handle avatar upload
+  const handleAvatarUpload = () => {
+    setIsUploading(true);
+    
+    // Simulate upload delay
+    setTimeout(() => {
+      setIsUploading(false);
+      
+      toast({
+        title: "Avatar updated",
+        description: "Your profile picture has been updated successfully.",
+      });
+    }, 1500);
+  };
+  
+  // Handle account deletion
+  const handleDeleteAccount = () => {
+    setIsDeleting(true);
+    
+    // Simulate deletion delay
+    setTimeout(() => {
+      setIsDeleting(false);
+      
+      toast({
+        title: "Account deleted",
+        description: "Your account has been permanently deleted.",
+        variant: "destructive",
+      });
+      
+      // Log out and redirect to home page
+      logout();
+      navigate("/");
+    }, 1500);
+  };
+  
+  // Handle note selection
+  const handleNoteSelect = (note) => {
+    setSelectedNote(note);
+    setNoteContent(note.content);
+    setIsEditingNote(false);
+  };
+  
+  // Handle note editing
+  const handleEditNote = () => {
+    setIsEditingNote(true);
+  };
+  
+  const handleSaveNote = () => {
+    // Update the note content
+    const updatedNotes = userData.savedNotes.map(note => 
+      note.id === selectedNote.id 
+        ? { ...note, content: noteContent } 
+        : note
+    );
+    
+    setUserData(prevData => ({
+      ...prevData,
+      savedNotes: updatedNotes,
+    }));
+    
+    setSelectedNote(prev => ({ ...prev, content: noteContent }));
+    setIsEditingNote(false);
+    
+    toast({
+      title: "Note updated",
+      description: "Your note has been saved successfully.",
+    });
+  };
+  
+  const handleDeleteNote = () => {
+    // Remove the note
+    const updatedNotes = userData.savedNotes.filter(note => note.id !== selectedNote.id);
+    
+    setUserData(prevData => ({
+      ...prevData,
+      savedNotes: updatedNotes,
+    }));
+    
+    setSelectedNote(null);
+    
+    toast({
+      title: "Note deleted",
+      description: "Your note has been deleted successfully.",
+    });
+  };
+  
+  // Handle logout
   const handleLogout = async () => {
     try {
       await logout();
-      toast({
-        title: "Success",
-        description: "You have been logged out",
-      });
+      navigate('/login');
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("Logout failed:", error);
       toast({
-        title: "Error",
-        description: "Failed to logout",
+        title: "Logout failed",
+        description: "There was an error logging out. Please try again.",
         variant: "destructive",
       });
     }
   };
-
-  if (!isAuthenticated || !user) {
+  
+  // Calculate subscription days remaining
+  const calculateDaysRemaining = () => {
+    if (!userData.subscription || !userData.subscription.expiresAt) {
+      return 0;
+    }
+    
+    const currentDate = new Date();
+    const expiryDate = new Date(userData.subscription.expiresAt);
+    const timeDiff = expiryDate.getTime() - currentDate.getTime();
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+    return Math.max(0, daysRemaining);
+  };
+  
+  // Calculate progress percentages
+  const calculateProgress = (completed, total) => {
+    if (!total || total === 0) return 0;
+    return Math.round((completed / total) * 100);
+  };
+  
+  const nismProgress = calculateProgress(userData.progress.nism.completed, userData.progress.nism.total);
+  const gateProgress = calculateProgress(userData.progress.gate.completed, userData.progress.gate.total);
+  
+  // Format date
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+  
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>Not Authenticated</CardTitle>
-              <CardDescription>Please login to view your profile</CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <Button asChild className="w-full">
-                <Link to="/login">Login</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </main>
-        <Footer />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
-
+  
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <>
       <Navbar />
-      <main className="flex-1 py-8 px-4">
+      <main className="container mx-auto px-4 py-8 profile-container">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Profile Sidebar */}
             <div className="md:col-span-1">
-              <Card className="bg-white dark:bg-gray-800 shadow-sm sticky top-20">
+              <Card>
                 <CardHeader className="text-center">
-                  <div className="mx-auto mb-4 rounded-full bg-blue-100 dark:bg-blue-900/50 h-24 w-24 flex items-center justify-center">
-                    <User className="h-12 w-12 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <CardTitle className="text-xl font-semibold font-work-sans text-gray-900 dark:text-white">
-                    {user.user_metadata?.name || user.email.split('@')[0]}
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-400 font-roboto">
-                    {user.email}
-                  </CardDescription>
-                  <div className="mt-2">
-                    <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                      Student
-                    </Badge>
+                  <div className="flex flex-col items-center space-y-4">
+                    <Avatar className="h-24 w-24">
+                      <AvatarImage src={userData.avatar} alt={userData.name} />
+                      <AvatarFallback className="text-2xl">
+                        {userData.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="mt-2">
+                          <Upload className="h-4 w-4 mr-1" /> Change Photo
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Update Profile Picture</DialogTitle>
+                          <DialogDescription>
+                            Upload a new profile picture. Recommended size: 300x300 pixels.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="flex items-center justify-center">
+                            <Label htmlFor="picture" className="sr-only">Picture</Label>
+                            <Input id="picture" type="file" accept="image/*" />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => {}}>Cancel</Button>
+                          <Button onClick={handleAvatarUpload} disabled={isUploading}>
+                            {isUploading ? (
+                              <>
+                                <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                                Uploading...
+                              </>
+                            ) : (
+                              'Upload'
+                            )}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    
+                    <div>
+                      <h2 className="text-2xl font-bold">{userData.name}</h2>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Member since {formatDate(userData.joinedDate)}
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <Badge variant={userData.subscription.status === 'active' ? 'default' : 'outline'} className="text-xs">
+                        {userData.subscription.type} Account
+                      </Badge>
+                    </div>
                   </div>
                 </CardHeader>
                 
-                <CardContent className="p-0">
-                  <ul className="divide-y divide-gray-100 dark:divide-gray-700">
-                    <li>
-                      <Button 
-                        variant="ghost" 
-                        className={`w-full justify-start rounded-none py-4 px-6 ${activeTab === 'profile' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
-                        onClick={() => setActiveTab('profile')}
-                      >
-                        <User className="h-5 w-5 mr-3" />
-                        Profile
-                      </Button>
-                    </li>
-                    <li>
-                      <Button 
-                        variant="ghost" 
-                        className={`w-full justify-start rounded-none py-4 px-6 ${activeTab === 'myExams' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
-                        onClick={() => setActiveTab('myExams')}
-                      >
-                        <BookCheck className="h-5 w-5 mr-3" />
-                        My Exams
-                      </Button>
-                    </li>
-                    <li>
-                      <Button 
-                        variant="ghost" 
-                        className={`w-full justify-start rounded-none py-4 px-6 ${activeTab === 'performance' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
-                        onClick={() => setActiveTab('performance')}
-                      >
-                        <BarChart3 className="h-5 w-5 mr-3" />
-                        Performance
-                      </Button>
-                    </li>
-                    <li>
-                      <Button 
-                        variant="ghost" 
-                        className={`w-full justify-start rounded-none py-4 px-6 ${activeTab === 'bookmarks' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
-                        onClick={() => setActiveTab('bookmarks')}
-                      >
-                        <Bookmark className="h-5 w-5 mr-3" />
-                        Bookmarks
-                      </Button>
-                    </li>
-                    <li>
-                      <Button 
-                        variant="ghost" 
-                        className={`w-full justify-start rounded-none py-4 px-6 ${activeTab === 'settings' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
-                        onClick={() => setActiveTab('settings')}
-                      >
-                        <Settings className="h-5 w-5 mr-3" />
-                        Settings
-                      </Button>
-                    </li>
-                  </ul>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <Mail className="h-4 w-4 mr-2 text-gray-500" />
+                      <span>{userData.email}</span>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                      <span>{userData.phone}</span>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                      <span>Joined {formatDate(userData.joinedDate)}</span>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Subscription Status</span>
+                        <Badge variant={userData.subscription.status === 'active' ? 'default' : 'destructive'}>
+                          {userData.subscription.status === 'active' ? 'Active' : 'Expired'}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Expires In</span>
+                        <span>{calculateDaysRemaining()} days</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="w-full" onClick={() => navigate('/payment/subscription')}>
+                      {userData.subscription.status === 'active' ? 'Extend Subscription' : 'Renew Subscription'}
+                    </Button>
+                  </div>
                 </CardContent>
-                <CardFooter className="px-6 py-4">
-                  <Button 
-                    variant="destructive" 
-                    className="w-full justify-start"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-5 w-5 mr-3" />
-                    Logout
+                
+                <CardFooter className="flex flex-col space-y-4">
+                  <Button variant="outline" className="w-full" onClick={handleEditProfile}>
+                    <Edit className="h-4 w-4 mr-2" /> Edit Profile
                   </Button>
+                  
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        <LogOut className="h-4 w-4 mr-2" /> Logout
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to logout?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You will be redirected to the login page.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </CardFooter>
               </Card>
             </div>
             
-            {/* Content Area */}
-            <div className="md:col-span-3">
-              <Card className="bg-white dark:bg-gray-800 shadow-sm">
-                <CardContent className="p-0">
-                  {activeTab === 'profile' && (
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold font-work-sans text-gray-900 dark:text-white">Profile Information</h2>
-                        <Button variant="outline" size="sm" className="text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit Profile
-                        </Button>
-                      </div>
-                      
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Full Name</div>
-                            <div className="font-medium text-gray-900 dark:text-white">
-                              {user.user_metadata?.name || "Not provided"}
-                            </div>
+            {/* Main Content */}
+            <div className="md:col-span-2">
+              <Tabs defaultValue="dashboard" className="w-full">
+                <TabsList className="grid grid-cols-4 mb-6">
+                  <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                  <TabsTrigger value="exams">Exams</TabsTrigger>
+                  <TabsTrigger value="certificates">Certificates</TabsTrigger>
+                  <TabsTrigger value="notes">Notes</TabsTrigger>
+                </TabsList>
+                
+                {/* Dashboard Tab */}
+                <TabsContent value="dashboard">
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Your Progress</CardTitle>
+                        <CardDescription>Track your exam preparation progress</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="font-medium">NISM Exams</span>
+                            <span className="text-sm text-gray-500">
+                              {userData.progress.nism.completed}/{userData.progress.nism.total} completed
+                            </span>
                           </div>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Email Address</div>
-                            <div className="font-medium text-gray-900 dark:text-white">{user.email}</div>
-                          </div>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Account Created</div>
-                            <div className="font-medium text-gray-900 dark:text-white">
-                              {new Date(user.created_at).toLocaleDateString('en-US', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })}
-                            </div>
-                          </div>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Account Type</div>
-                            <div className="font-medium text-gray-900 dark:text-white">Student</div>
+                          <Progress value={nismProgress} className="h-2" />
+                          <div className="flex justify-between text-sm">
+                            <span>Average Score: {userData.progress.nism.score}%</span>
+                            <span>{nismProgress}% Complete</span>
                           </div>
                         </div>
                         
-                        <Separator className="my-6" />
-                        
-                        <div>
-                          <h3 className="text-lg font-semibold font-work-sans text-gray-900 dark:text-white mb-4">Activity Summary</h3>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg flex items-start">
-                              <div className="bg-blue-100 dark:bg-blue-800/50 p-2 rounded-lg mr-3">
-                                <BookCheck className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                              </div>
-                              <div>
-                                <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                                  {purchases.length}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">Purchased Exams</div>
-                              </div>
-                            </div>
-                            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg flex items-start">
-                              <div className="bg-green-100 dark:bg-green-800/50 p-2 rounded-lg mr-3">
-                                <ThumbsUp className="h-5 w-5 text-green-600 dark:text-green-400" />
-                              </div>
-                              <div>
-                                <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                                  {purchases.filter(p => p.status === 'completed').length}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">Completed Exams</div>
-                              </div>
-                            </div>
-                            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg flex items-start">
-                              <div className="bg-purple-100 dark:bg-purple-800/50 p-2 rounded-lg mr-3">
-                                <History className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                              </div>
-                              <div>
-                                <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                                  {purchases.filter(p => p.status === 'in-progress').length}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">In Progress Exams</div>
-                              </div>
-                            </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="font-medium">GATE Exams</span>
+                            <span className="text-sm text-gray-500">
+                              {userData.progress.gate.completed}/{userData.progress.gate.total} completed
+                            </span>
+                          </div>
+                          <Progress value={gateProgress} className="h-2" />
+                          <div className="flex justify-between text-sm">
+                            <span>Average Score: {userData.progress.gate.score}%</span>
+                            <span>{gateProgress}% Complete</span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {activeTab === 'myExams' && (
-                    <div className="p-6">
-                      <h2 className="text-2xl font-bold font-work-sans text-gray-900 dark:text-white mb-6">My Purchased Exams</h2>
-                      
-                      {loading ? (
-                        <div className="text-center py-12">
-                          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-                          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading your exams...</p>
-                        </div>
-                      ) : purchases.length === 0 ? (
-                        <div className="text-center py-12 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                          <BookOpen className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No exams purchased yet</h3>
-                          <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-                            Explore our mock tests and add them to your collection to begin practicing.
-                          </p>
-                          <Button asChild>
-                            <Link to="/mock-tests">Explore Mock Tests</Link>
-                          </Button>
-                        </div>
-                      ) : (
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Recent Exams</CardTitle>
+                        <CardDescription>Your most recent exam attempts</CardDescription>
+                      </CardHeader>
+                      <CardContent>
                         <div className="space-y-4">
-                          <Tabs defaultValue="all">
-                            <TabsList className="mb-4 bg-gray-100 dark:bg-gray-800 p-1">
-                              <TabsTrigger value="all">All Exams</TabsTrigger>
-                              <TabsTrigger value="inProgress">In Progress</TabsTrigger>
-                              <TabsTrigger value="completed">Completed</TabsTrigger>
-                            </TabsList>
-                            
-                            <TabsContent value="all" className="mt-0">
-                              <div className="space-y-4">
-                                {purchases.map((purchase) => (
-                                  <Card key={purchase.id} className="border-l-4 border-l-blue-500 dark:border-l-blue-600">
-                                    <CardContent className="p-5">
-                                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                        <div>
-                                          <div className="flex items-center">
-                                            {purchase.exam?.type === 'GATE' ? (
-                                              <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                                            ) : (
-                                              <Award className="h-5 w-5 text-purple-600 dark:text-purple-400 mr-2" />
-                                            )}
-                                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{purchase.exam?.title}</h3>
-                                          </div>
-                                          <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                            <div className="flex items-center">
-                                              <Calendar className="h-4 w-4 mr-1" />
-                                              <span>Purchased: {new Date(purchase.created_at).toLocaleDateString()}</span>
-                                            </div>
-                                            <div className="flex items-center">
-                                              <Clock className="h-4 w-4 mr-1" />
-                                              <span>{purchase.exam?.duration} minutes</span>
-                                            </div>
-                                            <div className="flex items-center">
-                                              <FileText className="h-4 w-4 mr-1" />
-                                              <span>{purchase.exam?.total_questions} questions</span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="flex items-center gap-3 ml-auto">
-                                          <Badge className={
-                                            purchase.status === 'completed' 
-                                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                                              : purchase.status === 'in-progress'
-                                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                              : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                                          }>
-                                            {purchase.status === 'completed' ? 'Completed' : 
-                                             purchase.status === 'in-progress' ? 'In Progress' : 'Not Started'}
-                                          </Badge>
-                                          <Button 
-                                            asChild 
-                                            size="sm"
-                                            className={purchase.status === 'completed' ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}
-                                          >
-                                            <Link to={purchase.status === 'completed' 
-                                              ? `/results/${purchase.id}` 
-                                              : `/exam/${purchase.exam_id}?user_exam_id=${purchase.id}`}>
-                                              {purchase.status === 'completed' ? 'View Results' : 'Continue Exam'}
-                                            </Link>
-                                          </Button>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                ))}
+                          {userData.recentExams.map((exam) => (
+                            <div key={exam.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                              <div className="flex flex-col">
+                                <span className="font-medium">{exam.name}</span>
+                                <span className="text-sm text-gray-500">{formatDate(exam.date)}</span>
                               </div>
-                            </TabsContent>
-                            
-                            <TabsContent value="inProgress" className="mt-0">
-                              <div className="space-y-4">
-                                {purchases.filter(p => p.status === 'in-progress').length === 0 ? (
-                                  <div className="text-center py-8 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                                    <p className="text-gray-600 dark:text-gray-400">No exams in progress</p>
+                              <div className="flex items-center space-x-4">
+                                <div className="text-right">
+                                  <div className="font-medium">{exam.score}%</div>
+                                  <div className="text-sm text-gray-500">
+                                    {exam.correctAnswers}/{exam.totalQuestions} correct
                                   </div>
-                                ) : (
-                                  purchases.filter(p => p.status === 'in-progress').map((purchase) => (
-                                    <Card key={purchase.id} className="border-l-4 border-l-yellow-500 dark:border-l-yellow-600">
-                                      <CardContent className="p-5">
-                                        {/* Same content as above */}
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                          <div>
-                                            <div className="flex items-center">
-                                              {purchase.exam?.type === 'GATE' ? (
-                                                <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                                              ) : (
-                                                <Award className="h-5 w-5 text-purple-600 dark:text-purple-400 mr-2" />
-                                              )}
-                                              <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{purchase.exam?.title}</h3>
-                                            </div>
-                                            <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                              <div className="flex items-center">
-                                                <Calendar className="h-4 w-4 mr-1" />
-                                                <span>Started: {new Date(purchase.start_time).toLocaleDateString()}</span>
-                                              </div>
-                                              <div className="flex items-center">
-                                                <Clock className="h-4 w-4 mr-1" />
-                                                <span>{purchase.exam?.duration} minutes</span>
-                                              </div>
-                                              <div className="flex items-center">
-                                                <FileText className="h-4 w-4 mr-1" />
-                                                <span>{purchase.exam?.total_questions} questions</span>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex items-center gap-3 ml-auto">
-                                            <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
-                                              In Progress
-                                            </Badge>
-                                            <Button 
-                                              asChild 
-                                              size="sm"
-                                            >
-                                              <Link to={`/exam/${purchase.exam_id}?user_exam_id=${purchase.id}`}>
-                                                Continue Exam
-                                              </Link>
-                                            </Button>
-                                          </div>
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                  ))
-                                )}
+                                </div>
+                                <Button variant="outline" size="sm" onClick={() => navigate(`/results/${exam.id}`)}>
+                                  View
+                                </Button>
                               </div>
-                            </TabsContent>
-                            
-                            <TabsContent value="completed" className="mt-0">
-                              <div className="space-y-4">
-                                {purchases.filter(p => p.status === 'completed').length === 0 ? (
-                                  <div className="text-center py-8 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                                    <p className="text-gray-600 dark:text-gray-400">No completed exams</p>
-                                  </div>
-                                ) : (
-                                  purchases.filter(p => p.status === 'completed').map((purchase) => (
-                                    <Card key={purchase.id} className="border-l-4 border-l-green-500 dark:border-l-green-600">
-                                      <CardContent className="p-5">
-                                        {/* Same content as above */}
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                          <div>
-                                            <div className="flex items-center">
-                                              {purchase.exam?.type === 'GATE' ? (
-                                                <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                                              ) : (
-                                                <Award className="h-5 w-5 text-purple-600 dark:text-purple-400 mr-2" />
-                                              )}
-                                              <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{purchase.exam?.title}</h3>
-                                            </div>
-                                            <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                              <div className="flex items-center">
-                                                <Calendar className="h-4 w-4 mr-1" />
-                                                <span>Completed: {new Date(purchase.end_time).toLocaleDateString()}</span>
-                                              </div>
-                                              <div className="flex items-center">
-                                                <Clock className="h-4 w-4 mr-1" />
-                                                <span>{purchase.exam?.duration} minutes</span>
-                                              </div>
-                                              <div className="flex items-center">
-                                                <Award className="h-4 w-4 mr-1" />
-                                                <span>Score: {purchase.score || 0}/{purchase.exam?.total_questions}</span>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex items-center gap-3 ml-auto">
-                                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                                              Completed
-                                            </Badge>
-                                            <Button 
-                                              asChild 
-                                              size="sm"
-                                              className="bg-green-600 hover:bg-green-700"
-                                            >
-                                              <Link to={`/results/${purchase.id}`}>
-                                                View Results
-                                              </Link>
-                                            </Button>
-                                          </div>
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                  ))
-                                )}
-                              </div>
-                            </TabsContent>
-                          </Tabs>
+                            </div>
+                          ))}
                         </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {activeTab === 'performance' && (
-                    <div className="p-6">
-                      <h2 className="text-2xl font-bold font-work-sans text-gray-900 dark:text-white mb-6">Performance Analytics</h2>
-                      
-                      {purchases.filter(p => p.status === 'completed').length === 0 ? (
-                        <div className="text-center py-12 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                          <BarChart3 className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No performance data available</h3>
-                          <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-                            Complete some exams to see your performance analytics.
-                          </p>
-                          <Button asChild>
-                            <Link to="/mock-tests">Explore Mock Tests</Link>
+                      </CardContent>
+                      <CardFooter>
+                        <Button variant="outline" className="w-full" onClick={() => navigate('/dashboard')}>
+                          View All Exams
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </div>
+                </TabsContent>
+                
+                {/* Exams Tab */}
+                <TabsContent value="exams">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Your Exam History</CardTitle>
+                      <CardDescription>All your attempted exams and practice tests</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {userData.recentExams.map((exam) => (
+                          <div key={exam.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                            <div className="flex flex-col mb-2 md:mb-0">
+                              <span className="font-medium">{exam.name}</span>
+                              <div className="flex items-center text-sm text-gray-500">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                {formatDate(exam.date)}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between md:justify-end w-full md:w-auto md:space-x-4">
+                              <div className="flex items-center">
+                                <Badge variant={exam.score >= 70 ? "default" : "outline"} className="mr-2">
+                                  {exam.score}%
+                                </Badge>
+                                <span className="text-sm text-gray-500">
+                                  {exam.correctAnswers}/{exam.totalQuestions}
+                                </span>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button variant="outline" size="sm" onClick={() => navigate(`/results/${exam.id}`)}>
+                                  Results
+                                </Button>
+                                <Button size="sm" onClick={() => navigate(`/exam/${exam.id}?mode=review`)}>
+                                  Review
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <Button variant="outline" onClick={() => navigate('/mock-tests')}>
+                        Take New Mock Test
+                      </Button>
+                      <Button onClick={() => navigate('/dashboard')}>
+                        Go to Dashboard
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </TabsContent>
+                
+                {/* Certificates Tab */}
+                <TabsContent value="certificates">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Your Certificates</CardTitle>
+                      <CardDescription>Certificates you've earned</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {userData.certificates.map((cert) => (
+                          <div key={cert.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                            <div className="flex flex-col mb-2 md:mb-0">
+                              <div className="flex items-center">
+                                <span className="font-medium">{cert.name}</span>
+                                {cert.status === 'verified' && (
+                                  <Badge variant="default" className="ml-2">
+                                    <CheckCircle className="h-3 w-3 mr-1" /> Verified
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center text-sm text-gray-500">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                Issued on {formatDate(cert.issueDate)}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between md:justify-end w-full md:w-auto md:space-x-4">
+                              <div>
+                                <Badge variant="outline">Score: {cert.score}%</Badge>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button variant="outline" size="sm">
+                                  View
+                                </Button>
+                                <Button size="sm">
+                                  Download
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        
+                        {userData.certificates.length === 0 && (
+                          <div className="text-center py-8">
+                            <Award className="h-12 w-12 mx-auto text-gray-400" />
+                            <h3 className="mt-4 text-lg font-medium">No Certificates Yet</h3>
+                            <p className="mt-2 text-gray-500">
+                              Complete exams and earn certificates to display here.
+                            </p>
+                            <Button className="mt-4" onClick={() => navigate('/mock-tests')}>
+                              Take an Exam
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                {/* Notes Tab */}
+                <TabsContent value="notes">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-1">
+                      <Card className="h-full">
+                        <CardHeader>
+                          <CardTitle>Your Notes</CardTitle>
+                          <CardDescription>Study notes and reminders</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            {userData.savedNotes.map((note) => (
+                              <div 
+                                key={note.id} 
+                                className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                                  selectedNote?.id === note.id 
+                                    ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' 
+                                    : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                                }`}
+                                onClick={() => handleNoteSelect(note)}
+                              >
+                                <h4 className="font-medium truncate">{note.title}</h4>
+                                <p className="text-xs text-gray-500">{formatDate(note.date)}</p>
+                              </div>
+                            ))}
+                            
+                            {userData.savedNotes.length === 0 && (
+                              <div className="text-center py-8">
+                                <FileText className="h-8 w-8 mx-auto text-gray-400" />
+                                <p className="mt-2 text-sm text-gray-500">No notes yet</p>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                        <CardFooter>
+                          <Button variant="outline" className="w-full">
+                            Create New Note
                           </Button>
-                        </div>
-                      ) : (
-                        <div className="space-y-6">
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <Card className="bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800">
-                              <CardContent className="p-6">
-                                <div className="flex items-center justify-between mb-2">
-                                  <h3 className="text-sm font-medium text-green-800 dark:text-green-300">Average Score</h3>
-                                  <Award className="h-5 w-5 text-green-600 dark:text-green-400" />
-                                </div>
-                                <div className="text-3xl font-bold text-green-900 dark:text-green-300">
-                                  {Math.round(purchases
-                                    .filter(p => p.status === 'completed')
-                                    .reduce((acc, p) => acc + (p.score || 0), 0) / 
-                                    purchases.filter(p => p.status === 'completed').length
-                                  )}%
-                                </div>
-                              </CardContent>
-                            </Card>
-                            
-                            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800">
-                              <CardContent className="p-6">
-                                <div className="flex items-center justify-between mb-2">
-                                  <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">Exams Completed</h3>
-                                  <BookCheck className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                                </div>
-                                <div className="text-3xl font-bold text-blue-900 dark:text-blue-300">
-                                  {purchases.filter(p => p.status === 'completed').length}
-                                </div>
-                              </CardContent>
-                            </Card>
-                            
-                            <Card className="bg-purple-50 dark:bg-purple-900/20 border-purple-100 dark:border-purple-800">
-                              <CardContent className="p-6">
-                                <div className="flex items-center justify-between mb-2">
-                                  <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300">Time Spent</h3>
-                                  <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                                </div>
-                                <div className="text-3xl font-bold text-purple-900 dark:text-purple-300">
-                                  {purchases
-                                    .filter(p => p.status === 'completed' && p.end_time && p.start_time)
-                                    .reduce((acc, p) => {
-                                      const start = new Date(p.start_time);
-                                      const end = new Date(p.end_time);
-                                      return acc + (end.getTime() - start.getTime()) / (1000 * 60);
-                                    }, 0).toFixed(0)} min
-                                </div>
-                              </CardContent>
-                            </Card>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                    
+                    <div className="md:col-span-2">
+                      <Card className="h-full">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                          <div>
+                            <CardTitle>{selectedNote ? selectedNote.title : 'Note Details'}</CardTitle>
+                            {selectedNote && (
+                              <CardDescription>
+                                Created on {formatDate(selectedNote.date)}
+                              </CardDescription>
+                            )}
                           </div>
                           
-                          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Exam Results</h3>
-                            <div className="space-y-4">
-                              {purchases
-                                .filter(p => p.status === 'completed')
-                                .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
-                                .slice(0, 3)
-                                .map((purchase) => (
-                                  <div key={purchase.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                                    <div>
-                                      <div className="flex items-center">
-                                        {purchase.exam?.type === 'GATE' ? (
-                                          <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                                        ) : (
-                                          <Award className="h-5 w-5 text-purple-600 dark:text-purple-400 mr-2" />
-                                        )}
-                                        <h4 className="font-medium text-gray-900 dark:text-white">{purchase.exam?.title}</h4>
-                                      </div>
-                                      <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                        Completed: {new Date(purchase.end_time).toLocaleDateString()}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                      <div>
-                                        <div className="text-sm text-gray-500 dark:text-gray-400">Score</div>
-                                        <div className="font-bold text-gray-900 dark:text-white">{purchase.score || 0}/{purchase.exam?.total_questions}</div>
-                                      </div>
-                                      <Button asChild size="sm" variant="outline">
-                                        <Link to={`/results/${purchase.id}`}>View</Link>
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ))}
+                          {selectedNote && !isEditingNote && (
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm" onClick={handleEditNote}>
+                                <Edit className="h-4 w-4 mr-1" /> Edit
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="destructive" size="sm">
+                                    <Trash2 className="h-4 w-4 mr-1" /> Delete
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This will permanently delete this note. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleDeleteNote}>Delete</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {activeTab === 'bookmarks' && (
-                    <div className="p-6">
-                      <h2 className="text-2xl font-bold font-work-sans text-gray-900 dark:text-white mb-6">Bookmarked Questions</h2>
-                      
-                      <div className="text-center py-12 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                        <Bookmark className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No bookmarked questions</h3>
-                        <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-                          Bookmark important questions while taking tests to review them later.
-                        </p>
-                        <Button asChild>
-                          <Link to="/mock-tests">Explore Mock Tests</Link>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {activeTab === 'settings' && (
-                    <div className="p-6">
-                      <h2 className="text-2xl font-bold font-work-sans text-gray-900 dark:text-white mb-6">Account Settings</h2>
-                      
-                      <div className="space-y-6">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Personal Information</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
-                              <input 
-                                type="text" 
-                                defaultValue={user.user_metadata?.name || ""}
-                                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                                placeholder="Enter your full name"
+                          )}
+                          
+                          {selectedNote && isEditingNote && (
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm" onClick={() => setIsEditingNote(false)}>
+                                <X className="h-4 w-4 mr-1" /> Cancel
+                              </Button>
+                              <Button size="sm" onClick={handleSaveNote}>
+                                <Save className="h-4 w-4 mr-1" /> Save
+                              </Button>
+                            </div>
+                          )}
+                        </CardHeader>
+                        
+                        <CardContent>
+                          {selectedNote ? (
+                            isEditingNote ? (
+                              <textarea
+                                className="w-full h-64 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={noteContent}
+                                onChange={(e) => setNoteContent(e.target.value)}
                               />
+                            ) : (
+                              <div className="prose dark:prose-invert max-w-none">
+                                <p>{selectedNote.content}</p>
+                              </div>
+                            )
+                          ) : (
+                            <div className="text-center py-16">
+                              <FileText className="h-12 w-12 mx-auto text-gray-400" />
+                              <h3 className="mt-4 text-lg font-medium">No Note Selected</h3>
+                              <p className="mt-2 text-gray-500">
+                                Select a note from the list to view its contents.
+                              </p>
                             </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
-                              <input 
-                                type="email" 
-                                value={user.email}
-                                disabled
-                                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                              />
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Email cannot be changed</p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <Separator className="my-6" />
-                        
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Password</h3>
-                          <Button variant="outline">Change Password</Button>
-                        </div>
-                        
-                        <Separator className="my-6" />
-                        
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Account Actions</h3>
-                          <Button variant="destructive" onClick={handleLogout}>
-                            <LogOut className="h-4 w-4 mr-2" />
-                            Logout
-                          </Button>
-                        </div>
-                      </div>
+                          )}
+                        </CardContent>
+                      </Card>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
       </main>
+      
+      {/* Edit Profile Dialog */}
+      <Dialog open={isEditing} onOpenChange={setIsEditing}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile information.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={editedUserData.name}
+                onChange={(e) => setEditedUserData({ ...editedUserData, name: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={editedUserData.email}
+                onChange={(e) => setEditedUserData({ ...editedUserData, email: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right">
+                Phone
+              </Label>
+              <Input
+                id="phone"
+                value={editedUserData.phone}
+                onChange={(e) => setEditedUserData({ ...editedUserData, phone: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelEdit}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveProfile}>Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Delete Account Dialog */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive" className="hidden">
+            Delete Account
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteAccount} disabled={isDeleting}>
+              {isDeleting ? (
+                <>
+                  <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Account'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
       <Footer />
-    </div>
+    </>
   );
 };
 
